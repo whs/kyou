@@ -1,0 +1,100 @@
+{extends "base.html"}
+{block head}
+<style>
+body{
+	background: #eee;
+}
+#lp-in{
+	background: white;
+	padding: 20px;
+	width: 650px;
+	margin:  20px auto 20px auto;
+}
+#lp-in form{
+	width: 500px;
+	margin: auto;
+}
+h1{
+	margin-bottom: 20px;
+	text-align: center;
+}
+#applist{
+	text-align: center;
+}
+#applist a{
+	display: block;
+	width: 200px;
+	margin: auto;
+	text-align: center;
+}
+#applist .row{
+	margin-bottom: 50px;
+}
+#applist .logo{
+	display: block;
+	width: 200px;
+	height: 200px;
+	margin: auto;
+	background: #eee;
+	margin-bottom: 10px;
+}
+</style>
+{/block}
+{block body}
+<div id="lp-in">
+	<h1>project Kyou</h1>
+	<form action="#" class="form-horizontal">
+		<div class="control-group">
+			<label class="control-label" for="project">Project</label>
+			<div class="controls">
+				<select id="project">
+					<option>-----------</option>
+					<option>New project</option>
+				</select>
+			</div>
+    	</div>
+    	<div class="control-group">
+    		<div class="controls">
+    			<button class="btn btn-primary">Login with menome to share projects</button>
+    		</div>
+    	</div>
+	</form>
+	<div id="applist">
+		<div class="row">
+			<div class="span4">
+				<a href="#">
+					<span class="logo"></span>
+					Page creation
+				</a>
+			</div>
+			<div class="span4">
+				<a href="#">
+					<span class="logo"></span>
+					Binding
+				</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="span4">
+				<a href="#">
+					<span class="logo"></span>
+					Applications
+				</a>
+			</div>
+			<div class="span4">
+				<a href="#">
+					<span class="logo"></span>
+					Distribution
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+$(function(){
+	$("#project").change(function(){
+
+	});
+})
+</script>
+{/block}
