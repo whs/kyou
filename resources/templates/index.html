@@ -48,15 +48,12 @@ h1{
 			<label class="control-label" for="project">Project</label>
 			<div class="controls">
 				<select id="project">
-					<option>-----------</option>
-					<option>New project</option>
+					<option>Loading...</option>
 				</select>
+				<div class="help-block">
+					Logged in as <strong>{$user._id|escape}</strong> <a href="/auth" class="btn">Relogin</a>
+				</div>
 			</div>
-    	</div>
-    	<div class="control-group">
-    		<div class="controls">
-    			<button class="btn btn-primary">Login with menome to share projects</button>
-    		</div>
     	</div>
 	</form>
 	<div id="applist">
@@ -90,11 +87,68 @@ h1{
 		</div>
 	</div>
 </div>
+<form class="modal fade form-horizontal" id="newproj" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Create new project</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="pname">
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
 <script>
+var projects = new ProjectList;
 $(function(){
-	$("#project").change(function(){
-
+	projects.on("reset add", function(){
+		$("#project").empty();
+		this.each(function(v){
+			$("<option>").attr("value", v.id).text(v.get("name")).appendTo("#project");
+		});
+		$("<option value=''>-----------</option>").appendTo("#project");
+		$("<option value='@new'>New project</option>").appendTo("#project");
+		if(localStorage.project){
+			$("#project").val(localStorage.project);
+		}else{
+			$("#project").val("");
+		}
+		$("#project").change();
 	});
+	$("#project").change(function(){
+		if($(this).val() == "@new"){
+			$("#newproj").modal();
+			$("#newproj input[name=pname]").get(0).focus();
+			$(this).val("")
+			$("#applist").hide();
+		}else if($(this).val() != ""){
+			$("#applist").slideDown();
+			localStorage.project = $(this).val();
+		}
+	});
+	$("#newproj").submit(function(){
+		projects.create({
+			name: $("input[name=pname]", this).val(),
+			stage: 0
+		}, {
+			wait: true,
+			success: function(obj){
+				$("#project").val(obj.id).change();
+				$("#newproj").modal("hide");
+				$("#newproj input[name=pname]").val("").attr("disabled", false);
+			}
+		});
+		$("input[name=pname]", this).attr("disabled", true);
+		return false;
+	});
+	$("#applist").hide();
+	projects.reset({$projects|json_encode});
 })
 </script>
 {/block}

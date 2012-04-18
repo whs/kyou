@@ -62,10 +62,14 @@ class Base{
 			$this->smarty->assign("user", $this->user, true);
 		}
 	}
-	public function check_login(){
+	public function check_login($redirect=true){
 		if(!$this->user){
-			header("Location: /auth");
-			die();
+			if($redirect){
+				header("Location: /auth");
+				die();
+			}else{
+				$this->fatal_error("User not logged in");
+			}
 		}
 	}
 	/**
@@ -102,5 +106,13 @@ class Base{
 		$response = curl_exec($ci);
 		curl_close ($ci);
 		return $response;
+	}
+	public function fatal_error($msg){
+		header("Content-Type: application/json");
+		header("HTTP/1.0 400 Bad Request");
+		print json_encode(array(
+			"error" => $msg
+		));
+		die();
 	}
 }

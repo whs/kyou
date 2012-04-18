@@ -29,9 +29,16 @@ class URLRouter{
 	 */
 	public function route(){
 		global $phraw;
+		$routeFoundWrongMethod = false;
 		$routeFound = false;
 		foreach($this->url as $k=>$v){
-			if($phraw->route($k)){
+			$method = null;
+			if(strstr($k, " ")){
+				$k = explode(" ", $k);
+				$method = $k[0];
+				$k = implode(" ", array_slice($k, 1));
+			}
+			if(@$phraw->route($k) && ($method == null || $_SERVER['REQUEST_METHOD'] == $method)){
 				if(is_array($v)){
 					require $this->basepath.$v[0];
 					if(is_array($v[1])){
@@ -54,11 +61,17 @@ class URLRouter{
 					require $this->basepath.$v;
 				}
 				$routeFound = true;
+				$routeFoundWrongMethod = false;
 				break;
+			}else if(@$phraw->route($k)){
+				$routeFoundWrongMethod = true;
 			}
 		}
 		if(!$routeFound){
 			$this->notfound();
+		}
+		if($routeFoundWrongMethod){
+			$this->notallowed();	
 		}
 	}
 	public function notfound(){
@@ -69,5 +82,10 @@ class URLRouter{
 			header("HTTP/1.0 404 Not Found");
 			print json_encode(array("error" => "Endpoint not found."));
 		}
+	}
+	public function notallowed(){
+		header("Content-Type: application/json");
+		header("HTTP/1.0 405 Method Not Allowed");
+		print json_encode(array("error" => "Method not allowed."));
 	}
 }
