@@ -32,29 +32,28 @@ class Loader extends Base{
 		if(!$project){
 			$this->fatal_error("Project not found");
 		}
-		$out = $this->DB->pages->findOne(array(
+		$out = $this->DB->pages->find(array(
 			"project" => $project['_id']
 		));
-		$project['id'] = $project['_id'];
-		unset($project['_id']);
-		$out['project'] = $project;
 		return $this->output($out);
 	}
 
-	public function page_by_id(){
+	public function page_by_id($project=null){
 		$out = $this->DB->pages->findOne(array(
-			"_id" => $this->phraw->request['page']
+			"_id" => new MongoId($this->phraw->request['page'])
 		));
 		if(!$out){
 			$this->fatal_error("No page");
 		}
-		if((string) $out['project'] != $this->phraw->request['pid']){
+		if($project === null && (string) $out['project'] != $this->phraw->request['pid']){
 			$this->fatal_error("Page doesn't belong to this project");
 		}
-		$project = $this->DB->projects->findOne(array(
-			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
-		));
+		if(!$project){
+			$project = $this->DB->projects->findOne(array(
+				"_id" => $project === false ? new MongoId($out['project']) : new MongoId($this->phraw->request['pid']),
+				"user" => $this->user['_id']
+			));
+		}
 		if(!$project){
 			$this->fatal_error("Project not found");
 		}
@@ -160,7 +159,7 @@ class Deleter extends Base{
 		parent::init();
 		$this->check_login(false);
 	}
-	
+
 	public function project_by_id(){
 		$this->DB->projects->remove(array(
 			"_id" => new MongoId($this->phraw->request['pid']),

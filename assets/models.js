@@ -32,7 +32,17 @@ var ProjectList = Backbone.Collection.extend({
 });
 
 var Page = Backbone.Model.extend({
-
+	initialize: function(){
+		this.on("change:project", function(page, val){
+			if(_.isObject(val)){
+				page.project = new Project(val);
+			}else if(val){
+				page.project = new Project({id: val});
+				page.project.fetch();
+			}
+			page.unset("project");
+		}).trigger("change:project", this, this.get("project"), {});
+	}
 });
 
 var PageList = Backbone.Collection.extend({

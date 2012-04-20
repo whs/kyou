@@ -21,7 +21,7 @@ h1{
 #applist{
 	text-align: center;
 }
-#applist a{
+.icon{
 	display: block;
 	width: 200px;
 	margin: auto;
@@ -37,6 +37,35 @@ h1{
 	margin: auto;
 	background: #eee;
 	margin-bottom: 10px;
+}
+.popover-inner{
+	width: auto;
+}
+.popover-content{
+	height: 160px;
+	overflow: auto;
+	padding: 0;
+}
+.popover-content ul{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	text-align: left;
+}
+.popover-content a{
+	border-bottom: #f0f0f0 solid 1px;
+	display: block;
+	padding: 5px 10px 5px 10px;
+	color: inherit;
+}
+.popover-content a:hover{
+	background: #f5f5f5;
+	text-decoration: none;
+}
+.popover-content button{
+	float: right;
+	padding: 2px 10px 2px 10px;
+	margin-top: -3px;
 }
 </style>
 {/block}
@@ -60,13 +89,17 @@ h1{
 	<div id="applist">
 		<div class="row">
 			<div class="span4">
-				<a href="#">
-					<span class="logo"></span>
-					Page creation
-				</a>
+				<div class="popover-inner">
+					<h3 class="popover-title">Page creation</h3>
+					<div class="popover-content">
+						<ul id="pagelist">
+							<li><a href="#">Loading...</a></li>
+						</ul>
+					</div>
+				</div>
 			</div>
 			<div class="span4">
-				<a href="#">
+				<a href="#" class="icon">
 					<span class="logo"></span>
 					Binding
 				</a>
@@ -74,13 +107,17 @@ h1{
 		</div>
 		<div class="row">
 			<div class="span4">
-				<a href="#">
-					<span class="logo"></span>
-					Applications
-				</a>
+				<div class="popover-inner">
+					<h3 class="popover-title">Applications</h3>
+					<div class="popover-content">
+						<ul>
+							<li><a href="#">Lyrics timer</a></li>
+						</ul>
+					</div>
+				</div>
 			</div>
 			<div class="span4">
-				<a href="#">
+				<a href="#" class="icon">
 					<span class="logo"></span>
 					Distribution
 				</a>
@@ -105,8 +142,26 @@ h1{
 		<input type="submit" value="Save" class="btn btn-primary">
 	</div>
 </form>
+<form class="modal fade form-horizontal" id="newpage" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Create new page</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="pname">
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
 <script>
 var projects = new ProjectList;
+var curProj;
 $(function(){
 	projects.on("reset add destroy", function(){
 		$("#project").empty();
@@ -131,18 +186,38 @@ $(function(){
 		}else if($(this).val() != ""){
 			$("#applist").slideDown();
 			$("#proj_delete").show();
-			localStorage.project = $(this).val();
+			if(!curProj || $(this).val() != curProj.id){
+				$("#pagelist").html('<li><a href="#">Loading...</a></li>');
+				localStorage.project = $(this).val();
+				if(curProj){
+					curProj.off("reset add destroy");
+				}
+				curProj = projects.get($(this).val());
+				curProj.pages.fetch();
+				curProj.pages.on("reset add destroy", function(){
+					$("#pagelist").empty();
+					var addLink = $("<li><a href='#'><i class='icon-plus'></i> New Page</a></li>").appendTo("#pagelist");
+					$("a", addLink).click(function(){
+						$("#newpage").modal();
+						$("#newpage input[name=pname]").get(0).focus();
+						return false;
+					})
+					curProj.pages.forEach(function(model){
+						var ele = $("<li><a href='#'></a></li>");
+						$('a', ele).attr("href", "/page/" + model.id).html(_.escape(model.get("name"))+"<button class='btn btn-danger'><i class='icon-trash icon-white'></i></button>").data("id", model.id);
+						ele.appendTo("#pagelist");
+					});
+				});
+			}
 		}else{
 			$("#applist,#proj_delete").hide();
 		}
-	});
+	})
 	$("#proj_delete").click(function(){
 		if(!confirm("Delete current project?")){
 			return false;
 		}
-		var proj = localStorage.project;
-		delete localStorage.project;
-		projects.get(proj).destroy();
+		curProj.destroy();
 		return false;
 	});
 	$("#newproj").submit(function(){
@@ -160,8 +235,33 @@ $(function(){
 		$("input[name=pname]", this).attr("disabled", true);
 		return false;
 	});
+	$("#pagelist").delegate("button", "click", function(){
+		if(!confirm("Delete page \""+$(this).parent().text()+"\"?")){
+			return false;
+		}
+		$(this).hide();
+		curProj.pages.get($(this).parent().data("id")).destroy();
+		return false;
+	});
+	$("#newpage").submit(function(){
+		curProj.pages.create({
+			name: $("input[name=pname]", this).val(),
+			layout: "standard",
+		}, {
+			wait: true,
+			success: function(obj){
+				$("#newpage").modal("hide");
+				$("#newpage input[name=pname]").val("").attr("disabled", false);
+			}
+		});
+		$("input[name=pname]", this).attr("disabled", true);
+		return false;
+	});
 	$("#applist").hide();
 	projects.reset({$projects|json_encode});
+	if(localStorage.project){
+		$("#project").val(localStorage.project).change();
+	}
 })
 </script>
 {/block}
