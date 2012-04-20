@@ -50,6 +50,7 @@ h1{
 				<select id="project">
 					<option>Loading...</option>
 				</select>
+				<a href="#" class="btn btn-danger" id="proj_delete">Delete</a>
 				<div class="help-block">
 					Logged in as <strong>{$user._id|escape}</strong> <a href="/auth" class="btn">Relogin</a>
 				</div>
@@ -107,7 +108,7 @@ h1{
 <script>
 var projects = new ProjectList;
 $(function(){
-	projects.on("reset add", function(){
+	projects.on("reset add destroy", function(){
 		$("#project").empty();
 		this.each(function(v){
 			$("<option>").attr("value", v.id).text(v.get("name")).appendTo("#project");
@@ -126,11 +127,23 @@ $(function(){
 			$("#newproj").modal();
 			$("#newproj input[name=pname]").get(0).focus();
 			$(this).val("")
-			$("#applist").hide();
+			$("#applist,#proj_delete").hide();
 		}else if($(this).val() != ""){
 			$("#applist").slideDown();
+			$("#proj_delete").show();
 			localStorage.project = $(this).val();
+		}else{
+			$("#applist,#proj_delete").hide();
 		}
+	});
+	$("#proj_delete").click(function(){
+		if(!confirm("Delete current project?")){
+			return false;
+		}
+		var proj = localStorage.project;
+		delete localStorage.project;
+		projects.get(proj).destroy();
+		return false;
 	});
 	$("#newproj").submit(function(){
 		projects.create({

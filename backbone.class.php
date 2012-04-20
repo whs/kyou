@@ -154,3 +154,33 @@ class Saver extends Loader{
 		}
 	}
 }
+
+class Deleter extends Base{
+	public function init(){
+		parent::init();
+		$this->check_login(false);
+	}
+	
+	public function project_by_id(){
+		$this->DB->projects->remove(array(
+			"_id" => new MongoId($this->phraw->request['pid']),
+			"user" => $this->user['_id']
+		));
+		header("HTTP/1.0 410 Gone");
+	}
+
+	public function page_by_id(){
+		$project = $this->DB->projects->findOne(array(
+			"_id" => new MongoId($this->phraw->request['pid']),
+			"user" => $this->user['_id']
+		), array("_id"));
+		if(!$project){
+			$this->fatal_error("Project not found");
+		}
+		$this->DB->pages->remove(array(
+			"_id" => new MongoId($this->phraw->request['page']),
+			"project" => $project['_id']
+		));
+		header("HTTP/1.0 410 Gone");
+	}
+}

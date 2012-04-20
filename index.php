@@ -18,6 +18,9 @@ $router = new URLRouter(array(
 	"POST projects\/(?P<pid>[a-f0-9]+)"				=> array("backbone.class.php", array("Saver", "project_by_id")),
 	"POST projects\/(?P<pid>[a-f0-9]+)/pages/"		=> array("backbone.class.php", array("Saver", "pages")),
 	"POST projects\/(?P<pid>[a-f0-9]+)/pages/(?P<page>[a-f0-9]+)"	=> array("backbone.class.php", array("Saver", "page_by_id")),
+
+	"DELETE projects\/(?P<pid>[a-f0-9]+)"				=> array("backbone.class.php", array("Deleter", "project_by_id")),
+	"DELETE projects\/(?P<pid>[a-f0-9]+)/pages/(?P<page>[a-f0-9]+)"	=> array("backbone.class.php", array("Deleter", "page_by_id")),	
 ), $SMARTY, array(
 	"phraw" => $phraw,
 	"DB" => $DB,
