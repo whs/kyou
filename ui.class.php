@@ -29,4 +29,13 @@ class UI extends Base{
 		$this->smarty->assign("project", $page['project']);
 		$this->smarty->display("page.html");
 	}
+	public function widgets(){
+		header("Content-Type: text/javascript");
+		foreach(scandir("assets/widgets/") as $f){
+			if(is_file("assets/widgets/".$f)){
+				print file_get_contents("assets/widgets/".$f);
+				print "\n";
+			}
+		}
+	}
 }

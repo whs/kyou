@@ -57,8 +57,8 @@ class Loader extends Base{
 		if(!$project){
 			$this->fatal_error("Project not found");
 		}
-		$project['id'] = $project['_id'];
-		unset($project['_id']);
+		$project['id'] = (string) $project['_id'];
+		//unset($project['_id']);
 		$out['project'] = $project;
 		return $this->output($out);
 	}
@@ -71,7 +71,7 @@ class Loader extends Base{
 			if($x instanceof MongoId){
 				$x = (string) $x;
 			}
-			if(is_array($x)){
+			if($this->is_assoc($x)){
 				$x['id'] = (string) $x['_id'];
 				unset($x['_id']);
 			}
@@ -88,6 +88,10 @@ class Loader extends Base{
 		$v = $this->format_output($v);
 		print json_encode($v);
 	}
+
+	public static function is_assoc ($arr) {
+        return (is_array($arr) && count(array_filter(array_keys($arr),'is_string')) == count($arr));
+    }
 }
 
 class Saver extends Loader{
@@ -161,9 +165,18 @@ class Deleter extends Base{
 	}
 
 	public function project_by_id(){
-		$this->DB->projects->remove(array(
+		$project = $this->DB->projects->findOne(array(
 			"_id" => new MongoId($this->phraw->request['pid']),
 			"user" => $this->user['_id']
+		), array("_id"));
+		if(!$project){
+			$this->fatal_error("Project not found");
+		}
+		$this->DB->projects->remove(array(
+			"_id" => $project['_id']
+		));
+		$this->DB->pages->remove(array(
+			"project" => $project['_id']
 		));
 		header("HTTP/1.0 410 Gone");
 	}

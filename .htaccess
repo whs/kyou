@@ -2,3 +2,6 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$  index.php?u=$1 [L,QSA]
 Options -MultiViews
+FileETag MTime
+Header set Cache-Control "no-cache"
+Header set Pragma "no-cache"

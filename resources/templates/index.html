@@ -134,7 +134,7 @@ h1{
 		<div class="control-group">
 			<label class="control-label">Name</label>
 			<div class="controls">
-				<input type="text" name="pname">
+				<input type="text" name="pname" required>
 			</div>
     	</div>
 	</div>
@@ -151,7 +151,7 @@ h1{
 		<div class="control-group">
 			<label class="control-label">Name</label>
 			<div class="controls">
-				<input type="text" name="pname">
+				<input type="text" name="pname" required>
 			</div>
     	</div>
 	</div>
@@ -184,7 +184,7 @@ $(function(){
 			$(this).val("")
 			$("#applist,#proj_delete").hide();
 		}else if($(this).val() != ""){
-			$("#applist").slideDown();
+			$("#applist").show();
 			$("#proj_delete").show();
 			if(!curProj || $(this).val() != curProj.id){
 				$("#pagelist").html('<li><a href="#">Loading...</a></li>');
