@@ -86,6 +86,7 @@ var Page = Backbone.Model.extend({
 				var renderer = new widget.renderer({
 					model: widget
 				});
+				widget.view = renderer;
 				renderer.render();
 				renderer.$el.appendTo(this.$(".widgetsInject"));
 				javascripts = _.union(javascripts, (_.isFunction(renderer.javascripts) ? renderer.javascripts() : renderer.javascripts) || []);

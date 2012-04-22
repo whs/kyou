@@ -1,0 +1,350 @@
+{extends "base.html"}
+{block title}{$page.name|escape} | project Kyou{/block}
+{block head}
+<script src="/assets/jquery.ui.js"></script>
+<script src="/assets/handlebars.js"></script>
+<style>
+html,body{
+	height: 100%;
+}
+#sidebar{
+	position: fixed;
+	top: 0px;
+	right: 0px;
+	width: 400px;
+	height: 99.5%;
+	box-sizing: border-box;
+	padding: 10px;
+	overflow: auto;
+	box-shadow: rgba(0,0,0,0.5) 0px 0px 50px;
+}
+#wl_resize{
+	height: 150px;
+}
+#widgetlist{
+	margin: 0;
+	list-style: none;
+	border: #ccc solid 1px;
+	height: 100%;
+	overflow: auto;
+	border-radius: 5px 5px 0px 0px;
+	border-bottom: none;
+}
+#widgetlist li{
+	padding: 5px 10px 5px 10px;
+	border-bottom: #ddd solid 1px;
+	cursor: pointer;
+}
+#widgetlist li:hover{
+	background: #c6f0ff;
+}
+#widgetlist li.active{
+	background: #0088cc;
+	color: white;
+}
+.grip{
+	cursor: move;
+}
+.toolbar{
+	background: #eee;
+	padding: 5px;
+	border: #ccc solid 1px;
+	border-top: none;
+	margin-bottom: 20px;
+}
+#widgetlist .grip{
+	float: right;
+}
+#widgetlist img{
+	margin-top: -5px;
+}
+#pagepreview{
+	height: 99.5%;
+	border: none;
+}
+#autosave{
+	display: inline-block;
+	color: #888;
+}
+.imgpick{
+	width: 330px;
+	height: 200px;
+	overflow: auto;
+	border: #aaa solid 1px;
+}
+.pickitem{
+	width: 75px;
+	height: 75px;
+	box-shadow: border-box;
+	padding: 10px;
+	margin: 5px;
+	border: #eee solid 1px;
+	text-align: center;
+	cursor: pointer;
+}
+.pickitem:hover{
+	background: #c6f0ff;
+}
+.pickitem.active{
+	background: #00439e;
+	color: white;
+}
+.pickitem.active div{
+	color: #eee;
+}
+.pickitem div{
+	margin-top: 2px;
+	font-size: 10pt;
+	color: #888;
+}
+#widgetconfig .control-label{
+	width: 80px;
+}
+#widgetconfig .controls{
+	margin-left: 100px;
+	margin-right: 20px;
+}
+#widgetconfig input[type=text], #widgetconfig textarea{
+	width: 100%;
+}
+#showsidebar{
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	padding: 5px 10px;
+	background: rgba(0,0,0,0.6);
+	border-radius: 5px;
+	cursor: pointer;
+	opacity: 0.2;
+	display: none;
+	z-index: 1000;
+}
+#showsidebar:hover{
+	opacity: 1;
+}
+</style>
+{/block}
+{block body}
+<iframe id="pagepreview" sandbox="allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+<div id="sidebar">
+	<a href="/" class="btn" style="float: right; margin-top: -5px"><i class="icon-home"></i></a>
+	<a href="#" id="hidesidebar" class="btn" style="float: right; margin-top: -5px; margin-right: 10px;"><i class="icon-resize-full"></i></a>
+	<p>
+		<strong>Project:</strong> {$project.name|escape}<br>
+		<strong>Page:</strong> <a href="#" id="pagename"></a><br>
+		<strong>Layout:</strong> <a href="#" id="layoutname"></a>
+	</p>
+	<div id="wl_resize">
+		<ul id="widgetlist">
+			<li>Loading...</li>
+		</ul>
+	</div>
+	<div class="toolbar">
+		<button id="addwidget" class="btn btn-primary"><i class='icon-plus icon-white'></i></button>
+		<div id="autosave">Autosave ON</div>
+		<button id="delwidget" class="btn btn-danger" style="float: right;"><i class='icon-trash icon-white'></i></button>
+	</div>
+	<h1 id="widgetname"></h1>
+	<div id="widgetconfig">
+	</div>
+</div>
+<div id="showsidebar"><i class="icon-resize-small icon-white"></i></div>
+<form class="modal fade form-horizontal" id="newwidget" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>New Widget</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="name" required>
+			</div>
+    	</div>
+    	<div class="control-group">
+			<label class="control-label">Widget</label>
+			<div class="controls">
+				<div class="imgpick" id="widgetpick">
+					<input type="hidden" name="widget">
+				</div>
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
+<script src="/layouts.js"></script>
+<script src="/widgets.js"></script>
+<script>
+var page = new Page({$page|json_encode});
+var curWidget, widgetConfig, curLayout;
+var ASTimer;
+
+function save(){
+	clearTimeout(ASTimer);
+	ASTimer = setTimeout(function(){
+		$("#autosave").text("Saving...");
+		page.save();
+	}, 1500);
+}
+
+$(function(){
+	$(window).resize(function(){
+		$("#pagepreview").css("width", $(window).innerWidth() - $("#sidebar:visible").outerWidth());
+	}).resize();
+	page.renderer.setElement($("#pagepreview").get(0).contentDocument.documentElement);
+	page.on("render", function(){
+		$("#pagepreview").css("height", Math.max($(window).height()-5, $("#pagepreview").get(0).contentWindow.innerHeight));
+	})
+	page.on("reset", function(){
+		page.widgets.on("reset add destroy", function(){
+			$("#widgetlist").empty();
+			page.widgets.each(function(v){
+				var ele = $('<li><span class="ui-icon ui-icon-grip-solid-horizontal grip"></span><img> <strong></strong> <span class="widgetname"></span></li>');
+				ele.data("id", v.cid).data("model", v).addClass("id_"+v.cid);
+				var widget = new widgets[v.type](v);
+				$("img", ele).attr("src", widget.icon_small);
+				$("strong", ele).text(widget.name+":");
+				$(".widgetname", ele).text(widget.get("name"));
+				ele.appendTo("#widgetlist");
+				v.on("change:name", function(model, val){
+					$(".widgetname", ele).text(val);
+				});
+			});
+			if(curWidget){
+				$("#widgetlist li.id_"+curWidget.cid).addClass("active");
+			}
+			page.renderer.render();
+		}).trigger("reset");
+		page.widgets.on("change destroy add", function(){
+			$("#autosave").html("Unsaved changes!").stop(true).show().css("display", "inline-block").css("opacity", 1);
+			bindExit();
+			save();
+		});
+	});
+	page.on("change:layout reset", function(){
+		curLayout = new layouts[page.get("layout")];
+		$("#layoutname").text(" "+curLayout.name);
+		$("<img>").attr("src", curLayout.icon_small).prependTo("#layoutname");
+	});
+	page.on("change:name reset", function(){
+		$("#pagename").text(page.get("name"));
+	});
+	function bindExit(){
+		window.onbeforeunload = function(e){
+			var s = "You have unsaved changes.\n\nIf you close this page, the unsaved changes will be lost.";
+			e.returnValue = s;
+			page.save();
+			return s;
+		}
+	}
+	page.on("sync", function(){
+		$("#autosave").html("Saved").stop(true).show().fadeOut(2000);
+		window.onbeforeunload = null;
+		//page.trigger("reset");
+	});
+	page.on("change", function(){
+		$("#autosave").html("Unsaved changes!").stop(true).show().css("display", "inline-block").css("opacity", 1);
+		bindExit();
+		save();
+	});
+	page.trigger("reset");
+	$("#addwidget").click(function(){
+		$("#newwidget").modal();
+		$("#widgetpick div:first").click();
+		$("#newwidget input:first").get(0).focus();
+	});
+	$("#delwidget").click(function(){
+		if(!curWidget){
+			alert("No widget is selected");
+			return false;
+		}
+		if(confirm("Delete "+curWidget.name.toLowerCase()+" widget \""+curWidget.get("name")+"\"?")){
+			curWidget.destroy();
+		}else{
+			return;
+		}
+		widgetConfig.undelegateEvents();
+		$("#widgetconfig,#widgetname").empty();
+	});
+	$("#hidesidebar").click(function(){
+		$("#sidebar").hide();
+		$(window).resize();
+		$("#showsidebar").show();
+		return false;
+	});
+	$("#showsidebar").click(function(){
+		$("#showsidebar").hide();
+		$("#sidebar").show();
+		$(window).resize();
+		return false;
+	})
+	$(".imgpick").delegate(".pickitem", "click", function(){
+		$("input", $(this).parents(".imgpick")).val($(this).data("value"));
+		$(".active", $(this).parents(".imgpick")).removeClass("active");
+		$(this).addClass("active");
+	});
+	$("#newwidget").submit(function(){
+		var frm = $(this).serializeJSON();
+		$("input[name=name]", this).val("");
+		var view = widgets[frm.widget];
+		view = new view(frm);
+		view.weight = ((($("#widgetlist li").index($("#widgetlist .active"))+1)*100)||1E10) + 1;
+		page.widgets.add(view);
+		page.widgets.sort();
+		$(this).modal("hide");
+		save();
+		return false;
+	});
+	$("#widgetlist").delegate("li", "click", function(){
+		$("#widgetlist .active").removeClass("active");
+		if(widgetConfig){
+			widgetConfig.undelegateEvents();
+			curWidget.view.$el.unwrap();
+		}
+
+		$(this).addClass("active");
+		curWidget = page.widgets.getByCid($(this).data("id"));
+		$("#widgetname").text(curWidget.get("name")+" ");
+		$("<small>").text(curWidget.name+" widget").appendTo("#widgetname");
+		//$("<img>").attr("src", curWidget.icon_large).appendTo("#widgetname");
+		widgetConfig = new curWidget.config({
+			model: curWidget,
+			el: $("#widgetconfig")
+		});
+		widgetConfig.render();
+	});
+
+	$("#widgetlist").sortable({
+		containment: "parent",
+		handle: ".grip",
+		update: function(e, ui){
+			$("#widgetlist li").each(function(k,v){
+				var widget = page.widgets.getByCid($(v).data("id"));
+				widget.weight = k * 100;
+				widget.trigger("change");
+			});
+			page.widgets.sort();
+			save();
+		}
+	}).disableSelection();
+	$("#wl_resize").resizable({
+		handles: "s",
+	});
+
+	_.each(widgets, function(v, k){
+		v = new v;
+		if(!v.check_depends(page)){
+			return;
+		}
+		var ele = $("<div class='pickitem'><img><div></div></div>").data("value", k).attr("title", v.description);
+		$("img", ele).attr("src", v.icon_large);
+		$("div", ele).text(v.name);
+		ele.appendTo("#widgetpick");
+	});
+	$("#widgetpick .pickitem").tooltip();
+});
+</script>
+{$templates}
+{/block}
