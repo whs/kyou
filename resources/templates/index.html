@@ -8,7 +8,8 @@ body{
 	background: white;
 	padding: 20px;
 	width: 650px;
-	margin:  20px auto 20px auto;
+	margin: auto;
+	box-shadow: #333 0px 30px 100px;
 }
 #lp-in form{
 	width: 500px;
@@ -67,6 +68,9 @@ h1{
 	padding: 2px 10px 2px 10px;
 	margin-top: -3px;
 }
+.popover-content .label{
+	vertical-align: baseline;
+}
 </style>
 {/block}
 {block body}
@@ -98,7 +102,7 @@ h1{
 					</div>
 				</div>
 			</div>
-			<div class="span4">
+			<div class="span3 offset1">
 				<a href="#" class="icon">
 					<span class="logo"></span>
 					Binding
@@ -111,12 +115,12 @@ h1{
 					<h3 class="popover-title">Applications</h3>
 					<div class="popover-content">
 						<ul>
-							<li><a href="#">Lyrics timer</a></li>
+							<li><a href="#"><strong>Ryou:</strong> Lyrics timer</a></li>
 						</ul>
 					</div>
 				</div>
 			</div>
-			<div class="span4">
+			<div class="span3 offset1">
 				<a href="#" class="icon">
 					<span class="logo"></span>
 					Distribution
@@ -204,7 +208,7 @@ $(function(){
 					})
 					curProj.pages.forEach(function(model){
 						var ele = $("<li><a href='#'></a></li>");
-						$('a', ele).attr("href", "/page/" + model.id).html(_.escape(model.get("name"))+"<button class='btn btn-danger'><i class='icon-trash icon-white'></i></button>").data("id", model.id);
+						$('a', ele).attr("href", "/page/" + model.id).html(_.escape(model.get("name"))+" <span class='label'>"+model.stage()+"</span><button class='btn btn-danger'><i class='icon-trash icon-white'></i></button>").data("id", model.id);
 						ele.appendTo("#pagelist");
 					});
 				});
@@ -247,6 +251,7 @@ $(function(){
 		curProj.pages.create({
 			name: $("input[name=pname]", this).val(),
 			layout: "standard",
+			stage: 0,
 		}, {
 			wait: true,
 			success: function(obj){

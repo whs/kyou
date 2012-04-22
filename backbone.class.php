@@ -75,6 +75,13 @@ class Loader extends Base{
 				$x['id'] = (string) $x['_id'];
 				unset($x['_id']);
 			}
+			if(is_array($x)){
+				foreach($x as &$y){
+					if($y instanceof MongoId){
+						$y = (string) $y;
+					}
+				}
+			}
 		}
 		if(isset($v['_id'])){
 			$v['id'] = (string) $v['_id'];

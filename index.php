@@ -11,6 +11,7 @@ $router = new URLRouter(array(
 	"auth"										=> array("auth.class.php", array("AuthUI", "auth")),
 
 	"widgets.js"								=> array("ui.class.php", array("UI", "widgets")),
+	"layouts.js"								=> array("ui.class.php", array("UI", "layouts")),
 
 	"GET projects"									=> array("backbone.class.php", array("Loader", "projects")),
 	"GET projects\/(?P<pid>[a-f0-9]+)"				=> array("backbone.class.php", array("Loader", "project_by_id")),
