@@ -80,7 +80,9 @@ var Page = Backbone.Model.extend({
 			var javascripts = (_.isFunction(layout.javascripts) ? layout.javascripts() : layout.javascripts) || [];
 			var stylesheets = (_.isFunction(layout.stylesheets) ? layout.stylesheets() : layout.stylesheets) || [];
 
-			this.el.innerHTML = templ(this.model.toJSON());
+			var tmplData = this.model.toJSON();
+			tmplData.project = this.model.project.toJSON();
+			this.el.innerHTML = templ(tmplData);
 			// Render each widgets!
 			this.model.widgets.each(function(widget){
 				var renderer = new widget.renderer({
@@ -89,16 +91,20 @@ var Page = Backbone.Model.extend({
 				widget.view = renderer;
 				renderer.render();
 				renderer.$el.appendTo(this.$(".widgetsInject"));
+				renderer.$el.attr("id", widget.get("id")).addClass("widget_"+widget.type);
 				javascripts = _.union(javascripts, (_.isFunction(renderer.javascripts) ? renderer.javascripts() : renderer.javascripts) || []);
 				stylesheets = _.union(stylesheets, (_.isFunction(renderer.stylesheets) ? renderer.stylesheets() : renderer.stylesheets) || []);
 			}, this);
-			_.each(stylesheets, function(v){
-				if(v.indexOf("\n") != -1){
-					$("<style>").html(v).appendTo(this.$("head"));
-				}else{
-					$("<link rel='stylesheet'>").attr('href', "/"+v).appendTo(this.$("head"));
-				}
-			}, this);
+			// Somehow injecting this instantly breaks the iframe.
+			setTimeout(_.bind(function(){
+				_.each(stylesheets, function(v){
+					if(v.indexOf("\n") != -1){
+						$("<style>").html(v).appendTo(this.$("head"));
+					}else{
+						$("<link rel='stylesheet'>").attr('href', "/"+v).appendTo(this.$("head"));
+					}
+				}, this);
+			}, this), 10);
 			_.each(javascripts, function(v){
 				// Fuck jQuery. Injecting <script> does not work. Hardcore time!
 				var ele = document.createElement("script");
@@ -126,7 +132,7 @@ var PageList = Backbone.Collection.extend({
 var Widget = Backbone.Model.extend({
 	name: "New widget",
 	type: "widget",
-	description: "Widget ใหม่ ยังไม่ได้กำหนดรายละเอียด",
+	description: "Please set description!",
 	// 16x16 transparent
 	icon_small: "/assets/img/unknown.small.png",
 	// 64x64

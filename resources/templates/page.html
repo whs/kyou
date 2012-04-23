@@ -58,6 +58,11 @@ html,body{
 #widgetlist img{
 	margin-top: -5px;
 }
+#widgetlist small{
+	font-size: 8pt;
+	color: #aaa;
+	margin-left: 10px;
+}
 #pagepreview{
 	height: 99.5%;
 	border: none;
@@ -81,6 +86,7 @@ html,body{
 	border: #eee solid 1px;
 	text-align: center;
 	cursor: pointer;
+	float: left;
 }
 .pickitem:hover{
 	background: #c6f0ff;
@@ -122,13 +128,17 @@ html,body{
 #showsidebar:hover{
 	opacity: 1;
 }
+.label{
+	vertical-align: baseline;
+}
 </style>
 {/block}
 {block body}
-<iframe id="pagepreview" sandbox="allow-forms allow-popups allow-scripts allow-same-origin"></iframe>
+<iframe id="pagepreview" sandbox="allow-forms allow-popups allow-scripts allow-same-origin"><!DOCTYPE html><html><head></head><body></body></html></iframe>
 <div id="sidebar">
 	<a href="/" class="btn" style="float: right; margin-top: -5px"><i class="icon-home"></i></a>
 	<a href="#" id="hidesidebar" class="btn" style="float: right; margin-top: -5px; margin-right: 10px;"><i class="icon-resize-full"></i></a>
+	<a href="#" id="popout" class="btn" style="float: right; margin-top: -5px; margin-right: 10px;"><i class="icon-share-alt"></i></a>
 	<p>
 		<strong>Project:</strong> {$project.name|escape}<br>
 		<strong>Page:</strong> <a href="#" id="pagename"></a><br>
@@ -174,6 +184,43 @@ html,body{
 		<input type="submit" value="Save" class="btn btn-primary">
 	</div>
 </form>
+<form class="modal fade form-horizontal" id="pagesetup" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Page settings</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="name" required>
+			</div>
+    	</div>
+    	<div class="control-group">
+			<label class="control-label">Stage</label>
+			<div class="controls">
+				<select name="stage">
+					<option value="0">Planning</option>
+					<option value="1">Waiting for content</option>
+					<option value="2">Working</option>
+					<option value="3">QA</option>
+					<option value="4">Done</option>
+				</select>
+			</div>
+    	</div>
+    	<div class="control-group">
+			<label class="control-label">Layout</label>
+			<div class="controls">
+				<div class="imgpick" id="layoutpick">
+					<input type="hidden" name="layout">
+				</div>
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
 <script src="/layouts.js"></script>
 <script src="/widgets.js"></script>
 <script>
@@ -192,11 +239,12 @@ function save(){
 $(function(){
 	$(window).resize(function(){
 		$("#pagepreview").css("width", $(window).innerWidth() - $("#sidebar:visible").outerWidth());
+		$("#wl_resize").css("width", "auto");
 	}).resize();
 	page.renderer.setElement($("#pagepreview").get(0).contentDocument.documentElement);
 	page.on("render", function(){
 		$("#pagepreview").css("height", Math.max($(window).height()-5, $("#pagepreview").get(0).contentWindow.innerHeight));
-	})
+	});
 	page.on("reset", function(){
 		page.widgets.on("reset add destroy", function(){
 			$("#widgetlist").empty();
@@ -207,6 +255,7 @@ $(function(){
 				$("img", ele).attr("src", widget.icon_small);
 				$("strong", ele).text(widget.name+":");
 				$(".widgetname", ele).text(widget.get("name"));
+				$("<small></small>").text("#"+widget.get("id")).appendTo(ele);
 				ele.appendTo("#widgetlist");
 				v.on("change:name", function(model, val){
 					$(".widgetname", ele).text(val);
@@ -227,9 +276,11 @@ $(function(){
 		curLayout = new layouts[page.get("layout")];
 		$("#layoutname").text(" "+curLayout.name);
 		$("<img>").attr("src", curLayout.icon_small).prependTo("#layoutname");
+		page.renderer.render();
 	});
-	page.on("change:name reset", function(){
-		$("#pagename").text(page.get("name"));
+	page.on("change:name change:stage reset", function(){
+		$("#pagename").text(page.get("name")+" ");
+		$("<span class='label'>").text(page.stage()).appendTo("#pagename");
 	});
 	function bindExit(){
 		window.onbeforeunload = function(e){
@@ -261,7 +312,8 @@ $(function(){
 			return false;
 		}
 		if(confirm("Delete "+curWidget.name.toLowerCase()+" widget \""+curWidget.get("name")+"\"?")){
-			curWidget.destroy();
+			curWidget.trigger("destroy");
+			page.widgets.remove(curWidget).trigger("destroy");
 		}else{
 			return;
 		}
@@ -279,7 +331,22 @@ $(function(){
 		$("#sidebar").show();
 		$(window).resize();
 		return false;
-	})
+	});
+	$("#popout").click(function(){
+		$("#pagepreview,#popout,#hidesidebar").hide();
+		var previewWnd = window.open("", "preview", "toolbar=no,menubar=no");
+		page.renderer.setElement(previewWnd.document.documentElement);
+		page.renderer.render();
+		$("#sidebar").css("width", "100%");
+		previewWnd.onunload = function(){
+			$("#sidebar").css("width", "400px");
+			$("#popout,#pagepreview,#hidesidebar").show();
+			$(window).resize();
+			page.renderer.setElement($("#pagepreview").get(0).contentDocument.documentElement);
+			page.renderer.render();
+		};
+		return false;
+	});
 	$(".imgpick").delegate(".pickitem", "click", function(){
 		$("input", $(this).parents(".imgpick")).val($(this).data("value"));
 		$(".active", $(this).parents(".imgpick")).removeClass("active");
@@ -289,31 +356,44 @@ $(function(){
 		var frm = $(this).serializeJSON();
 		$("input[name=name]", this).val("");
 		var view = widgets[frm.widget];
+		frm.id = "w_"+new Date().getTime().toString(36);
 		view = new view(frm);
 		view.weight = ((($("#widgetlist li").index($("#widgetlist .active"))+1)*100)||1E10) + 1;
 		page.widgets.add(view);
-		page.widgets.sort();
 		$(this).modal("hide");
-		save();
 		return false;
 	});
 	$("#widgetlist").delegate("li", "click", function(){
 		$("#widgetlist .active").removeClass("active");
 		if(widgetConfig){
 			widgetConfig.undelegateEvents();
-			curWidget.view.$el.unwrap();
 		}
 
 		$(this).addClass("active");
 		curWidget = page.widgets.getByCid($(this).data("id"));
 		$("#widgetname").text(curWidget.get("name")+" ");
-		$("<small>").text(curWidget.name+" widget").appendTo("#widgetname");
+		$("<small>").text("#"+curWidget.get("id")).appendTo("#widgetname");
 		//$("<img>").attr("src", curWidget.icon_large).appendTo("#widgetname");
 		widgetConfig = new curWidget.config({
 			model: curWidget,
 			el: $("#widgetconfig")
 		});
 		widgetConfig.render();
+	});
+	$("#pagesetup").submit(function(){
+		page.set("name", $("#pagesetup input[name=name]").val());
+		page.set("layout", $("#pagesetup input[name=layout]").val());
+		page.set("stage", parseInt($("#pagesetup select[name=stage]").val()));
+		save();
+		$(this).modal("hide");
+		return false;
+	});
+	$("#pagename,#layoutname").click(function(){
+		$("#pagesetup").modal();
+		$("#layoutpick .item_"+curLayout.type).click();
+		$("#pagesetup input[name=name]").val(page.get("name")).get(0).focus();
+		$("#pagesetup select[name=stage]").val(page.get("stage"));
+		return false;
 	});
 
 	$("#widgetlist").sortable({
@@ -338,12 +418,19 @@ $(function(){
 		if(!v.check_depends(page)){
 			return;
 		}
-		var ele = $("<div class='pickitem'><img><div></div></div>").data("value", k).attr("title", v.description);
+		var ele = $("<div class='pickitem'><img><div></div></div>").addClass("item_"+k).data("value", k).attr("title", v.description);
 		$("img", ele).attr("src", v.icon_large);
 		$("div", ele).text(v.name);
 		ele.appendTo("#widgetpick");
 	});
-	$("#widgetpick .pickitem").tooltip();
+	_.each(layouts, function(v, k){
+		v = new v;
+		var ele = $("<div class='pickitem'><img><div></div></div>").addClass("item_"+k).data("value", k).attr("title", v.description);
+		$("img", ele).attr("src", v.icon_large);
+		$("div", ele).text(v.name);
+		ele.appendTo("#layoutpick");
+	});
+	$("#widgetpick .pickitem,#layoutpick .pickitem").tooltip();
 });
 </script>
 {$templates}
