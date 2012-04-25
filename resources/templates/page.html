@@ -1,5 +1,5 @@
 {extends "base.html"}
-{block title}{$page.name|escape} | project Kyou{/block}
+{block title}{$page.name|escape} | {$strings.app}{/block}
 {block head}
 <script src="/assets/jquery.ui.js"></script>
 <script src="/assets/handlebars.js"></script>
@@ -136,9 +136,22 @@ html,body{
 {block body}
 <iframe id="pagepreview" sandbox="allow-forms allow-popups allow-scripts allow-same-origin"><!DOCTYPE html><html><head></head><body></body></html></iframe>
 <div id="sidebar">
-	<a href="/" class="btn" style="float: right; margin-top: -5px"><i class="icon-home"></i></a>
-	<a href="#" id="hidesidebar" class="btn" style="float: right; margin-top: -5px; margin-right: 10px;"><i class="icon-resize-full"></i></a>
-	<a href="#" id="popout" class="btn" style="float: right; margin-top: -5px; margin-right: 10px;"><i class="icon-share-alt"></i></a>
+	<div class="toolbar" style="margin: -10px; margin-bottom: 10px;">
+		<a href="#" id="popout" class="btn"><i class="icon-share-alt"></i></a>
+		<a href="#" id="hidesidebar" class="btn"><i class="icon-resize-full"></i></a>
+		<div class="btn-group" style="display: inline-block; vertical-align: middle;">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+				<i class="icon-time"></i>
+				<span class="caret"></span>
+			</a>
+  			<ul class="dropdown-menu">
+    			<li><a href="#" id="ushio_new"><i class="icon-plus"></i> Create revision</a></li>
+    			<li><a href="#" id="runushio"><i class="icon-time"></i> Run {$strings.vc}</a></li>
+  			</ul>
+		</div>
+		<a href="/" class="btn pull-right"><i class="icon-home"></i></a>
+		<br style="clear: both;">
+	</div>
 	<p>
 		<strong>Project:</strong> {$project.name|escape}<br>
 		<strong>Page:</strong> <a href="#" id="pagename"></a><br>
@@ -214,6 +227,23 @@ html,body{
 				<div class="imgpick" id="layoutpick">
 					<input type="hidden" name="layout">
 				</div>
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
+<form class="modal fade form-horizontal" id="newrev" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Create revision</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Description</label>
+			<div class="controls">
+				<input type="text" name="desc" required>
 			</div>
     	</div>
 	</div>
@@ -393,6 +423,42 @@ $(function(){
 		$("#layoutpick .item_"+curLayout.type).click();
 		$("#pagesetup input[name=name]").val(page.get("name")).get(0).focus();
 		$("#pagesetup select[name=stage]").val(page.get("stage"));
+		return false;
+	});
+	$("#runushio").click(function(){
+		$("<div>").css({
+			position: "fixed",
+			top: 0,
+			left: 0,
+			width: "100%",
+			height: "100%",
+			background: "rgba(255,255,255,0.95)",
+			zIndex: 100000,
+			textAlign: "center",
+			boxSizing: "border-box",
+			paddingTop: "25%",
+			verticalAlign: "middle",
+			fontSize: 64,
+			fontFamily: "HelveticaNeue-UltraLight, helvetica, sans-serif"
+		}).text("Entering {$strings.vc}...").hide().appendTo("body").fadeIn(1000);
+		window.location = "/page/" +page.id + "/revisions"
+		return false;
+	});
+	$("#ushio_new").click(function(e){
+		page.save();
+		$("#newrev").modal();
+		$("#newrev input").get(0).focus();
+		e.preventDefault();
+	});
+	$("#newrev").submit(function(){
+		var out = $(this).serializeJSON();
+		out.html = page.renderer.el.outerHTML;
+		$("input", this).attr("disabled", true);
+		$.post("/page/"+page.id+"/@save", out, function(){
+			$("#newrev input").attr("disabled", false);
+			$("#newrev [type=text]").val("");
+			$("#newrev").modal("hide");
+		});
 		return false;
 	});
 

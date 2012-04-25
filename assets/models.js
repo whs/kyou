@@ -73,7 +73,9 @@ var Page = Backbone.Model.extend({
 		return out;
 	},
 	_renderer: Backbone.View.extend({
+		rendering: false,
 		render: function(){
+			this.rendering = true;
 			var layout = new layouts[this.model.get("layout")];
 			var templ = Handlebars.compile($("#tmpl_layout_"+this.model.get("layout")).html());
 
@@ -104,6 +106,9 @@ var Page = Backbone.Model.extend({
 						$("<link rel='stylesheet'>").attr('href', "/"+v).appendTo(this.$("head"));
 					}
 				}, this);
+				setTimeout(_.bind(function(){
+					this.rendering = false;
+				}, this), 50);
 			}, this), 10);
 			_.each(javascripts, function(v){
 				// Fuck jQuery. Injecting <script> does not work. Hardcore time!
@@ -117,6 +122,11 @@ var Page = Backbone.Model.extend({
 				this.$("body").get(0).appendChild(ele);
 			}, this);
 			this.model.trigger("render");
+		},
+		image: function(cb){
+			if(this.rendering){
+				setTimeout(_.bind(this.image, this), 10);
+			}
 		}
 	})
 });

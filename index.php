@@ -2,12 +2,22 @@
 require "engine/config.php";
 require "engine/bootstrap.php";
 require "engine/routing.php";
+require "strings.php";
+if(is_readable("nonfree/strings.php")){
+	require "nonfree/strings.php";
+	$SMARTY->assign("nonfree", true);
+}
+$SMARTY->assign("strings", $strings);
 
 ob_start();
 
 $router = new URLRouter(array(
 	""											=> array("ui.class.php", array("UI", "index")),
 	"page\/(?P<page>[a-f0-9]+)"					=> array("ui.class.php", array("UI", "page")),
+	"page\/(?P<page>[a-f0-9]+)\/revisions"		=> array("ui.class.php", array("UI", "ushio_world")),
+	"page\/(?P<page>[a-f0-9]+)\/@save"			=> array("ui.class.php", array("UI", "ushio_save")),
+	"page\/@load"			=> array("ui.class.php", array("UI", "ushio_load")),
+	"rev\/(?P<rev>[a-f0-9]+)"					=> array("ui.class.php", array("UI", "ushio_rev")),
 	"auth"										=> array("auth.class.php", array("AuthUI", "auth")),
 
 	"widgets.js"								=> array("ui.class.php", array("UI", "widgets")),
