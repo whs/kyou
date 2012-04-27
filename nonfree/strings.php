@@ -5,3 +5,4 @@ $strings['resman'] = "Yukine";
 $strings['kara'] = "Ryou";
 $strings['binding'] = "Nagisa";
 $strings['dist'] = "Fuko";
+$strings['sharing'] = "Tomoyo";

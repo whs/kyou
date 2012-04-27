@@ -14,10 +14,12 @@ ob_start();
 $router = new URLRouter(array(
 	""											=> array("ui.class.php", array("UI", "index")),
 	"page\/(?P<page>[a-f0-9]+)"					=> array("ui.class.php", array("UI", "page")),
+	"page\/(?P<page>[a-f0-9]+)\/@lock"			=> array("ui.class.php", array("UI", "lockman")),
 	"page\/(?P<page>[a-f0-9]+)\/revisions"		=> array("ui.class.php", array("UI", "ushio_world")),
 	"page\/(?P<page>[a-f0-9]+)\/@save"			=> array("ui.class.php", array("UI", "ushio_save")),
-	"page\/@load"			=> array("ui.class.php", array("UI", "ushio_load")),
+	"page\/@load"								=> array("ui.class.php", array("UI", "ushio_load")),
 	"rev\/(?P<rev>[a-f0-9]+)"					=> array("ui.class.php", array("UI", "ushio_rev")),
+	"_users"									=> array("ui.class.php", array("UI", "ac_users")),
 	"auth"										=> array("auth.class.php", array("AuthUI", "auth")),
 
 	"widgets.js"								=> array("ui.class.php", array("UI", "widgets")),

@@ -8,7 +8,7 @@ layouts["standard"] = Layout.extend({
 	},
 	stylesheets: function(){
 		return [
-			"bookfile/style.css"
+			"files/style.css"
 		];
 	}
 });

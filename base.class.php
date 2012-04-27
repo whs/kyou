@@ -43,6 +43,7 @@ class Base{
 			return false;
 		}
 		$this->user = array("_id" => $_COOKIE['id']);
+		$this->smarty->assign("user", $this->user);
 		$this->reload_user();
 	}
 	public function set_user($uid){

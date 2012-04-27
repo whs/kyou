@@ -116,6 +116,16 @@ class Saver extends Loader{
 	public function project_by_id(){
 		$data = $this->get_data();
 		unset($data['id']);
+		// Get old project
+		$proj = $this->DB->projects->findOne(array(
+			"_id" => new MongoId($this->phraw->request['pid']),
+			"user" => $this->user['_id']
+		));
+		if(!$proj){
+			$this->fatal_error("No project");
+		}
+		$data['user'] = array_merge(array($proj['user'][0]), $data['user'], array($this->user['_id']));
+		$data['user'] = array_values(array_unique($data['user']));
 		$this->DB->projects->update(array(
 			"_id" => new MongoId($this->phraw->request['pid']),
 			"user" => $this->user['_id']

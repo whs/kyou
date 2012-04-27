@@ -86,17 +86,34 @@ body{
 		</div>
 	</div>
 </div>
+<div class="modal fade" id="confirm">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Revert?</h3>
+	</div>
+	<div class="modal-body">
+		<p>Discard current state and return to this revision?</p>
+
+		<p>Current state will not be saved and cannot be restored later.</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger">Cancel</button>
+		<button class="btn btn-primary">Revert</button>
+	</div>
+</div>
 <script>
 var revisions = {$rev|json_encode};
 var curRevInd = 0;
 var bgImg = "{if $nonfree}/nonfree/ushio.jpg{/if}";
-function preview(v, down){
-	var ele = $("<iframe sandbox>").attr("src", "/rev/"+v.id);
-	if(!down){
-		ele.prependTo("#pages");
-	}else{
-		ele.appendTo("#pages");
-	}
+
+function reqlock(){
+	$.post("/page/{$page.id}/@lock");
+}
+reqlock();
+setInterval(reqlock, 15000);
+
+function preview(v){
+	var ele = $("<iframe sandbox>").attr("src", "/rev/"+v.id).prependTo("#pages");
 	ele.addClass("preview-"+v.id).wrap("<div class='wrap'></div>").parent().hide();
 }
 function checkEnable(){
@@ -111,11 +128,11 @@ function checkEnable(){
 		$("#next").removeClass("disabled");
 	}
 	$("#revinfo .name").text(revisions[curRevInd].ushio.description);
-	var d = new Date(revisions[curRevInd].ushio.time.sec*1000 + revisions[curRevInd].ushio.time.usec);
+	var d = new Date(revisions[curRevInd].ushio.time.sec*1000);
 	$("#revinfo .meta").text("Saved by "+revisions[curRevInd].ushio.user+" @ "+d.toLocaleDateString()+" "+d.toLocaleTimeString());
 }
 $(function(){
-	_.each(revisions.slice(0,3), function(v){
+	_.each(revisions, function(v){
 		preview(v);
 	});
 	$("#pages iframe:last").parent().fadeIn(1000);
@@ -126,18 +143,8 @@ $(function(){
 	$("#prev").click(function(){
 		if(curRevInd >= revisions.length-1) return false;
 		windsBlow();
-		$("#pages iframe:eq("+(revisions.length-curRevInd-1)+")").css("-webkit-transform", "scale(1)").parent().fadeOut(1000, function(){ $(this).hide() });
-		// Draw up
+		$(".preview-"+revisions[curRevInd].id).css("-webkit-transform", "scale(1)").parent().fadeOut(1000, function(){ $(this).hide() });
 		curRevInd += 1;
-		var i = 1;
-		while(i<=3){
-			var rev = revisions[curRevInd+i];
-			if(!rev){ break; }
-			if($(".preview-"+rev.id).length == 0){
-				preview(rev);
-			}
-			i++;
-		}
 		$(".preview-"+revisions[curRevInd].id).parent().show();
 		setTimeout(function(ele){
 			ele.css("-webkit-transform", "scale(0.8)");
@@ -148,18 +155,8 @@ $(function(){
 	$("#next").click(function(){
 		if(curRevInd == 0) return false;
 		windsBlow(true);
-		$("#pages iframe:eq("+(revisions.length-curRevInd-1)+")").css("-webkit-transform", "scale(0.5)").parent().fadeOut(1000, function(){ $(this).hide() });
-		// Draw down
+		$(".preview-"+revisions[curRevInd].id).css("-webkit-transform", "scale(0.5)").parent().fadeOut(1000, function(){ $(this).hide() });
 		curRevInd -= 1;
-		var i = 1;
-		while(i<=3){
-			var rev = revisions[curRevInd-i];
-			if(!rev){ break; }
-			if($(".preview-"+rev.id).length == 0){
-				preview(rev, true);
-			}
-			i++;
-		}
 		$(".preview-"+revisions[curRevInd].id).parent().fadeIn();
 		setTimeout(function(ele){
 			ele.css("-webkit-transform", "scale(0.8)");
@@ -168,18 +165,18 @@ $(function(){
 		return false;
 	});
 	$("#save").click(function(){
-		if(!confirm("Discard current state and return to this revision?\n\nCurrent state will not be saved and cannot be restored later.")){
-			return false;
-		}
+		$("#confirm").modal();
+		return false;
+	});
+	$("#confirm .btn-primary").click(function(){
+		$("#confirm").modal("hide");
 		blast();
 		window.restoreComplete = false;
 		$.post("/page/@load", { rev: revisions[curRevInd].id }, function(){
 			window.restoreComplete = true;
 		});
-		setTimeout(function(){
-			$(".preview-"+revisions[curRevInd].id).parent().fadeOut(1000);
-			$(".preview-"+revisions[curRevInd].id).css("-webkit-transform", "scale(1)");
-		}, 300);
+		$(".preview-"+revisions[curRevInd].id).parent().fadeOut(1000);
+		$(".preview-"+revisions[curRevInd].id).css("-webkit-transform", "scale(1)");
 		setTimeout(function(){
 			$("<div>").css({
 				position: "fixed",
@@ -191,17 +188,20 @@ $(function(){
 				zIndex: 100000,
 				boxSizing: "border-box",
 			}).hide().appendTo("body").fadeIn(1500);
-		}, 1000);
+		}, 800);
 		var chk = function(){
 			if(window.restoreComplete){
 				window.location = "/page/{$page.id}";
 			}else{
-				blast();
 				setTimeout(chk, 500);
 			}
 		};
-		setTimeout(chk, 2500);
+		setTimeout(chk, 2200);
 		$("#revinfo").hide();
+		return false;
+	});
+	$("#confirm .btn-danger").click(function(){
+		$("#confirm").modal("hide");
 		return false;
 	});
 });

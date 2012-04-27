@@ -51,6 +51,7 @@ html,body{
 	border: #ccc solid 1px;
 	border-top: none;
 	margin-bottom: 20px;
+	width: 100%;
 }
 #widgetlist .grip{
 	float: right;
@@ -136,7 +137,7 @@ html,body{
 {block body}
 <iframe id="pagepreview" sandbox="allow-forms allow-popups allow-scripts allow-same-origin"><!DOCTYPE html><html><head></head><body></body></html></iframe>
 <div id="sidebar">
-	<div class="toolbar" style="margin: -10px; margin-bottom: 10px;">
+	<div class="toolbar" style="margin: -10px; margin-bottom: 10px; width: auto;">
 		<a href="#" id="popout" class="btn"><i class="icon-share-alt"></i></a>
 		<a href="#" id="hidesidebar" class="btn"><i class="icon-resize-full"></i></a>
 		<div class="btn-group" style="display: inline-block; vertical-align: middle;">
@@ -162,7 +163,7 @@ html,body{
 			<li>Loading...</li>
 		</ul>
 	</div>
-	<div class="toolbar">
+	<div class="toolbar" style="width: auto;">
 		<button id="addwidget" class="btn btn-primary"><i class='icon-plus icon-white'></i></button>
 		<div id="autosave">Autosave ON</div>
 		<button id="delwidget" class="btn btn-danger" style="float: right;"><i class='icon-trash icon-white'></i></button>
@@ -251,6 +252,24 @@ html,body{
 		<input type="submit" value="Save" class="btn btn-primary">
 	</div>
 </form>
+<form class="modal fade form-horizontal" id="selectpage" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Select page</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Page</label>
+			<div class="controls">
+				<select name="page">
+				</select>
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Select" class="btn btn-primary">
+	</div>
+</form>
 <script src="/layouts.js"></script>
 <script src="/widgets.js"></script>
 <script>
@@ -264,6 +283,26 @@ function save(){
 		$("#autosave").text("Saving...");
 		page.save();
 	}, 1500);
+}
+function reqlock(){
+	$.post("/page/{$page.id}/@lock");
+}
+reqlock();
+setInterval(reqlock, 15000);
+window.onunload = function(){
+	$.ajax({
+		async: false,
+		url: "/page/{$page.id}/@lock",
+		type: "DELETE"
+	});
+}
+function pick_page(cb){
+	$("#selectpage").unbind("submit").bind("submit", function(){
+		cb($("select", this).val(), $("option:selected", this).text());
+		$(this).modal("hide");
+		return false;
+	}).modal();
+	return true;
 }
 
 $(function(){
@@ -311,6 +350,12 @@ $(function(){
 	page.on("change:name change:stage reset", function(){
 		$("#pagename").text(page.get("name")+" ");
 		$("<span class='label'>").text(page.stage()).appendTo("#pagename");
+	});
+	page.project.pages.on("reset", function(){
+		$("#selectpage select").empty();
+		page.project.pages.each(function(v){
+			$("<option>").attr("value", v.id).text(v.get("name")).appendTo("#selectpage select");
+		});
 	});
 	function bindExit(){
 		window.onbeforeunload = function(e){
@@ -451,14 +496,22 @@ $(function(){
 		e.preventDefault();
 	});
 	$("#newrev").submit(function(){
-		var out = $(this).serializeJSON();
-		out.html = page.renderer.el.outerHTML;
+		// Rerender
+		page.renderer.render({ preview: true });
 		$("input", this).attr("disabled", true);
-		$.post("/page/"+page.id+"/@save", out, function(){
-			$("#newrev input").attr("disabled", false);
-			$("#newrev [type=text]").val("");
-			$("#newrev").modal("hide");
-		});
+		setTimeout(_.bind(function(){
+			$("input", this).attr("disabled", false);
+			var out = $(this).serializeJSON();
+			$("input", this).attr("disabled", true);
+			out.html = page.renderer.el.outerHTML;
+			
+			$.post("/page/"+page.id+"/@save", out, function(){
+				$("#newrev input").attr("disabled", false);
+				$("#newrev [type=text]").val("");
+				page.renderer.render();
+				$("#newrev").modal("hide");
+			});
+		}, this), 250);
 		return false;
 	});
 
@@ -496,6 +549,7 @@ $(function(){
 		$("div", ele).text(v.name);
 		ele.appendTo("#layoutpick");
 	});
+	page.project.pages.fetch();
 	$("#widgetpick .pickitem,#layoutpick .pickitem").tooltip();
 });
 </script>

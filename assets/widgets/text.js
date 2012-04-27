@@ -3,7 +3,18 @@ widgets["text"] = Widget.extend({
 	name: "Text",
 	description: "HTML text",
 	config: TemplConfigView.extend({
-		template: "text"
+		template: "text",
+		events: function(){
+			return _.extend({}, TemplConfigView.prototype.events,{
+				"click #linkbtn": "linkpage"
+			});
+		},
+		linkpage: function(){
+			pick_page(_.bind(function(v, name){
+				this.$("textarea").insertAtCaret("<a href='/"+v+".html'>"+name+"</a>");
+			}, this));
+			return false;
+		}
 	}),
 	renderer: Backbone.View.extend({
 		tagName: "p",

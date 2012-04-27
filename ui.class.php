@@ -9,6 +9,8 @@ class UILoader extends Loader{
 }
 
 class UI extends Base{
+	const LOCK_PERIOD = 60;
+
 	public function init(){
 		parent::init();
 		$this->loader = new UILoader;
@@ -100,6 +102,53 @@ class UI extends Base{
 			die();
 		}
 		print $rev['ushio']['html'];
+	}
+	public function ac_users(){
+		$this->check_login();
+		$users = $this->DB->users->find(array(
+			'$and' => array(
+				//array("_id" => array('$ne' => $_GET['owner'])),
+				array("_id" => new MongoRegex('/'.preg_quote($_GET['q'], '/').'/i')),
+			)
+		), array("_id"));
+		$out = array();
+		foreach($users as $u){
+			$out[] = array(
+				"name" => (string) $u['_id'],
+				"id" => (string) $u['_id']
+			);
+		}
+		header("Content-Type: application/json");
+		print json_encode($out);
+	}
+	public function lockman(){
+		$this->check_login();
+		header("Content-Type: application/json");
+		if($_SERVER['REQUEST_METHOD'] == "GET"){
+			$lock = $this->DB->locks->findOne(array(
+				"page" => new MongoId((string) $this->phraw->request['page']),
+				"time" => array('$gte' => new MongoDate(time() - $this::LOCK_PERIOD))
+			));
+			if($lock){
+				print json_encode($lock);
+			}
+		}else if($_SERVER['REQUEST_METHOD'] == "POST"){
+			$this->DB->locks->update(array(
+				"page" => new MongoId((string) $this->phraw->request['page']),
+				"user" => $this->user['_id']
+			), array(
+				'$set' => array(
+					'time' => new MongoDate()
+				)
+			), array("upsert" => true));
+			print "true";
+		}else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
+			$this->DB->locks->remove(array(
+				"page" => new MongoId((string) $this->phraw->request['page']),
+				"user" => $this->user['_id']
+			));
+			print "true";
+		}
 	}
 
 	public function widgets(){

@@ -32,9 +32,7 @@ function blast(){
 	emitter.addAction(new SPARKS.RandomDrift(500,500,300));
 	emitter.start();
 
-	for(var i=0;i<=100; i++){
-		emitter.createParticle();
-	}
+	emitter.update(0.2);
 }
 $(function(){
 	scene = new THREE.Scene();
@@ -59,17 +57,18 @@ $(function(){
 
 
 	emitter.addInitializer(new initColorSize());
-	emitter.addInitializer(new SPARKS.Position( new SPARKS.PointZone( new THREE.Vector3(0,-50,0) ) ) );
+	emitter.addInitializer(new SPARKS.Position( new SPARKS.PointZone( new THREE.Vector3(0,-100,-100) ) ) );
 	emitter.addInitializer(new SPARKS.Lifetime(0,120));
 	emitter.addInitializer(new SPARKS.Velocity(new SPARKS.PointZone(new THREE.Vector3(0,10,0))));
 
 	emitter.addAction(new SPARKS.Age());
 	emitter.addAction(new SPARKS.Move());
-	emitter.addAction(new SPARKS.RandomDrift(300,-10,300));
+	emitter.addAction(new SPARKS.RandomDrift(300,-50,300));
 	emitter.start();
 
-	for(var i=0;i<=100; i++){
-		emitter.createParticle();
+	for(var i=0;i<=200; i++){
+		//emitter.createParticle();
+		emitter.update(0.1);
 	}
 
 	// Background

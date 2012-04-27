@@ -1,23 +1,40 @@
 {extends "base.html"}
 {block head}
+<script src="/assets/jquery.tokeninput.js"></script>
+<link rel="stylesheet" href="/assets/css/token-input.css">
+<link rel="stylesheet" href="/assets/css/token-input-mac.css">
 <style>
 body{
 	background: #eee;
 }
+h1{
+	background: #888;
+	border-bottom: #555 solid 2px;
+	box-shadow: inset rgba(0,0,0,0.5) 0px -10px 40px;
+	color: white;
+	margin-top: -20px;
+	margin-left: -20px;
+	width: 690px;
+	height: 100px;
+	padding-top: 50px;
+	text-align: left;
+	box-sizing: border-box;
+	margin-bottom: 20px;
+	padding-left: 20px;
+	text-shadow: black 0px 2px 1px, black 0px -1px 1px;
+	{if $nonfree}background-image: url(/nonfree/kyou.jpg);{/if}
+}
 #lp-in{
 	background: white;
 	padding: 20px;
+	padding-bottom: 1px;
 	width: 650px;
 	margin: auto;
 	box-shadow: #333 0px 30px 100px;
 }
 #lp-in form{
-	width: 500px;
+	width: 600px;
 	margin: auto;
-}
-h1{
-	margin-bottom: 20px;
-	text-align: center;
 }
 #applist{
 	text-align: center;
@@ -71,6 +88,9 @@ h1{
 .popover-content .label{
 	vertical-align: baseline;
 }
+ul.token-input-list{
+	width: 250px;
+}
 </style>
 {/block}
 {block body}
@@ -83,6 +103,7 @@ h1{
 				<select id="project">
 					<option>Loading...</option>
 				</select>
+				<button id="proj_share" class="btn">Sharing</button>
 				<a href="#" class="btn btn-danger" id="proj_delete">Delete</a>
 				<div class="help-block">
 					Logged in as <strong>{$user._id|escape}</strong> <a href="/auth" class="btn">Relogin</a>
@@ -164,6 +185,43 @@ h1{
 		<input type="submit" value="Save" class="btn btn-primary">
 	</div>
 </form>
+<form class="modal fade form-horizontal" id="sharing" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>{$strings.sharing}</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Project owner</label>
+			<div class="controls">
+				<input type="text" id="projowner" disabled>
+			</div>
+    	</div>
+    	<div class="control-group">
+			<label class="control-label">Members</label>
+			<div class="controls">
+				<input type="text" name="member" class="token-input-mac" id="projmember">
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
+<form class="modal fade" id="lockwarn">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Page under editing</h3>
+	</div>
+	<div class="modal-body">
+		<p>Page is locked by <strong id="lockuser"></strong> at <strong id="locktime"></strong>.</p>
+		<p>If you continue, your changes may overwrite that user's changes.</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger">Cancel</button>
+		<a class="btn btn-primary">Continue</a>
+	</div>
+</form>
 <script>
 var projects = new ProjectList;
 var curProj;
@@ -187,10 +245,9 @@ $(function(){
 			$("#newproj").modal();
 			$("#newproj input[name=pname]").get(0).focus();
 			$(this).val("")
-			$("#applist,#proj_delete").hide();
+			$("#applist,#proj_delete,#proj_share").hide();
 		}else if($(this).val() != ""){
-			$("#applist").show();
-			$("#proj_delete").show();
+			$("#applist,#proj_delete,#proj_share").show();
 			if(!curProj || $(this).val() != curProj.id){
 				$("#pagelist").html('<li><a href="#">Loading...</a></li>');
 				localStorage.project = $(this).val();
@@ -198,7 +255,18 @@ $(function(){
 					curProj.off("reset add destroy");
 				}
 				curProj = projects.get($(this).val());
-				curProj.pages.fetch();
+				var owner = curProj.get("user")[0];
+				$("#projowner").val(owner);
+				var userlist = curProj.get("user").slice(1);
+				_.each(userlist, function(x,ind){
+					userlist[ind] = { id: x, name: x };
+				});
+				$("#projmember").tokenInput("/_users?owner="+owner, {
+					prePopulate: userlist,
+					preventDuplicates: true,
+					zindex: 20000,
+					theme: "mac"
+				});
 				curProj.pages.on("reset add destroy", function(){
 					$("#pagelist").empty();
 					var addLink = $("<li><a href='#'><i class='icon-plus'></i> New Page</a></li>").appendTo("#pagelist");
@@ -209,13 +277,14 @@ $(function(){
 					})
 					curProj.pages.forEach(function(model){
 						var ele = $("<li><a href='#'></a></li>");
-						$('a', ele).attr("href", "/page/" + model.id).html(_.escape(model.get("name"))+" <span class='label'>"+model.stage()+"</span><button class='btn btn-danger'><i class='icon-trash icon-white'></i></button>").data("id", model.id);
+						$('a', ele).attr("href", "/page/" + model.id).data("id", model.id).html(_.escape(model.get("name"))+" <span class='label'>"+model.stage()+"</span><button class='btn btn-danger'><i class='icon-trash icon-white'></i></button>").data("id", model.id);
 						ele.appendTo("#pagelist");
 					});
 				});
+				curProj.pages.fetch();
 			}
 		}else{
-			$("#applist,#proj_delete").hide();
+			$("#applist,#proj_delete,#proj_share").hide();
 		}
 	})
 	$("#proj_delete").click(function(){
@@ -240,12 +309,47 @@ $(function(){
 		$("input[name=pname]", this).attr("disabled", true);
 		return false;
 	});
+	$("#proj_share").click(function(){
+		$("#sharing").modal();
+		return false;
+	});
+	$("#sharing").submit(function(){
+		var users = $("#projmember").val().split(",");
+		if(users.length == 1 && users[0] === ""){
+			users = [];
+		}
+		users = _.union([{$user._id|json_encode}], users);
+		curProj.set("user", users);
+		curProj.save();
+		$("#sharing").modal("hide");
+		return false;
+	});
 	$("#pagelist").delegate("button", "click", function(){
 		if(!confirm("Delete page \""+$(this).parent().text()+"\"?")){
 			return false;
 		}
 		$(this).hide();
 		curProj.pages.get($(this).parent().data("id")).destroy();
+		return false;
+	});
+	$("#pagelist").delegate("a", "click", function(){
+		$(".label", this).data("orig", $(".label", this).text()).text("Loading...");
+		$.getJSON(this.href+"/@lock", _.bind(function(x){
+			if(x){
+				$("#lockwarn").modal();
+				var d = new Date(x.time.sec*1000);
+				$("#lockuser").text(x.user);
+				$("#locktime").text(d.toLocaleDateString()+" "+d.toLocaleTimeString());
+				$(".label", this).text($(".label", this).data("orig"));
+				$("#lockwarn a.btn").attr("href", this.href);
+			}else{
+				window.location = this.href;
+			}
+		}, this));
+		return false;
+	});
+	$("#lockwarn .btn-danger").click(function(){
+		$("#lockwarn").modal("hide");
 		return false;
 	});
 	$("#newpage").submit(function(){

@@ -7,6 +7,33 @@
 		return json;
 	};
 })(jQuery);
+jQuery.fn.extend({
+	insertAtCaret: function(myValue){
+	  return this.each(function(i) {
+	    if (document.selection) {
+	      //For browsers like Internet Explorer
+	      this.focus();
+	      sel = document.selection.createRange();
+	      sel.text = myValue;
+	      this.focus();
+	    }
+	    else if (this.selectionStart || this.selectionStart == '0') {
+	      //For browsers like Firefox and Webkit based
+	      var startPos = this.selectionStart;
+	      var endPos = this.selectionEnd;
+	      var scrollTop = this.scrollTop;
+	      this.value = this.value.substring(0, startPos)+myValue+this.value.substring(endPos,this.value.length);
+	      this.focus();
+	      this.selectionStart = startPos + myValue.length;
+	      this.selectionEnd = startPos + myValue.length;
+	      this.scrollTop = scrollTop;
+	    } else {
+	      this.value += myValue;
+	      this.focus();
+	    }
+	  })
+	}
+});
 
 var Project = Backbone.Model.extend({
 	urlRoot: "/projects/",
@@ -74,7 +101,11 @@ var Page = Backbone.Model.extend({
 	},
 	_renderer: Backbone.View.extend({
 		rendering: false,
-		render: function(){
+		events: {
+			"click a": "stopClick",
+			"submit form": "stopClick",
+		},
+		render: function(opt){
 			this.rendering = true;
 			var layout = new layouts[this.model.get("layout")];
 			var templ = Handlebars.compile($("#tmpl_layout_"+this.model.get("layout")).html());
@@ -91,11 +122,11 @@ var Page = Backbone.Model.extend({
 					model: widget
 				});
 				widget.view = renderer;
-				renderer.render();
+				renderer.render(opt);
 				renderer.$el.appendTo(this.$(".widgetsInject"));
 				renderer.$el.attr("id", widget.get("id")).addClass("widget_"+widget.type);
-				javascripts = _.union(javascripts, (_.isFunction(renderer.javascripts) ? renderer.javascripts() : renderer.javascripts) || []);
-				stylesheets = _.union(stylesheets, (_.isFunction(renderer.stylesheets) ? renderer.stylesheets() : renderer.stylesheets) || []);
+				javascripts = _.union(javascripts, (_.isFunction(renderer.javascripts) ? renderer.javascripts(opt) : renderer.javascripts) || []);
+				stylesheets = _.union(stylesheets, (_.isFunction(renderer.stylesheets) ? renderer.stylesheets(opt) : renderer.stylesheets) || []);
 			}, this);
 			// Somehow injecting this instantly breaks the iframe.
 			setTimeout(_.bind(function(){
@@ -123,10 +154,9 @@ var Page = Backbone.Model.extend({
 			}, this);
 			this.model.trigger("render");
 		},
-		image: function(cb){
-			if(this.rendering){
-				setTimeout(_.bind(this.image, this), 10);
-			}
+		stopClick: function(e){
+			e.preventDefault();
+			alert("Link disabled in document preview");
 		}
 	})
 });
