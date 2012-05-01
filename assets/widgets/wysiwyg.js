@@ -4,19 +4,9 @@ widgets["wysiwyg"] = Widget.extend({
 	description: "Free text with What You See Is What You Get editor",
 	config: Backbone.View.extend({
 		render: function(){
-			this.$el.html("<textarea></textarea>");
+			this.$el.html("<textarea></textarea><div class='alert alert-info'>To save, click <span style='width:16px;height:16px;background:url(/assets/ckeditor/skins/kama/icons.png) no-repeat 0px -32px;display:inline-block;vertical-align:middle;'></span></div>");
 			this.$("textarea").val(this.model.get("html"));
 			var render = _.bind(function(){
-				CKEDITOR.replace(this.$("textarea").get(0), {
-					toolbar: [
-						['Bold','Italic','Underline','Strike','Subscript','Superscript','-', 'RemoveFormat', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink', '-', 'TextColor','BGColor'],
-						['Styles','Format','Font','FontSize'],
-						['Image', 'Table', 'SpecialChar', 'HorizontalRule', '-', 'Find','Replace', '-', 'Maximize', 'Source', 'Save']
-					]
-				});
-				
-			}, this);
-			var setupAndRender = _.bind(function(){
 				CKEDITOR.plugins.registered['save'] = {
 					init: _.bind(function(editor){
 						var command = editor.addCommand('save', {
@@ -28,9 +18,17 @@ widgets["wysiwyg"] = Widget.extend({
 						editor.ui.addButton('Save', {label: 'Save', command : 'save'});
 					}, this)
 				}
+				this.editor = CKEDITOR.replace(this.$("textarea").get(0), {
+					toolbar: [
+						['Bold','Italic','Underline','Strike','Subscript','Superscript','-', 'RemoveFormat', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink', '-', 'TextColor','BGColor'],
+						['Styles','Format','Font','FontSize'],
+						['Image', 'Table', 'SpecialChar', 'HorizontalRule', '-', 'Find','Replace', '-', 'Maximize', 'Source', 'Save']
+					]
+				});
+			}, this);
+			var setupAndRender = _.bind(function(){
 				// Link to internal pages
 				CKEDITOR.on( 'dialogDefinition', function(ev){
-					console.log(ev);
 					if(ev.data.name == "link"){
 						var dialogDefinition = ev.data.definition;
 						var infoTab = dialogDefinition.getContents('info');
@@ -63,6 +61,15 @@ widgets["wysiwyg"] = Widget.extend({
 			}else{
 				render();
 			}
+		},
+		unload: function(){
+			if(this.model.get("html") != this.editor.getData()){
+				if(!confirm("Discard unsaved changes?")){
+					return false;
+				}
+			}
+			this.editor.destroy();
+			this.undelegateEvents();
 		}
 	}),
 	renderer: Backbone.View.extend({

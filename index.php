@@ -22,6 +22,10 @@ $router = new URLRouter(array(
 	"_users"									=> array("ui.class.php", array("UI", "ac_users")),
 	"auth"										=> array("auth.class.php", array("AuthUI", "auth")),
 
+	"project\/(?P<id>[a-f0-9]+)\/files\/"		=> array("yukine.class.php", array("Yukine", "fm")),
+	"project\/(?P<id>[a-f0-9]+)\/files\/@pick"	=> array("yukine.class.php", array("Yukine", "picker")),
+	"POST project\/(?P<id>[a-f0-9]+)\/files\/@upload"	=> array("yukine.class.php", array("Yukine", "upload")),
+
 	"widgets.js"								=> array("ui.class.php", array("UI", "widgets")),
 	"layouts.js"								=> array("ui.class.php", array("UI", "layouts")),
 

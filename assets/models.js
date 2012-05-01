@@ -92,7 +92,7 @@ var Page = Backbone.Model.extend({
 		return stagemap[stage];
 	},
 	url: function(){
-		return this.project.url() + "/pages/" + this.id;
+		return this.project.url() + "/pages/" + (this.id||"");
 	},
 	toJSON: function(){
 		var out = Backbone.Model.prototype.toJSON.call(this);
@@ -208,7 +208,12 @@ var WidgetList = Backbone.Collection.extend({
 			});
 			return Backbone.Collection.prototype.add.call(this, model, option);
 		}else if(!model['on']){
-			return Backbone.Collection.prototype.add.call(this, new widgets[model.type](model), option);
+			try{
+				return Backbone.Collection.prototype.add.call(this, new widgets[model.type](model), option);
+			}catch(e){
+				console.error("unknown widget "+model.type);
+				return false;
+			}
 		}else{
 			return Backbone.Collection.prototype.add.call(this, model, option);
 		}
@@ -259,6 +264,9 @@ var TemplConfigView = Backbone.View.extend({
 			this.$("input[type=submit]").val("Save").attr("disabled", false);
 		}, 500);
 		return false;
+	},
+	unload: function(){
+		this.undelegateEvents();
 	}
 });
 

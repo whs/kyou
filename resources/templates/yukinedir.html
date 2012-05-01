@@ -1,0 +1,14 @@
+{function listdir}
+{$dirlist=scandir($path)}
+{if $dirlist|count > 2 }<ul class="nav">{/if}
+	{foreach $dirlist as $f}
+	{if is_dir("$path/$f") && $f != "." && $f != ".."}
+	<li><a href="{preg_replace('~^bookfiles/[^/]+[/]*~', '', $path)}/{$f}/"><i class="icon-folder-open"></i> {$f}</a>{listdir path="$path/$f"}</li>
+	{/if}
+	{/foreach}
+{if $dirlist|count > 2 }</ul>{/if}
+{/function}
+<li>
+	<a href=""><i class="icon-folder-open"></i> /</a>
+	{listdir path=$dirname}
+</li>

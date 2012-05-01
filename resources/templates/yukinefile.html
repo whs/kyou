@@ -1,0 +1,17 @@
+{foreach $dir as $file}
+{$absfile="$dirname/$file"}
+{if is_dir($absfile)}{continue}{/if}
+<div class="file">
+	<a href="#" title="{$file|escape}" data-link="/{$absfile}">
+		<span class="iconbox"><img src="{if preg_match('~\.(png|gif|jpg|jpeg)$~', $file)}/{$absfile}{else}/assets/img/file.png{/if}"></span>
+		<span class="fileinfo">
+			<span class="filename">{$file|escape}</span>
+			<span class="filesize">{filesize($absfile)|filesize}</span>
+			<span class="filedate">{$absfile|filemtime|date_format:"j/n/y g:iA"}</span>
+		</span>
+	</a>
+</div>
+{/foreach}
+{if $dir|count == 2}
+<div style="margin: 40px;" class="alert alert-info">Directory is empty<br><a href="#" class="btn btn-danger" id="rmdir"><i class="icon-trash icon-white"></i> Delete</a></div>
+{/if}

@@ -189,10 +189,16 @@ class Deleter extends Base{
 		if(!$project){
 			$this->fatal_error("Project not found");
 		}
+		if($project['user'][0] != $this->user['_id']){
+			$this->fatal_error("User does not own this project");	
+		}
 		$this->DB->projects->remove(array(
 			"_id" => $project['_id']
 		));
 		$this->DB->pages->remove(array(
+			"project" => $project['_id']
+		));
+		$this->DB->revisions->remove(array(
 			"project" => $project['_id']
 		));
 		header("HTTP/1.0 410 Gone");

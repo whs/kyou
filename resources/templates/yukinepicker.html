@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Picker</title>
+	<script type="text/javascript" src="/assets/jquery.js"></script>
+	<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+	<style>
+.item{
+	width: 90px;
+	height: 90px;
+	box-sizing: border-box;
+	margin: 10px;
+	text-align: center;
+	float: left;
+}
+.icon img{
+	max-width: 64px;
+	max-height: 64px;
+}
+.icon{
+	text-align: center;
+	display: block;
+	height: 64px;
+	width: 64px;
+}
+.item a{
+	display: block;
+	padding: 10px;
+}
+.item a:hover{
+	text-decoration:none;
+	border: #aaa solid 1px;
+	padding: 9px;
+}
+.itemname{
+	width: 100%;
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+	</style>
+	<script>
+$(function(){
+	$("a[href=#]").click(function(){
+		parent.window.yukine_select($(this).data("file"));
+	});
+})
+	</script>
+</head>
+<body>
+	<ul class="breadcrumb">
+		<li><a href="?path=/">{$project.name|escape}</a> <span class="divider">/</span></li>
+		{$curP="/"}
+		{foreach explode("/", $path) as $pfrag}
+		{if $pfrag==""}{continue}{/if}
+		{$curP="$curP$pfrag/"}
+		<li><a href="?path={$curP}">{$pfrag|escape}</a> <span class="divider">/</span></li>
+		{/foreach}
+	</ul>
+	<div id="itemlist">
+		{foreach $dir as $file}
+		{if $file == "."}{continue}{/if}
+		{if $path == "/" && $file == ".."}{continue}{/if}
+		<div class="item">
+			<a href="{if is_dir("$abspath/$file")}?path={$path}{$file}/{else}#{/if}" data-file="/{$abspath}{$file}">
+				<span class="icon"><img src="{if preg_match('~\.(png|gif|jpg|jpeg)$~', $file)}/{$abspath}{$file}{else}{if is_dir("$abspath/$file")}/assets/img/folder.png{else}/assets/img/file.png{/if}{/if}"></span>
+				<span class="itemname" title="{$file|escape}">{$file|escape}</span>
+			</a>
+		</div>
+		{/foreach}
+	</div>
+</body>
+</html>

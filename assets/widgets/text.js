@@ -6,7 +6,9 @@ widgets["text"] = Widget.extend({
 		template: "text",
 		events: function(){
 			return _.extend({}, TemplConfigView.prototype.events,{
-				"click #linkbtn": "linkpage"
+				"click #linkbtn": "linkpage",
+				"click #filebtn": "filepage",
+				"click #imgbtn": "imgpage",
 			});
 		},
 		linkpage: function(){
@@ -14,7 +16,19 @@ widgets["text"] = Widget.extend({
 				this.$("textarea").insertAtCaret("<a href='/"+v+".html'>"+name+"</a>");
 			}, this));
 			return false;
-		}
+		},
+		filepage: function(){
+			pick_file(_.bind(function(f){
+				this.$("textarea").insertAtCaret("<a href=\""+f+"\">"+f.match(/\/([^\/]+)$/)[1]+"</a>");
+			}, this));
+			return false;
+		},
+		imgpage: function(){
+			pick_file(_.bind(function(f){
+				this.$("textarea").insertAtCaret("<img src=\""+f+"\">");
+			}, this));
+			return false;
+		},
 	}),
 	renderer: Backbone.View.extend({
 		tagName: "p",

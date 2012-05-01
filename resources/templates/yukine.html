@@ -1,0 +1,321 @@
+{extends "base.html"}
+{block title}{$project.name|escape} | {$strings.resman}{/block}
+{block head}
+<style>
+html,body{ height: 100%; }
+#head{
+	background: #efefef;
+	border-bottom: #ccc solid 1px;
+	padding: 10px;
+	height: 8%;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+#actions{
+	float: right;
+}
+.container-fluid{
+	padding: 0;
+	height: 92%;
+}
+.nav{
+	margin-bottom: 0;
+}
+.row-fluid{ height: 100%; }
+.nav li a{
+	padding: 5px;
+}
+.nav > li > a:hover, .nav > li > a.active {
+	background: #dedede;
+}
+#dirlist{
+	height: 100%;
+	overflow: auto;
+	border-right: #ccc solid 1px;
+	background: #efefef;
+	height: 100%;
+	box-sizing: border-box;
+}
+.file{
+	width: 180px;
+	height: 74px;
+	float: left;
+	margin: 10px;
+	padding: 1px;
+}
+.file:hover{
+	padding: 0px;
+	border: #bbb solid 1px;
+}
+.file.active{
+	padding: 0px;
+	border: #bbb solid 1px;
+	background: #aaeeff;
+}
+.file a{
+	padding: 5px;
+	display: block;
+}
+.fileinfo{
+	width: 96px;
+	margin-left: 10px;
+	float: left;
+	overflow: hidden;
+	display: block;
+}
+.file a:hover{ text-decoration: none; }
+.filename{
+	font-size: 13pt;
+	display: block;
+	white-space: nowrap;
+	text-overflow:ellipsis;
+	overflow: hidden;
+}
+.filesize, .filedate{
+	color: #aaa;
+	display: block;
+}
+.file .iconbox{
+	float: left;
+	height: 64px;
+	width: 64px;
+	text-align: center;
+	display: block;
+}
+.file img{ max-width: 64px; max-height: 64px; }
+#filelist{
+	height: 80%;
+	overflow: auto;
+	box-shadow: inset #555 0px 2px 5px;
+	position: relative;
+}
+#fileinfo{
+	position: relative;
+	background: #eee;
+	height: 20%;
+	border-top: #ccc solid 1px;
+	padding: 10px;
+	box-sizing: border-box;
+}
+#info{
+	padding-left: 210px;
+}
+.row-fluid > [class*="span"]{
+	margin-left: 0;
+	height: 100%;
+}
+.row-fluid > .span10{
+	width: 85.106531913599999%;
+}
+#fileinfo img{
+	float: left;
+	max-height: 70%;
+	max-width: 200px;
+}
+#actionbar{
+	clear: both;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	border-top: #ccc solid 1px;
+	box-sizing: border-box;
+	padding: 5px;
+	background: #eee;
+}
+#icon{ margin-right: 20px; }
+#dropindicator{
+	position: fixed;
+	left: 45%;
+	width: 20%;
+	top: 40%;
+	box-sizing: border-box;
+	background: rgba(0,0,0,0.8);
+	color: white;
+	text-align: center;
+	padding: 20px;
+	border-radius: 10px;
+	font-size: 16pt;
+}
+#upload{
+	display: inline;
+	margin-right: 10px;
+}
+li ul{
+	padding-left: 15px;
+}
+</style>
+{/block}
+{block body}
+<div id="head">
+	<div id="actions">
+		<div id="upload"><progress></progress> <span id="progress"></span></div>
+		<span id="uploadhelp">Drag file into this page to upload</span>
+		<a href="/" class="btn"><i class="icon-home"></i> Project Home</a>
+	</div>
+	<h1>{$project.name|escape}</h1>
+</div>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<ul class="nav span2" id="dirlist">
+			{include "yukinedir.html"}
+		</ul>
+		<div class="span10">
+			<div id="filelist">
+				<div id="flistin">{include "yukinefile.html"}</div>
+				<div id="dropindicator">Drop to upload</div>
+				<br style="clear: both;">
+			</div>
+			<div id="fileinfo">
+				<img src="/assets/file.png" id="icon">
+				<div id="info">
+					<h1></h1>
+					<p></p>
+					<p style="color: #777"></p>
+				</div>
+				<div id="actionbar">
+					<button class="btn" id="folderbtn"><i class="icon-plus"></i> Create folder</button>
+					<a href="#" class="btn" id="dlbtn"><i class="icon-download-alt"></i> Download</a>
+					<button class="btn btn-danger" id="delbtn"><i class="icon-trash icon-white"></i> Delete</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<form class="modal fade form-horizontal" id="newfolder" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>New folder</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="name" pattern="[a-zA-Z0-9_]+" required>
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="New" class="btn btn-primary">
+	</div>
+</form>
+<script>
+var curPath = "/";
+function progress(x){
+	(x.upload||x).onprogress = function(e){
+		var position = e.position || e.loaded;
+    	var total = e.totalSize || e.total;
+		console.log(position, total);
+		$("#upload progress").attr({
+			"max": total,
+			"value": position
+		});
+		$("#progress").text(parseInt((position/total) * 100)+"%");
+	}
+	x.onloadend = function(){
+		$("#upload").hide();
+	}
+}
+function reloadPath(){
+	$("#flistin").load("?path="+encodeURIComponent(curPath));
+}
+$(function(){
+	$("#icon,#info,#dropindicator,#upload").hide();
+	$("#filelist").delegate(".file a", "click", function(){
+		$("#filelist .active").removeClass("active");
+		$(this).parent().addClass("active");
+		$("#icon").attr("src", $("img", this).attr("src"));
+		$("#info h1").text($(".filename", this).text());
+		$("#info p:first").text($(".filesize", this).text() + " @ " + $(".filedate", this).text());
+		$("#info p:last").text($(this).data("link").replace(/^\/bookfiles\/([^\/]+)/, ""));
+		$("#dlbtn").attr("href", $(this).data("link")).unbind("click");
+		$("#icon,#info,#actionbar").show();
+		return false;
+	});
+	$("#filelist").get(0).addEventListener("dragover", function(e){
+		$("#dropindicator").show();
+	}, false);
+	$("#filelist").get(0).addEventListener("dragleave", function(e){
+		$("#dropindicator").hide();
+	}, false);
+	$("#folderbtn").click(function(){
+		$("#newfolder .control-label").text(curPath);
+		$("#newfolder").modal();
+		$("#newfolder input:first").get(0).focus();
+	});
+	$("#newfolder").submit(function(){
+		$.post("", { path: curPath, dirname: $("input[name=name]", this).val() }, _.bind(function(e){
+			$("input", this).attr("disabled", false);
+			$("input[name=name]", this).val("");
+			$("#newfolder").modal("hide");
+			$("#dirlist").html(e);
+			$("#dirlist a[href=\""+curPath.replace(/^\//, "")+"\"]").addClass("active");
+		}, this));
+		$("input", this).attr("disabled", true);
+		return false;
+	});
+	$("#delbtn").click(function(){
+		var file = $("#filelist .active a");
+		if(file.length == 0){
+			alert("No file is selected");
+			return false;
+		}
+		var fn = file.attr("title");
+		if(confirm("Delete "+curPath+(curPath.match(/\/$/) ? "" : "/")+fn+"?")){
+			$.post("", { delete: fn, path: curPath }, reloadPath);
+			$("#info,#icon").hide();
+		}
+		return false;
+	});
+	window.onhashchange = function(){
+		curPath = window.location.hash.replace(/^#/, "");
+		reloadPath();
+		$("#dirlist .active").removeClass("active");
+		$("#dirlist a[href=\""+curPath.replace(/^\//, "")+"\"]").addClass("active");
+	}
+	window.onhashchange();
+	$("#dirlist").delegate("a", "click", function(){
+		$("#info,#icon").hide();
+		curPath = "/"+$(this).attr("href");
+		window.location.hash=curPath;
+		return false;
+	});
+	$("#filelist").delegate("#rmdir", "click", function(){
+		$.post("", { rmdir: curPath }, function(e){
+			$("#dirlist").html(e);
+			$("#dirlist a[href=\""+curPath.replace(/^\//, "")+"\"]").addClass("active");
+		});
+		curPath = "/";
+		window.location.hash=curPath;
+		return false;
+	})
+	$("#filelist").get(0).addEventListener("drop", function(e){
+		if(e.dataTransfer.files.length == 0){
+			e.dataTransfer.dropEffect = "none";
+			return false;
+		}
+		e.dataTransfer.dropEffect = "copy";
+		$("#dropindicator,#uploadhelp").hide();
+		$("#upload").show();
+		var f = new FormData();
+		f.append("path", curPath);
+		var fileList = [];
+		_.each(e.dataTransfer.files, function(x){
+			fileList.push(x.fileName);
+			f.append("file[]", x);
+		});
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", "/project/{$project._id}/files/@upload");
+		xhr.onload = function(){
+			if(xhr.responseText != "OK"){
+				alert(xhr.responseText);
+			}
+			reloadPath();
+		}
+		xhr.send(f);
+		progress(xhr);
+		e.preventDefault();
+	}, false);
+});
+</script>
+{/block}

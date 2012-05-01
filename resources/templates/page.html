@@ -132,16 +132,27 @@ html,body{
 .label{
 	vertical-align: baseline;
 }
+#selectitem iframe{
+	width: 100%;
+	height: 350px;
+	border: none;
+}
+.modal-backdrop{
+	z-index: 20000;
+}
+.modal{
+	z-index: 20050;
+}
 </style>
 {/block}
 {block body}
 <iframe id="pagepreview" sandbox="allow-forms allow-popups allow-scripts allow-same-origin"><!DOCTYPE html><html><head></head><body></body></html></iframe>
 <div id="sidebar">
 	<div class="toolbar" style="margin: -10px; margin-bottom: 10px; width: auto;">
-		<a href="#" id="popout" class="btn"><i class="icon-share-alt"></i></a>
-		<a href="#" id="hidesidebar" class="btn"><i class="icon-resize-full"></i></a>
+		<a href="#" id="popout" class="btn" title="Popout preview"><i class="icon-share-alt"></i></a>
+		<a href="#" id="hidesidebar" class="btn" title="Hide sidebar"><i class="icon-resize-full"></i></a>
 		<div class="btn-group" style="display: inline-block; vertical-align: middle;">
-			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#" title="{$strings.vc}">
 				<i class="icon-time"></i>
 				<span class="caret"></span>
 			</a>
@@ -150,7 +161,7 @@ html,body{
     			<li><a href="#" id="runushio"><i class="icon-time"></i> Run {$strings.vc}</a></li>
   			</ul>
 		</div>
-		<a href="/" class="btn pull-right"><i class="icon-home"></i></a>
+		<a href="/" class="btn pull-right" title="Project home"><i class="icon-home"></i></a>
 		<br style="clear: both;">
 	</div>
 	<p>
@@ -164,15 +175,15 @@ html,body{
 		</ul>
 	</div>
 	<div class="toolbar" style="width: auto;">
-		<button id="addwidget" class="btn btn-primary"><i class='icon-plus icon-white'></i></button>
+		<button id="addwidget" class="btn btn-primary" title="Add new widget"><i class='icon-plus icon-white'></i></button>
 		<div id="autosave">Autosave ON</div>
-		<button id="delwidget" class="btn btn-danger" style="float: right;"><i class='icon-trash icon-white'></i></button>
+		<button id="delwidget" class="btn btn-danger" style="float: right;" title="Delete this widget"><i class='icon-trash icon-white'></i></button>
 	</div>
 	<h1 id="widgetname"></h1>
 	<div id="widgetconfig">
 	</div>
 </div>
-<div id="showsidebar"><i class="icon-resize-small icon-white"></i></div>
+<div id="showsidebar" title="Show sidebar"><i class="icon-resize-small icon-white"></i></div>
 <form class="modal fade form-horizontal" id="newwidget" action="#">
 	<div class="modal-header">
 		<a class="close" data-dismiss="modal">×</a>
@@ -270,6 +281,19 @@ html,body{
 		<input type="submit" value="Select" class="btn btn-primary">
 	</div>
 </form>
+<form class="modal fade form-horizontal" id="selectitem" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Select resource file</h3>
+	</div>
+	<div class="modal-body">
+		<input type="text" name="file" required readonly style="width: 97%; margin-bottom: 10px; border:none; background:transparent; box-shadow: none;">
+		<iframe src="about:blank"></iframe>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Select" class="btn btn-primary">
+	</div>
+</form>
 <script src="/layouts.js"></script>
 <script src="/widgets.js"></script>
 <script>
@@ -303,6 +327,18 @@ function pick_page(cb){
 		return false;
 	}).modal();
 	return true;
+}
+function pick_file(cb){
+	$("#selectitem iframe").attr("src", "/project/{$project.id}/files/@pick");
+	$("#selectitem").unbind("submit").bind("submit", function(){
+		cb($("input[name=file]", this).val());
+		$(this).modal("hide");
+		return false;
+	}).modal();
+	return true;
+}
+function yukine_select(f){
+	$("#selectitem input[name=file]").val(f);
 }
 
 $(function(){
@@ -439,11 +475,14 @@ $(function(){
 		return false;
 	});
 	$("#widgetlist").delegate("li", "click", function(){
-		$("#widgetlist .active").removeClass("active");
 		if(widgetConfig){
-			widgetConfig.undelegateEvents();
+			var out = widgetConfig.unload();
+			if(out === false){
+				return false;
+			}
 		}
 
+		$("#widgetlist .active").removeClass("active");
 		$(this).addClass("active");
 		curWidget = page.widgets.getByCid($(this).data("id"));
 		$("#widgetname").text(curWidget.get("name")+" ");
@@ -551,6 +590,7 @@ $(function(){
 	});
 	page.project.pages.fetch();
 	$("#widgetpick .pickitem,#layoutpick .pickitem").tooltip();
+	$(".toolbar a[title],.toolbar button[title],#showsidebar").tooltip({ placement: "bottom" });
 });
 </script>
 {$templates}

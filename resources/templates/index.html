@@ -109,7 +109,7 @@ ul.token-input-list{
 					Logged in as <strong>{$user._id|escape}</strong> <a href="/auth" class="btn">Relogin</a>
 				</div>
 			</div>
-    	</div>
+		</div>
 	</form>
 	<div id="applist">
 		<div class="row">
@@ -126,7 +126,7 @@ ul.token-input-list{
 			<div class="span3 offset1">
 				<a href="#" class="icon">
 					<span class="logo"></span>
-					{$strings.binding}
+					<strong>{$strings.binding}:</strong> Page sorter
 				</a>
 			</div>
 		</div>
@@ -136,7 +136,7 @@ ul.token-input-list{
 					<h3 class="popover-title">Applications</h3>
 					<div class="popover-content">
 						<ul>
-							<li><a href="#"><strong>{$strings.resman}:</strong> Resources manager</a></li>
+							<li><a href="#" data-link="/project/%s/files/"><strong>{$strings.resman}:</strong> Resources manager</a></li>
 							<li><a href="#"><strong>{$strings.kara}:</strong> Lyrics timer</a></li>
 						</ul>
 					</div>
@@ -145,7 +145,7 @@ ul.token-input-list{
 			<div class="span3 offset1">
 				<a href="#" class="icon">
 					<span class="logo"></span>
-					{$strings.dist}
+					<strong>{$strings.dist}:</strong> Export book
 				</a>
 			</div>
 		</div>
@@ -162,7 +162,7 @@ ul.token-input-list{
 			<div class="controls">
 				<input type="text" name="pname" required>
 			</div>
-    	</div>
+		</div>
 	</div>
 	<div class="modal-footer">
 		<input type="submit" value="Save" class="btn btn-primary">
@@ -179,7 +179,7 @@ ul.token-input-list{
 			<div class="controls">
 				<input type="text" name="pname" required>
 			</div>
-    	</div>
+		</div>
 	</div>
 	<div class="modal-footer">
 		<input type="submit" value="Save" class="btn btn-primary">
@@ -196,13 +196,13 @@ ul.token-input-list{
 			<div class="controls">
 				<input type="text" id="projowner" disabled>
 			</div>
-    	</div>
-    	<div class="control-group">
+		</div>
+		<div class="control-group">
 			<label class="control-label">Members</label>
 			<div class="controls">
 				<input type="text" name="member" class="token-input-mac" id="projmember">
 			</div>
-    	</div>
+	</div>
 	</div>
 	<div class="modal-footer">
 		<input type="submit" value="Save" class="btn btn-primary">
@@ -266,6 +266,9 @@ $(function(){
 					preventDuplicates: true,
 					zindex: 20000,
 					theme: "mac"
+				});
+				$("a[data-link]").attr("href", function(){
+					return $(this).data("link").replace("%s", curProj.id);
 				});
 				curProj.pages.on("reset add destroy", function(){
 					$("#pagelist").empty();
@@ -357,6 +360,7 @@ $(function(){
 			name: $("input[name=pname]", this).val(),
 			layout: "standard",
 			stage: 0,
+			project: curProj
 		}, {
 			wait: true,
 			success: function(obj){

@@ -1,4 +1,5 @@
 RewriteEngine On
+RewriteRule ^$  index.php?u= [L,QSA]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$  index.php?u=$1 [L,QSA]
 Options -MultiViews
