@@ -39,17 +39,50 @@ widgets["wysiwyg"] = Widget.extend({
 						infoTab.add({
 							type: "vbox",
 							id: "localPageOptions",
-							children: [{
-								"type": "select",
-								"label": "Pages",
-								"id": "localPage",
-								"items": pages,
-								"onChange": function(ev){
-									var diag = CKEDITOR.dialog.getCurrent();
-									var url = diag.getContentElement('info','url');
-									url.setValue("/"+ev.data.value+".html");
+							children: [
+								{
+									"type": "select",
+									"label": "Pages",
+									"id": "localPage",
+									"items": pages,
+									"onChange": function(ev){
+										if(!ev.data.value){
+											return;
+										}
+										var diag = CKEDITOR.dialog.getCurrent();
+										var url = diag.getContentElement('info','url');
+										url.setValue("/"+ev.data.value+".html");
+									}
+								},
+								{
+									"type": "button",
+									"label": "Resource",
+									"id": "resfile",
+									"onClick": function(){
+										var diag = CKEDITOR.dialog.getCurrent();
+										var url = diag.getContentElement('info','url');
+										pick_file(function(d){
+											url.setValue(d);
+										});
+									}
 								}
-							}]
+							]
+						});
+					}else if(ev.data.name == "image"){
+						var dialogDefinition = ev.data.definition;
+						var infoTab = dialogDefinition.getContents('info');
+						console.log(infoTab);
+						infoTab.elements[0].children.push({
+							"type": "button",
+							"label": "Resource",
+							"id": "resfile",
+							"onClick": function(){
+								var diag = CKEDITOR.dialog.getCurrent();
+								var url = diag.getContentElement('info','txtUrl');
+								pick_file(function(d){
+									url.setValue(d);
+								});
+							}
 						});
 					}
 				});

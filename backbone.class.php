@@ -34,7 +34,8 @@ class Loader extends Base{
 		}
 		$out = $this->DB->pages->find(array(
 			"project" => $project['_id']
-		));
+		), array('widgets' => false));
+		$out->sort(array("weight" => 1));
 		return $this->output($out);
 	}
 

@@ -103,6 +103,27 @@ class UI extends Base{
 		}
 		print $rev['ushio']['html'];
 	}
+	public function nagisa(){
+		$pages = $this->loader->pages();
+		$this->smarty->assign("pages", $pages);
+		$project = $this->loader->project_by_id();
+		if(isset($_POST['data'])){
+			foreach($_POST['data'] as $item){
+				$this->DB->pages->update(array(
+					'_id' => new MongoId((string) $item['id']),
+					'project' => new MongoId($project['id'])
+				), array(
+					'$set' => array(
+						'weight' => (int) $item['weight']
+					)
+				));
+			}
+			die();
+		}
+		$this->smarty->assign("project", $project);
+		$this->smarty->display("nagisa.html");
+	}
+
 	public function ac_users(){
 		$this->check_login();
 		$users = $this->DB->users->find(array(
@@ -168,6 +189,27 @@ class UI extends Base{
 				print "\n";
 			}
 		}
+	}
+	public function foldersize($path) {
+		$total_size = 0;
+		$files = scandir($path);
+		$cleanPath = rtrim($path, '/'). '/';
+
+		foreach($files as $t) {
+			if ($t<>"." && $t<>"..") {
+				$currentFile = $cleanPath . $t;
+				if (is_dir($currentFile)) {
+					$size = foldersize($currentFile);
+					$total_size += $size;
+				}
+				else {
+					$size = filesize($currentFile);
+					$total_size += $size;
+				}
+			}   
+		}
+
+		return $total_size;
 	}
 	public function get_templates($folder){
 		$out = "";

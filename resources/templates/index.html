@@ -124,8 +124,9 @@ ul.token-input-list{
 				</div>
 			</div>
 			<div class="span3 offset1">
-				<a href="#" class="icon">
-					<span class="logo"></span>
+				<a href="#" data-link="/project/%s/organize/" class="icon">
+					{if $nonfree}<img src="/nonfree/nagisa.png" style="border-radius: 15px; margin-bottom: 10px;">
+					{else}<span class="logo"></span>{/if}
 					<strong>{$strings.binding}:</strong> Page sorter
 				</a>
 			</div>

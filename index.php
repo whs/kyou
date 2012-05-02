@@ -19,6 +19,8 @@ $router = new URLRouter(array(
 	"page\/(?P<page>[a-f0-9]+)\/@save"			=> array("ui.class.php", array("UI", "ushio_save")),
 	"page\/@load"								=> array("ui.class.php", array("UI", "ushio_load")),
 	"rev\/(?P<rev>[a-f0-9]+)"					=> array("ui.class.php", array("UI", "ushio_rev")),
+	"project\/(?P<pid>[a-f0-9]+)\/organize\/"	=> array("ui.class.php", array("UI", "nagisa")),
+
 	"_users"									=> array("ui.class.php", array("UI", "ac_users")),
 	"auth"										=> array("auth.class.php", array("AuthUI", "auth")),
 
