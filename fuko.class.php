@@ -70,6 +70,7 @@ class Fuko extends UI{
 				copy("assets/nav.css", "output/tmp/".$_POST['ticket']."/nav.css");
 				file_put_contents("output/tmp/".$_POST['ticket']."/nav.js", $this->gen_navigator($project));
 				// Zip
+				unlink("output/".$project['id'].".zip");
 				$this->zip("output/tmp/".$_POST['ticket']."/", "output/".$project['id'].".zip");
 				$this->rrmdir("output/tmp/".$_POST['ticket']."/");
 			}else{
@@ -164,8 +165,11 @@ class Fuko extends UI{
 		if (is_dir($source) === true){
 			$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
 			foreach ($files as $file){
+				if(basename($file) == ".." || basename($file) == "."){
+					continue;
+				}
 				$file = str_replace('\\', '/', realpath($file));
-				if (is_dir($file) === true){
+				if (is_dir($file) === true && $source != $file){
 					$zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
 				}else if (is_file($file) === true){
 					$zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
