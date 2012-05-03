@@ -1,3 +1,5 @@
 resources/compiled/*
 resources/cached/*
 bookfiles/*
+output/*.zip
+output/tmp/*

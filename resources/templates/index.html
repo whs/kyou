@@ -144,8 +144,9 @@ ul.token-input-list{
 				</div>
 			</div>
 			<div class="span3 offset1">
-				<a href="#" class="icon">
-					<span class="logo"></span>
+				<a href="#" class="icon" data-link="/project/%s/dist/">
+					{if $nonfree}<img src="/nonfree/fuko.png" style="border-radius: 15px; margin-bottom: 10px;">
+					{else}<span class="logo"></span>{/if}
 					<strong>{$strings.dist}:</strong> Export book
 				</a>
 			</div>

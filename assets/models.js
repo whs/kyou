@@ -71,11 +71,13 @@ var Page = Backbone.Model.extend({
 			}
 			page.unset("project");
 		}).trigger("change:project", this, this.get("project"), {});
-		if(this.has("widgets") && _.size(widgets) > 0){
-			this.widgets = new WidgetList(this.get("widgets"));
-		}else{
-			this.widgets = new WidgetList();
-		}
+		this.on("change:widgets", function(page, val){
+			if(val && _.size(val) > 0){
+				page.widgets = new WidgetList(val);
+			}else{
+				page.widgets = new WidgetList();
+			}
+		}).trigger("change:widgets", this, this.get("widgets"), {});
 		this.renderer = new this._renderer({
 			model: this
 		});
@@ -153,6 +155,30 @@ var Page = Backbone.Model.extend({
 				this.$("body").get(0).appendChild(ele);
 			}, this);
 			this.model.trigger("render");
+		},
+		stylesheets: function(opt){
+			var layout = new layouts[this.model.get("layout")];
+			var stylesheets = (_.isFunction(layout.stylesheets) ? layout.stylesheets() : layout.stylesheets) || [];
+			this.model.widgets.each(function(widget){
+				var renderer = new widget.renderer({
+					model: widget
+				});
+				renderer.render(opt);
+				stylesheets = _.union(stylesheets, (_.isFunction(renderer.stylesheets) ? renderer.stylesheets(opt) : renderer.stylesheets) || []);
+			}, this);
+			return stylesheets;
+		},
+		javascripts: function(opt){
+			var layout = new layouts[this.model.get("layout")];
+			var javascripts = (_.isFunction(layout.javascripts) ? layout.javascripts() : layout.javascripts) || [];
+			this.model.widgets.each(function(widget){
+				var renderer = new widget.renderer({
+					model: widget
+				});
+				renderer.render(opt);
+				javascripts = _.union(javascripts, (_.isFunction(renderer.javascripts) ? renderer.javascripts(opt) : renderer.javascripts) || []);
+			}, this);
+			return javascripts;
 		},
 		stopClick: function(e){
 			e.preventDefault();

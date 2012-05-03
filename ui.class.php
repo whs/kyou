@@ -29,7 +29,7 @@ class UI extends Base{
 		$page = $this->loader->page_by_id(false);
 		$this->smarty->assign("page", $page);
 		$this->smarty->assign("project", $page['project']);
-		$this->smarty->assign("templates", $this->get_templates("layout").$this->get_templates("config"));
+		$this->smarty->assign("templates", $this->get_templates("layout").$this->get_templates("widgets").$this->get_templates("config"));
 		$this->smarty->display("page.html");
 	}
 	public function ushio_world(){
@@ -102,26 +102,6 @@ class UI extends Base{
 			die();
 		}
 		print $rev['ushio']['html'];
-	}
-	public function nagisa(){
-		$pages = $this->loader->pages();
-		$this->smarty->assign("pages", $pages);
-		$project = $this->loader->project_by_id();
-		if(isset($_POST['data'])){
-			foreach($_POST['data'] as $item){
-				$this->DB->pages->update(array(
-					'_id' => new MongoId((string) $item['id']),
-					'project' => new MongoId($project['id'])
-				), array(
-					'$set' => array(
-						'weight' => (int) $item['weight']
-					)
-				));
-			}
-			die();
-		}
-		$this->smarty->assign("project", $project);
-		$this->smarty->display("nagisa.html");
 	}
 
 	public function ac_users(){

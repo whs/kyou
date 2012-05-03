@@ -21,6 +21,9 @@ class Yukine extends Base{
 				$this->smarty->display_error(403);
 				die();
 			}
+			if($_POST['delete'] == ""){
+				die();
+			}
 			unlink($path."/".$_POST['delete']);
 			die();
 		}

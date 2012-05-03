@@ -1,5 +1,5 @@
 {extends "base.html"}
-{block title}{$project.name|escape} | {$strings.binding}{/block}
+{block title}{$project.name|escape} | {$strings.dist}{/block}
 {block head}
 <script src="/assets/jquery.ui.js"></script>
 <style type="text/css">
@@ -30,7 +30,7 @@
 <div class="navbar navbar-fixed-top">
 	<div class="navbar-inner">
 		<div class="container">
-			<a class="brand" href="/">{$strings.binding}</a>
+			<a class="brand" href="/">{$strings.dist}</a>
 			<ul class="nav">
 				<li><a href="/">Project Home</a></li>
 				<li><a href="/">Current Project: <strong>{$project.name|escape}</strong></a></li>
@@ -42,19 +42,22 @@
 	<div class="row-fluid">
 		<div class="span9" id="pagelist">Loading...</div>
 		<div class="span3">
+			<h3>Welcome to {$strings.dist}</h3>
+			<p>{$strings.dist} packages your book and make it ready for the world.</p>
 			<div class="alert alert-block alert-info">
-				<h4 class="alert-heading">How to use?</h4>
+				<h4 class="alert-heading">Step 1: Page organization</h4>
 				<p>Drag &amp; drop the pages in the order you want to show the pages and click save.</p>
 				<p>To create new pages, <a href="/">go back to the front page</a></p>
-				<p>To export, <a href="#">use {$strings.dist}</a></p>
 			</div>
 			<h2>{$project.name|escape}</h2>
 			<dl class="dl-horizontal">
 				<dt>Pages</dt>
 				<dd>{$pages|count}</dd>
+				<dt>Estimated size</dt>
+				<dd>{$size|filesize}</dd>
 			</dl>
 			<div class="form-actions">
-				<button class="btn btn-primary" id="savebtn">Save</button>
+				<button class="btn btn-primary" id="savebtn">Next &gt;</button>
 		</div>
 		</div>
 	</div>
@@ -90,9 +93,7 @@ $(function(){
 				alert(d);
 			}
 			$("#savebtn").text("Saved");
-			setTimeout(function(){
-				$("#savebtn").text("Save").attr("disabled", false);
-			}, 500);
+			window.location = "/project/{$project.id}/dist/2/";
 		});
 	});
 	$("#pagelist").sortable({
@@ -100,5 +101,5 @@ $(function(){
 	}).disableSelection();
 	pagelist.reset({$pages|json_encode});
 });
-</script
+</script>
 {/block}

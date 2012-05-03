@@ -19,7 +19,6 @@ $router = new URLRouter(array(
 	"page\/(?P<page>[a-f0-9]+)\/@save"			=> array("ui.class.php", array("UI", "ushio_save")),
 	"page\/@load"								=> array("ui.class.php", array("UI", "ushio_load")),
 	"rev\/(?P<rev>[a-f0-9]+)"					=> array("ui.class.php", array("UI", "ushio_rev")),
-	"project\/(?P<pid>[a-f0-9]+)\/organize\/"	=> array("ui.class.php", array("UI", "nagisa")),
 
 	"_users"									=> array("ui.class.php", array("UI", "ac_users")),
 	"auth"										=> array("auth.class.php", array("AuthUI", "auth")),
@@ -27,6 +26,9 @@ $router = new URLRouter(array(
 	"project\/(?P<id>[a-f0-9]+)\/files\/"		=> array("yukine.class.php", array("Yukine", "fm")),
 	"project\/(?P<id>[a-f0-9]+)\/files\/@pick"	=> array("yukine.class.php", array("Yukine", "picker")),
 	"POST project\/(?P<id>[a-f0-9]+)\/files\/@upload"	=> array("yukine.class.php", array("Yukine", "upload")),
+
+	"project\/(?P<pid>[a-f0-9]+)\/dist\/"		=> array("fuko.class.php", array("Fuko", "nagisa")),
+	"project\/(?P<pid>[a-f0-9]+)\/dist\/2\/"	=> array("fuko.class.php", array("Fuko", "fuko_config")),
 
 	"widgets.js"								=> array("ui.class.php", array("UI", "widgets")),
 	"layouts.js"								=> array("ui.class.php", array("UI", "layouts")),

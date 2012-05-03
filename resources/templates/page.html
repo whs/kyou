@@ -140,13 +140,14 @@ html,body{
 .modal-backdrop{
 	z-index: 20000;
 }
-.modal{
+.modal.fade{
 	z-index: 20050;
+	top: -100%;
 }
 </style>
 {/block}
 {block body}
-<iframe id="pagepreview" sandbox="allow-forms allow-popups allow-scripts allow-same-origin"><!DOCTYPE html><html><head></head><body></body></html></iframe>
+<iframe id="pagepreview" sandbox="allow-scripts allow-same-origin"></iframe>
 <div id="sidebar">
 	<div class="toolbar" style="margin: -10px; margin-bottom: 10px; width: auto;">
 		<a href="#" id="popout" class="btn" title="Popout preview"><i class="icon-share-alt"></i></a>
@@ -337,8 +338,15 @@ function pick_file(cb){
 	}).modal();
 	return true;
 }
+var yukine_lastClick;
 function yukine_select(f){
-	$("#selectitem input[name=file]").val(f);
+	var oV = $("#selectitem input[name=file]").val();
+	if(oV == f && new Date().getTime() - yukine_lastClick < 250){
+		$("#selectitem").submit();
+	}else{
+		$("#selectitem input[name=file]").val(f);
+		yukine_lastClick = new Date().getTime();
+	}
 }
 
 $(function(){

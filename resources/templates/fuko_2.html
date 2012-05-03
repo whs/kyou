@@ -1,0 +1,299 @@
+<{extends "base.html"}
+{block title}{$project.name|escape} | {$strings.dist}{/block}
+{block head}
+<style type="text/css">
+body{
+	background: #eee;
+}
+#box{
+	margin: auto;
+	margin-top: 100px;
+	width: 500px;
+	border-radius: 10px;
+	background: rgba(255,255,255,0.9);
+	padding: 10px;
+	box-shadow: #555 0px 0px 5px;
+}
+h2{
+	text-shadow: white 0px -1px 0px;
+}
+.input-prepend.input-append .add-on:last-child, .input-prepend.input-append .btn:last-child{
+	margin-left: -5px;
+}
+#selectitem iframe{
+	width: 100%;
+	height: 350px;
+	border: none;
+}
+.modal-backdrop{
+	z-index: 20000;
+}
+.modal.fade{
+	z-index: 20050;
+	top: -100%;
+}
+#renderer{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 99.5%;
+	height: 99.5%;
+	border: none;
+	z-index: -1000000;
+}
+#rendering{
+	text-align: center;
+	font-size: 16pt;
+	display: none;
+}
+#rendering progress{
+	display: block;
+	margin: 40px auto 40px auto;
+}
+#rendering em{
+	display: block;
+	font-size: 10pt;
+	margin-top: 10px;
+}
+#renderdone{
+	display: none;
+}
+</style>
+{/block}
+{block body}
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+			<a class="brand" href="/">{$strings.dist}</a>
+			<ul class="nav">
+				<li><a href="/">Project Home</a></li>
+				<li><a href="/">Current Project: <strong>{$project.name|escape}</strong></a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+<iframe id="renderer" sandbox></iframe>
+<div id="box">
+	<h2>{$strings.dist}</h2>
+	<form action="#" class="form-horizontal" id="configform">
+		<div class="control-group">
+			<label class="control-label">Output format</label>
+			<div class="controls">
+				<select name="output" class="input-xlarge" required>
+					<option value="zip">ZIP for Chrome Web Store/PhoneGap/iPad</option>
+				</select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">App Icon</label>
+			<div class="controls">
+				<div class="input-prepend input-append">
+					<span class="add-on">16x16</span><input name="icon16" type="text" value="{$project.icon16|escape}">
+					<button class="btn pickbtn" type="button">Pick</button>
+				</div>
+				<div class="input-prepend input-append">
+					<span class="add-on">48x48</span><input name="icon48" type="text" value="{$project.icon48|escape}">
+					<button class="btn pickbtn" type="button">Pick</button>
+				</div>
+				<div class="input-prepend input-append">
+					<span class="add-on">128x128</span><input name="icon128" type="text" value="{$project.icon128|escape}" required>
+					<button class="btn pickbtn" type="button">Pick</button>
+				</div>
+				<div class="help-block">128x128 icon is required. Only png is supported. Chrome Web Store also requires 16x16 icon. Read <a href="https://developers.google.com/chrome/web-store/docs/images" target="_blank">the icon guideline</a>.</div>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Application ID</label>
+			<div class="controls">
+				<input type="text" name="appid" value="{if $project.appid}{$project.appid|escape}{else}th.in.sunburn.kyou.{$project.name|replace:' ':''|lower|escape}{/if}" required>
+				<div class="help-block">Reverse domain of your website appended by application name. The default is <em>probably</em> <strong>incorrect</strong>. For example, th.in.sunburn.coreanime.issue1</div>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Application version</label>
+			<div class="controls">
+				<input type="text" name="appver" value="{$project.appver|default:1.0|escape}" pattern="[0-9\.]*[0-9]" required>
+				<div class="help-block">Always increase this number on each build. Testing builds do not count, however.</div>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Description</label>
+			<div class="controls">
+				<textarea name="description" maxlength="132" class="input-xlarge" required>{$project.description|escape}</textarea>
+				<div class="help-block">Describe your book. Maximum 132 characters. No HTML.</div>
+			</div>
+		</div>
+		<div class="form-actions">
+			<input type="submit" value="Next &gt;" class="btn btn-primary">
+		</div>
+	</form>
+	<div id="rendering">
+		<progress></progress>
+		<div id="action">Requesting render ticket</div>
+		<em>Note that the page preview may be different from the output...</em>
+	</div>
+	<div id="renderdone">
+		<h2>Done!</h2>
+		<p>You're finished!</p>
+		<p><a href="/output/{$project.id}.zip" class="btn btn-large btn-primary" style="display: block">Download</a></p>
+		<h4>What's next?</h4>
+		<ul>
+			<li>Unzip this file and upload to your website. Share the link with the world!</li>
+			<li>Upload this ZIP to the <a href="https://chrome.google.com/webstore/developer/dashboard" target="_blank">Chrome Web Store</a></li>
+			<li>Upload this ZIP to <a href="https://build.phonegap.com/apps" target="_blank">PhoneGap:Build</a> service. (Note that ZIP file larger than 10MB is not allowed)</li>
+		</ul>
+	</div>
+</div>
+<form class="modal fade form-horizontal" id="selectitem" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Select resource file</h3>
+	</div>
+	<div class="modal-body">
+		<input type="text" name="file" required readonly style="width: 97%; margin-bottom: 10px; border:none; background:transparent; box-shadow: none;">
+		<iframe src="about:blank"></iframe>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Select" class="btn btn-primary">
+	</div>
+</form>
+<script>
+function pick_file(cb){
+	$("#selectitem iframe").attr("src", "/project/{$project.id}/files/@pick");
+	$("#selectitem").unbind("submit").bind("submit", function(){
+		cb($("input[name=file]", this).val());
+		$(this).modal("hide");
+		return false;
+	}).modal();
+	return true;
+}
+var yukine_lastClick;
+function yukine_select(f){
+	var oV = $("#selectitem input[name=file]").val();
+	if(oV == f && new Date().getTime() - yukine_lastClick < 250){
+		$("#selectitem").submit();
+	}else{
+		$("#selectitem input[name=file]").val(f);
+		yukine_lastClick = new Date().getTime();
+	}
+}
+var uploaded = 0;
+var javascripts = [];
+var stylesheets = [];
+function render(ind){
+	$("#action").text("Rendering "+(ind+1)+"/"+project.pages.length);
+	var page = project.pages.at(ind);
+	page.on("change", function(){
+		page.renderer.setElement($("#renderer").get(0).contentDocument.documentElement);
+		page.renderer.render({ dist: output });
+		setTimeout(function(){
+			var firstCSS = page.renderer.$("link[rel=stylesheet]:first");
+			if(firstCSS.length == 0){
+				$("<link rel='stylesheet' href='nav.css'>").appendTo(page.renderer.$("head"));
+			}else{
+				$("<link rel='stylesheet' href='nav.css'>").insertBefore(firstCSS);
+			}
+			var ele = document.createElement("script");
+			ele.type = "text/javascript";
+			ele.src = "nav.js";
+			page.renderer.$("body").get(0).appendChild(ele);
+			_.each(["href", "src"], function(attr){
+				page.renderer.$("["+attr+"^=\"/bookfiles/\"]").attr(attr, function(){
+					return $(this).attr(attr).replace(/^\/bookfiles\/[^\/]+\//, "");
+				});
+				page.renderer.$("["+attr+"^=\"/\"]").attr(attr, function(){
+					return $(this).attr(attr).replace(/^\//, "");
+				});
+				page.renderer.$("["+attr+"=\""+project.pages.at(0).id+".html\"]").attr(attr, function(){
+					return "index.html";
+				});
+			});
+			var html = page.renderer.el.outerHTML;
+			$.ajax({
+				url: "?" + $.param({ "act": "save", "file": (ind == 0 ? "index" : page.id), "ticket": renderTicket }),
+				contentType: "text/html",
+				processData: "false",
+				data: html,
+				type: "PUT"
+			}).success(function(){
+				uploaded++;
+				$("#rendering progress").val(parseInt($("#rendering progress").val()) + 1);	
+			});
+			$("#rendering progress").val(parseInt($("#rendering progress").val()) + 1);
+			if(ind < project.pages.length - 1){
+				render(ind+1);
+			}else{
+				$("#action").text("Finishing up...");
+				$.post("", { "act": "resfile", "ticket": renderTicket, "javascripts": page.renderer.javascripts({ dist: output }), "stylesheets": page.renderer.stylesheets({ dist: output }) }, function(d){
+					if(d) alert(d);
+					uploaded++;
+					$("#rendering progress").val(parseInt($("#rendering progress").val()) + 1);	
+				});
+				var poller = setInterval(function(){
+					if(uploaded == project.pages.length + 1){
+						clearInterval(poller);
+						$("#renderer").fadeOut(function(){ $(this).remove(); });
+						$("#rendering progress").removeAttr("value");
+						$("#action").text("A bit of magic...");
+						$.post("", { "act": "pack", "output": output, "ticket": renderTicket }, function(d){
+							if(d){
+								alert(d);
+							}
+							$("#rendering,#box h2:first").hide();
+							$("#renderdone").show();
+							$("body").css("background", "#eee url(/assets/img/cake.png) bottom right no-repeat");
+						});
+					}else{
+						$("#action").text("Waiting for uploads to finish...");
+					}
+				}, 5);
+			}
+		}, 60);
+	});
+	page.fetch();
+}
+var project = new Project({$project|json_encode});
+var output;
+var renderTicket;
+$(function(){
+	$(".pickbtn").click(function(){
+		pick_file(_.bind(function(f){
+			$("input", $(this).parent()).val(f.replace(/^\/bookfiles\/[^\/]+\//, ""));
+		}, this));
+	});
+	$("form").submit(function(){
+		$("input[type=submit]", this).attr("disabled", true);
+		var postData = $(this).serializeJSON();
+		output = postData['output'];
+		var setData = _.extend(postData, {});
+		delete setData['output'];
+		project.set(setData);
+		project.save();
+		project.pages.fetch();
+		$("#configform").hide();
+		$("#rendering").show();
+		$.post("", { act: "ticket", output: postData['output'] }, function(id){
+			renderTicket = id.id;
+		}, "json").error(function(d){
+			alert("Cannot request render ticket: " + d.responseText);
+			window.location.reload();
+		});
+		return false;
+	});
+	function startRender(){
+		if(!renderTicket){
+			setTimeout(startRender, 10);
+			return;
+		}
+		$("#action").text("Rendering...");
+		$("#rendering progress").attr("max", (project.pages.length * 2) + 1);
+		render(0);
+	}
+	project.pages.on("reset", startRender);
+})
+</script>
+<script src="/assets/handlebars.js" async></script>
+<script src="/layouts.js" async></script>
+<script src="/widgets.js" async></script>
+{$templates}
+{/block}
