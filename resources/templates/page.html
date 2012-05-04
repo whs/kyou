@@ -56,6 +56,11 @@ html,body{
 #widgetlist .grip{
 	float: right;
 }
+#widgetlist .cssfix{
+	float: right;
+	padding: 1px;
+	margin-top: -1px;
+}
 #widgetlist img{
 	margin-top: -5px;
 }
@@ -362,7 +367,7 @@ $(function(){
 		page.widgets.on("reset add destroy", function(){
 			$("#widgetlist").empty();
 			page.widgets.each(function(v){
-				var ele = $('<li><span class="ui-icon ui-icon-grip-solid-horizontal grip"></span><img> <strong></strong> <span class="widgetname"></span></li>');
+				var ele = $('<li><span class="ui-icon ui-icon-grip-solid-horizontal grip"></span><a class="cssfix btn" title="CSS Edit"><span class="ui-icon ui-icon-wrench"></span></a><img> <strong></strong> <span class="widgetname"></span></li>');
 				ele.data("id", v.cid).data("model", v).addClass("id_"+v.cid);
 				var widget = new widgets[v.type](v);
 				$("img", ele).attr("src", widget.icon_small);
@@ -409,17 +414,22 @@ $(function(){
 			return s;
 		}
 	}
+	var stopAutoSync = false;
 	page.on("sync", function(){
 		$("#autosave").html("Saved").stop(true).show().fadeOut(2000);
 		window.onbeforeunload = null;
-		//page.trigger("reset");
+		stopAutoSync = true;
 	});
 	page.on("change", function(){
+		if(stopAutoSync){
+			stopAutoSync = false;
+			return;
+		}
 		$("#autosave").html("Unsaved changes!").stop(true).show().css("display", "inline-block").css("opacity", 1);
 		bindExit();
 		save();
 	});
-	page.trigger("reset");
+
 	$("#addwidget").click(function(){
 		$("#newwidget").modal();
 		$("#widgetpick div:first").click();
@@ -502,6 +512,22 @@ $(function(){
 		});
 		widgetConfig.render();
 	});
+	$("#widgetlist").delegate(".cssfix", "click", function(){
+		if(widgetConfig){
+			var out = widgetConfig.unload();
+			if(out === false){
+				return false;
+			}
+		}
+
+		$("#widgetlist .active").removeClass("active");
+		$(this).parents("li").addClass("active");
+		curWidget = page.widgets.getByCid($(this).parents("li").data("id"));
+		$("#widgetname").text(curWidget.get("name")+" ");
+		$("<small>").text("#"+curWidget.get("id")).appendTo("#widgetname");
+		widgetConfig = null;
+		return false;
+	});
 	$("#pagesetup").submit(function(){
 		page.set("name", $("#pagesetup input[name=name]").val());
 		page.set("layout", $("#pagesetup input[name=layout]").val());
@@ -561,6 +587,13 @@ $(function(){
 		}, this), 250);
 		return false;
 	});
+	$("#widgetconfig").delegate(".pickbtn", "click", function(){
+		$(".pickbtn").click(function(){
+			pick_file(_.bind(function(f){
+				$("input", $(this).parent()).val(f);
+			}, this));
+		});
+	});
 
 	$("#widgetlist").sortable({
 		containment: "parent",
@@ -596,6 +629,7 @@ $(function(){
 		$("div", ele).text(v.name);
 		ele.appendTo("#layoutpick");
 	});
+	page.trigger("reset");
 	page.project.pages.fetch();
 	$("#widgetpick .pickitem,#layoutpick .pickitem").tooltip();
 	$(".toolbar a[title],.toolbar button[title],#showsidebar").tooltip({ placement: "bottom" });
