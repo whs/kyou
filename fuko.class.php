@@ -34,7 +34,9 @@ class Fuko extends UI{
 				"id" => $id
 			));
 			flush();
-			$this->recurse_copy("bookfiles/".$project['id'], "output/tmp/".$id);
+			if(is_dir("bookfiles/".$project['id'])){
+				$this->recurse_copy("bookfiles/".$project['id'], "output/tmp/".$id);
+			}
 			die();
 		}else if($_GET['act'] == "save" && preg_match('~^[0-9a-f]+$~', $_GET['ticket']) && !strstr($_GET['file'], "/")){
 			file_put_contents("output/tmp/".$_GET['ticket']."/".$_GET['file'].".html", file_get_contents("php://input"));
@@ -70,7 +72,7 @@ class Fuko extends UI{
 				copy("assets/nav.css", "output/tmp/".$_POST['ticket']."/nav.css");
 				file_put_contents("output/tmp/".$_POST['ticket']."/nav.js", $this->gen_navigator($project));
 				// Zip
-				unlink("output/".$project['id'].".zip");
+				@unlink("output/".$project['id'].".zip");
 				$this->zip("output/tmp/".$_POST['ticket']."/", "output/".$project['id'].".zip");
 				$this->rrmdir("output/tmp/".$_POST['ticket']."/");
 			}else{

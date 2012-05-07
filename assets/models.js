@@ -71,16 +71,17 @@ var Page = Backbone.Model.extend({
 			}
 			page.unset("project");
 		}).trigger("change:project", this, this.get("project"), {});
-		this.on("change:widgets", function(page, val){
-			if(val && _.size(val) > 0){
-				page.widgets = new WidgetList(val);
-			}else{
-				page.widgets = new WidgetList();
-			}
-		}).trigger("change:widgets", this, this.get("widgets"), {});
+		this.loadWidgets();
 		this.renderer = new this._renderer({
 			model: this
 		});
+	},
+	loadWidgets: function(){
+		if(this.has("widgets") && _.size(this.get("widgets")) > 0){
+			this.widgets = new WidgetList(this.get("widgets"));
+		}else{
+			this.widgets = new WidgetList();
+		}
 	},
 	stage: function(){
 		var stage = this.get("stage");
@@ -118,6 +119,7 @@ var Page = Backbone.Model.extend({
 			var tmplData = this.model.toJSON();
 			tmplData.project = this.model.project.toJSON();
 			this.el.innerHTML = templ(tmplData);
+			var target = this.$(".widgetsInject").get(0);
 			// Render each widgets!
 			this.model.widgets.each(function(widget){
 				var renderer = new widget.renderer({
@@ -125,7 +127,7 @@ var Page = Backbone.Model.extend({
 				});
 				widget.view = renderer;
 				renderer.render(opt);
-				renderer.$el.appendTo(this.$(".widgetsInject"));
+				target.appendChild(renderer.$el.get(0));
 				renderer.$el.attr("id", widget.get("id")).addClass("widget_"+widget.type);
 				javascripts = _.union(javascripts, (_.isFunction(renderer.javascripts) ? renderer.javascripts(opt) : renderer.javascripts) || []);
 				stylesheets = _.union(stylesheets, (_.isFunction(renderer.stylesheets) ? renderer.stylesheets(opt) : renderer.stylesheets) || []);
@@ -136,7 +138,7 @@ var Page = Backbone.Model.extend({
 					if(v.indexOf("\n") != -1){
 						$("<style>").html(v).appendTo(this.$("head"));
 					}else{
-						$("<link rel='stylesheet'>").attr('href', "/"+v).appendTo(this.$("head"));
+						$("<link rel='stylesheet'>").attr('href', (v.indexOf("http") == 0 ? "" : "/")+v).appendTo(this.$("head"));
 					}
 				}, this);
 				setTimeout(_.bind(function(){
@@ -150,7 +152,7 @@ var Page = Backbone.Model.extend({
 				if(v.indexOf("\n") != -1){
 					ele.innerHTML = v;
 				}else{
-					ele.src = "/" + v;
+					ele.src = (v.indexOf("http") == 0 ? "" : "/") + v;
 				}
 				this.$("body").get(0).appendChild(ele);
 			}, this);
@@ -278,13 +280,22 @@ var TemplConfigView = Backbone.View.extend({
 		var modelData = this.model.toJSON();
 		this.el.innerHTML = this.template(modelData);
 		_.each(modelData, function(v,k){
-			this.$("[name="+k+"]").val(v);
+			var input = this.$("[name="+k+"]");
+			if(input.attr("type") == "checkbox" || input.attr("type") == "radio"){
+				input.attr("checked", v);
+			}else{
+				input.val(v);
+			}
 		}, this);
 	},
 	save: function(e){
 		_.each($(e.target).serializeJSON(), function(v,k){
 			this.model.set(k, v);
 		}, this);
+		var model = this.model;
+		$("input[type=checkbox]:not(:checked)", e.target).each(function(){
+			model.set(this.name, false);
+		});
 		this.$("input[type=submit]").val("Saved").attr("disabled", true);
 		setTimeout(function(){
 			this.$("input[type=submit]").val("Save").attr("disabled", false);

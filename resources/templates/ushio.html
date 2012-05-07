@@ -104,7 +104,7 @@ body{
 <script>
 var revisions = {$rev|json_encode};
 var curRevInd = 0;
-var bgImg = "{if $nonfree}/nonfree/ushio.jpg{/if}";
+var bgImg = {if $nonfree}Math.random() < 0.5 ? "/nonfree/ushio.jpg" : "/nonfree/ushio2.jpg"{else}""{/if};
 
 function reqlock(){
 	$.post("/page/{$page.id}/@lock");

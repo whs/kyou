@@ -149,6 +149,12 @@ html,body{
 	z-index: 20050;
 	top: -100%;
 }
+.input-prepend .add-on, .input-prepend .btn{
+	margin-right: -5px;
+}
+.input-prepend input{
+	width: auto !important;
+}
 </style>
 {/block}
 {block body}
@@ -368,7 +374,7 @@ $(function(){
 			$("#widgetlist").empty();
 			page.widgets.each(function(v){
 				var ele = $('<li><span class="ui-icon ui-icon-grip-solid-horizontal grip"></span><a class="cssfix btn" title="CSS Edit"><span class="ui-icon ui-icon-wrench"></span></a><img> <strong></strong> <span class="widgetname"></span></li>');
-				ele.data("id", v.cid).data("model", v).addClass("id_"+v.cid);
+				ele.data("id", v.id).data("model", v).addClass("id_"+v.id);
 				var widget = new widgets[v.type](v);
 				$("img", ele).attr("src", widget.icon_small);
 				$("strong", ele).text(widget.name+":");
@@ -380,7 +386,7 @@ $(function(){
 				});
 			});
 			if(curWidget){
-				$("#widgetlist li.id_"+curWidget.cid).addClass("active");
+				$("#widgetlist li.id_"+curWidget.id).addClass("active");
 			}
 			page.renderer.render();
 		}).trigger("reset");
@@ -502,7 +508,7 @@ $(function(){
 
 		$("#widgetlist .active").removeClass("active");
 		$(this).addClass("active");
-		curWidget = page.widgets.getByCid($(this).data("id"));
+		curWidget = page.widgets.get($(this).data("id"));
 		$("#widgetname").text(curWidget.get("name")+" ");
 		$("<small>").text("#"+curWidget.get("id")).appendTo("#widgetname");
 		//$("<img>").attr("src", curWidget.icon_large).appendTo("#widgetname");
@@ -522,7 +528,7 @@ $(function(){
 
 		$("#widgetlist .active").removeClass("active");
 		$(this).parents("li").addClass("active");
-		curWidget = page.widgets.getByCid($(this).parents("li").data("id"));
+		curWidget = page.widgets.get($(this).parents("li").data("id"));
 		$("#widgetname").text(curWidget.get("name")+" ");
 		$("<small>").text("#"+curWidget.get("id")).appendTo("#widgetname");
 		widgetConfig = null;
@@ -588,11 +594,9 @@ $(function(){
 		return false;
 	});
 	$("#widgetconfig").delegate(".pickbtn", "click", function(){
-		$(".pickbtn").click(function(){
-			pick_file(_.bind(function(f){
-				$("input", $(this).parent()).val(f);
-			}, this));
-		});
+		pick_file(_.bind(function(f){
+			$("input", $(this).parent()).val(f);
+		}, this));
 	});
 
 	$("#widgetlist").sortable({
@@ -600,7 +604,7 @@ $(function(){
 		handle: ".grip",
 		update: function(e, ui){
 			$("#widgetlist li").each(function(k,v){
-				var widget = page.widgets.getByCid($(v).data("id"));
+				var widget = page.widgets.get($(v).data("id"));
 				widget.weight = k * 100;
 				widget.trigger("change");
 			});
