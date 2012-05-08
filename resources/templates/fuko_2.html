@@ -180,13 +180,20 @@ function yukine_select(f){
 var uploaded = 0;
 var javascripts = [];
 var stylesheets = [];
+var resources = [];
 function render(ind){
 	$("#action").text("Rendering "+(ind+1)+"/"+project.pages.length);
 	var page = project.pages.at(ind);
+	var noNLfilter = function(x){
+		return x.indexOf("\n") == -1;
+	}
 	page.on("change", function(){
 		page.loadWidgets();
 		page.renderer.setElement($("#renderer").get(0).contentDocument.documentElement);
 		page.renderer.render({ dist: output });
+		javascripts = _.union(javascripts, _.filter(page.renderer.javascripts({ dist: output }), noNLfilter));
+		stylesheets = _.union(stylesheets, _.filter(page.renderer.stylesheets({ dist: output }), noNLfilter));
+		resources = _.union(resources, page.renderer.resources({ dist: output }));
 		setTimeout(function(){
 			var firstCSS = page.renderer.$("link[rel=stylesheet]:first");
 			if(firstCSS.length == 0){
@@ -224,11 +231,14 @@ function render(ind){
 			if(ind < project.pages.length - 1){
 				render(ind+1);
 			}else{
-				var noNLfilter = function(x){
-					return x.indexOf("\n") == -1;
-				}
 				$("#action").text("Finishing up...");
-				$.post("", { "act": "resfile", "ticket": renderTicket, "javascripts": _.filter(page.renderer.javascripts({ dist: output }), noNLfilter), "stylesheets": _.filter(page.renderer.stylesheets({ dist: output }), noNLfilter) }, function(d){
+				$.post("", {
+					"act": "resfile",
+					"ticket": renderTicket,
+					"javascripts": javascripts,
+					"stylesheets": stylesheets,
+					"resources": resources
+				}, function(d){
 					if(d) alert(d);
 					uploaded++;
 					$("#rendering progress").val(parseInt($("#rendering progress").val()) + 1);	

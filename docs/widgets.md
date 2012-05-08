@@ -40,6 +40,8 @@ The config object is a subclass of Backbone.View. You can access the canvas in `
 
 When the configuration page is closed, `unload()` is fired. You should pull all events bind to the top level element. Specially, Backbone binds the events specified in `events` attribute of the view to the top level element. Use `this.undelegateEvents()` to unbound. The default implementation of `unload()` automatically does this.
 
+If the `unload()` method returned `false`, the unloading process is canceled. Use this when the user have unsaved data. Note that when the editor page is unloaded, the `unload()` method does not fire at all.
+
 The TemplConfigView is a subclass of Backbone.View and simplify the widget creation process. Just extend this class by `TemplConfigView.extend({})` and specifying the template name in the template attribute.
 
 The configuration template is a file in `handlebars/config/template.html`. Inside should be a form. When is form is submitted, its content will be set on the model object which should be very common for all widgets.
@@ -48,9 +50,9 @@ The configuration template is a file in `handlebars/config/template.html`. Insid
 
 The renderer is also a subclass of Backbone.View. The renderer is automatically initialized with the model set to the associated model. Renderer view is not persistent. Subsequential render will create new renderer.
 
-Apart from the usual `render` method, the renderer class also can supply the `javascripts` and/or `stylesheets` attributes. Both are an array (or a function that returns an array) of JavaScripts/CSS files to load. The injection of JavaScripts/CSS is run after all the widgets have been loaded. If any member of the attributes is a multiline string (have \n inside) it is treated as inline script.
+Apart from the usual `render` method, the renderer class also can supply the `javascripts` and/or `stylesheets` attributes. Both are an array (or a function that returns an array) of JavaScripts/CSS files to load. The injection of JavaScripts/CSS is run after all the widgets have been loaded. If any member of the attributes is a multiline string (have \n inside) it is treated as inline script. Also, `resources` attribute exists for resource file required for rendering this widget and will be copied to the output file. These files are not automatically loaded to the page in any ways. Do not use external URL in `resources` (but you can use them in other attributes) and you can point this to a folder to copy the entire folder.
 
-When the packaging process is run, all resource files pointed to by `javascripts` and `stylesheets` in the local filesystem is copied into the package. Also, for security only files in the `assets` folder and `files` folder can be copied. If you're writing widget, put your files in the `files` folder.
+When the packaging process is run, all resource files pointed to by `javascripts`, `stylesheets` and `resources` in the local filesystem is copied into the package. Also, for security only files in the `assets` folder and `files` folder can be copied. If you're writing widget, put your files in the `files` folder.
 
 Similar to the configuration system, the render target is supplied in `this.el` or `this.$el`. Usually you don't need to replace the element if your view configuration is correct but if you need to do, study how from the h1 widget.
 
@@ -64,3 +66,4 @@ Widget previews should be quick. If you're loading something from other site, ma
 - Never, ever include any external CSS in the page. While it does work, it breaks the page preview. Please use the stylesheets option for this, or if you can't use `setTimeout` to workaround this problem.
 - Never put a / in front of stylesheet/javascript URL. The packaging process does not copy any files that have / prefix.
 - A newline in stylesheet/javascript URL make the engine treating such string as inline script.
+- When running resource file collection pass, the widget's `render()` function is not called.

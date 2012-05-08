@@ -56,8 +56,31 @@ class Fuko extends UI{
 					header("X-Unsafe-File: ".$item);
 					continue;
 				}
-				mkdir("output/tmp/".$_POST['ticket']."/".dirname($item));
+				@mkdir("output/tmp/".$_POST['ticket']."/".dirname($item), 0777, true);
 				copy($itemp, "output/tmp/".$_POST['ticket']."/".$item);
+			}
+			if(is_array($_POST['resources'])){
+				foreach($_POST['resources'] as $item){
+					$itemp = realpath($item);
+					$safe = false;
+					foreach($whitelist as $w){
+						if(strpos($itemp, realpath($w)) === 0){
+							$safe = true;
+							break;
+						}
+					}
+					if(!$safe){
+						header("X-Unsafe-File: ".$item);
+						continue;
+					}
+					if(is_dir($itemp)){
+						@mkdir("output/tmp/".$_POST['ticket']."/".$item, 0777, true);
+						$this->recurse_copy($itemp, "output/tmp/".$_POST['ticket']."/".$item);
+					}else{
+						@mkdir("output/tmp/".$_POST['ticket']."/".dirname($item), 0777, true);
+						copy($itemp, "output/tmp/".$_POST['ticket']."/".$item);
+					}
+				}
 			}
 			die();
 		}else if($_POST['act'] == "pack" && preg_match('~^[0-9a-f]+$~', $_POST['ticket'])){
@@ -92,7 +115,7 @@ class Fuko extends UI{
 		$pages = $this->DB->pages->find(array(
 			"project" => new MongoId($project)
 		))->count();
-		$page_size = 2 * 1024; // 2kB
+		$page_size = 10 * 1024; // 2kB
 		$totalSize += $page_size;
 		// Yukine
 		if(is_dir("bookfiles/".$project)){

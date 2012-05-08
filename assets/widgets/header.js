@@ -23,6 +23,7 @@ widgets["header"] = Widget.extend({
 			}else{
 				this.$("h2").remove();
 			}
-		}
+		},
+		resources: ["assets/widgets"]
 	}),
 });

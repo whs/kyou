@@ -160,27 +160,36 @@ var Page = Backbone.Model.extend({
 		},
 		stylesheets: function(opt){
 			var layout = new layouts[this.model.get("layout")];
-			var stylesheets = (_.isFunction(layout.stylesheets) ? layout.stylesheets() : layout.stylesheets) || [];
+			var stylesheets = (_.isFunction(layout.stylesheets) ? layout.stylesheets(opt) : layout.stylesheets) || [];
 			this.model.widgets.each(function(widget){
 				var renderer = new widget.renderer({
 					model: widget
 				});
-				renderer.render(opt);
 				stylesheets = _.union(stylesheets, (_.isFunction(renderer.stylesheets) ? renderer.stylesheets(opt) : renderer.stylesheets) || []);
 			}, this);
 			return stylesheets;
 		},
 		javascripts: function(opt){
 			var layout = new layouts[this.model.get("layout")];
-			var javascripts = (_.isFunction(layout.javascripts) ? layout.javascripts() : layout.javascripts) || [];
+			var javascripts = (_.isFunction(layout.javascripts) ? layout.javascripts(opt) : layout.javascripts) || [];
 			this.model.widgets.each(function(widget){
 				var renderer = new widget.renderer({
 					model: widget
 				});
-				renderer.render(opt);
 				javascripts = _.union(javascripts, (_.isFunction(renderer.javascripts) ? renderer.javascripts(opt) : renderer.javascripts) || []);
 			}, this);
 			return javascripts;
+		},
+		resources: function(opt){
+			var layout = new layouts[this.model.get("layout")];
+			var resources = (_.isFunction(layout.resources) ? layout.resources(opt) : layout.resources) || [];
+			this.model.widgets.each(function(widget){
+				var renderer = new widget.renderer({
+					model: widget
+				});
+				resources = _.union(resources, (_.isFunction(renderer.resources) ? renderer.resources(opt) : renderer.resources) || []);
+			}, this);
+			return resources;
 		},
 		stopClick: function(e){
 			e.preventDefault();
@@ -222,7 +231,10 @@ var Widget = Backbone.Model.extend({
 	renderer: Backbone.View.extend({
 		render: function(){
 			this.$el.html("<div class='alert alert-info'>Widget does not define renderer!</div>");
-		}
+		},
+		resources: [],
+		javascripts: [],
+		stylesheets: []
 	}),
 });
 
@@ -265,7 +277,8 @@ var Layout = Backbone.Model.extend({
 	// 64x64
 	icon_large: "/assets/img/unknown.large.png",
 	javascripts: [],
-	stylesheets: []
+	stylesheets: [],
+	resources: []
 });
 
 var TemplConfigView = Backbone.View.extend({
