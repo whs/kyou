@@ -24,6 +24,5 @@ widgets["header"] = Widget.extend({
 				this.$("h2").remove();
 			}
 		},
-		resources: ["assets/widgets"]
 	}),
 });

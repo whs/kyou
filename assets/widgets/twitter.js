@@ -35,7 +35,8 @@ widgets["twitter"] = Widget.extend({
 					width: this.model.get("width") ? this.model.get("width") : "auto",
 					height: this.model.get("height"),
 					padding: 5,
-					overflow: "hidden"
+					overflow: "hidden",
+					borderRadius: "10px"
 				});
 			}
 		},
@@ -73,7 +74,7 @@ widgets["twitter"] = Widget.extend({
 				}
 			};
 			var moreCode = "";
-			if(this.model.get("t_type") == "user" || this.model.get("t_type") == "faves"){
+			if(this.model.get("t_type") == "profile" || this.model.get("t_type") == "faves"){
 				moreCode = ".setUser("+JSON.stringify(this.model.get("username"))+")";
 			}
 			if(this.model.get("t_type") == "list"){

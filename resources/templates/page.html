@@ -21,7 +21,7 @@ html,body{
 #wl_resize{
 	height: 150px;
 }
-#widgetlist{
+.widgetlist{
 	margin: 0;
 	list-style: none;
 	border: #ccc solid 1px;
@@ -30,15 +30,15 @@ html,body{
 	border-radius: 5px 5px 0px 0px;
 	border-bottom: none;
 }
-#widgetlist li{
+.widgetlist li{
 	padding: 5px 10px 5px 10px;
 	border-bottom: #ddd solid 1px;
 	cursor: pointer;
 }
-#widgetlist li:hover{
+.widgetlist li:hover{
 	background: #c6f0ff;
 }
-#widgetlist li.active{
+.widgetlist li.active{
 	background: #0088cc;
 	color: white;
 }
@@ -53,18 +53,18 @@ html,body{
 	margin-bottom: 20px;
 	width: 100%;
 }
-#widgetlist .grip{
+.widgetlist .ui-icon{
 	float: right;
 }
-#widgetlist .cssfix{
+.widgetlist .btn{
 	float: right;
 	padding: 1px;
 	margin-top: -1px;
 }
-#widgetlist img{
+.widgetlist img{
 	margin-top: -5px;
 }
-#widgetlist small{
+.widgetlist small{
 	font-size: 8pt;
 	color: #aaa;
 	margin-left: 10px;
@@ -115,9 +115,6 @@ html,body{
 #widgetconfig .controls{
 	margin-left: 100px;
 	margin-right: 20px;
-}
-#widgetconfig input[type=text], #widgetconfig textarea{
-	width: 100%;
 }
 #showsidebar{
 	position: fixed;
@@ -182,7 +179,7 @@ html,body{
 		<strong>Layout:</strong> <a href="#" id="layoutname"></a>
 	</p>
 	<div id="wl_resize">
-		<ul id="widgetlist">
+		<ul id="widgetlist" class="widgetlist">
 			<li>Loading...</li>
 		</ul>
 	</div>

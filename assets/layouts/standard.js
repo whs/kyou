@@ -8,7 +8,7 @@ layouts["standard"] = Layout.extend({
 	},
 	stylesheets: function(){
 		return [
-			"files/style.css"
+			"files/standard.css"
 		];
 	}
 });
