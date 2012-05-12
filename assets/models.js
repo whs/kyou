@@ -129,6 +129,7 @@ var Page = Backbone.Model.extend({
 				renderer.render(opt);
 				target.appendChild(renderer.$el.get(0));
 				renderer.$el.attr("id", widget.get("id")).addClass("widget_"+widget.type);
+				format_view(widget);
 				javascripts = _.union(javascripts, (_.isFunction(renderer.javascripts) ? renderer.javascripts(opt) : renderer.javascripts) || []);
 				stylesheets = _.union(stylesheets, (_.isFunction(renderer.stylesheets) ? renderer.stylesheets(opt) : renderer.stylesheets) || []);
 			}, this);
@@ -215,6 +216,7 @@ var Widget = Backbone.Model.extend({
 	// 64x64
 	icon_large: "/assets/img/unknown.large.png",
 	weight: 0,
+	disable_config: [],
 	check_depends: function(page){
 		return true;
 	},
@@ -278,7 +280,7 @@ var Layout = Backbone.Model.extend({
 	icon_large: "/assets/img/unknown.large.png",
 	javascripts: [],
 	stylesheets: [],
-	resources: []
+	resources: [],
 });
 
 var TemplConfigView = Backbone.View.extend({
@@ -313,6 +315,91 @@ var TemplConfigView = Backbone.View.extend({
 		setTimeout(function(){
 			this.$("input[type=submit]").val("Save").attr("disabled", false);
 		}, 500);
+		return false;
+	},
+	unload: function(){
+		this.undelegateEvents();
+	}
+});
+
+function format_view(model){
+	if(!model.view){
+		return false;
+	}
+	var el = model.view.$el;
+	var css = _.clone(model.get("_css"));
+	if(!css){
+		return;
+	}
+	if(!css['background-repeat']){
+		css['background-repeat'] = "no-repeat";
+	}
+	_.each(["width", "height", "margin-top", "margin-right", "margin-bottom", "margin-left"], function(x){
+		if(css[x]){
+			css[x] = css[x] + "px";
+		}
+	});
+	_.each(css, function(v, x){
+		if(!v){
+			delete css[x];
+		}
+	})
+	var customcss = css['customcss'];
+	delete css['customcss'];
+	el.css(css);
+	el.attr("style", (el.attr("style") + " ;; " || "") + customcss);
+}
+
+var CSSConfigView = TemplConfigView.extend({
+	template: "_css",
+	events: {
+		"submit form": "save",
+		"change input": "rerender",
+		"change select": "rerender",
+		"click select": "rerender",
+	},
+	render: function(){
+		var css = this.model.get("_css") || [];
+		this.el.innerHTML = this.template(css);
+		_.each(curWidget.disable_config, function(v){
+			this.$("[name="+v+"],[data-name="+v+"]").closest(".span1,.span2,.span3,.span4,.span5").hide();
+		});
+		_.each(css, function(v,k){
+			var input = this.$("[name="+k+"]");
+			if(input.attr("type") == "checkbox" || input.attr("type") == "radio"){
+				input.attr("checked", v);
+			}else{
+				input.val(v);
+			}
+		}, this);
+		_.each(["float", "text-align"], function(v){
+			var el = this.$("[data-name="+v+"] [data-value="+css[v]+"]");
+			if(el.length > 0){
+				el.button('toggle');
+			}else{
+				this.$("[data-name="+v+"] .btn:first").button("toggle");
+			}
+		})
+	},
+	rerender: function(){
+		if(this.model.view){
+			format_view(this.model);
+		}else{
+			console.error("no view is found");
+		}
+	},
+	save: function(e){
+		var out = this.$("form").serializeJSON();
+		this.$("form .active[data-value]").each(function(){
+			out[$(this).parents("[data-name]").data("name")] = $(this).data("value");
+		});
+		console.log(out);
+		this.model.set("_css", out).trigger("change");
+		this.$("input[type=submit]").val("Saved").attr("disabled", true);
+		setTimeout(function(){
+			this.$("input[type=submit]").val("Save").attr("disabled", false);
+		}, 500);
+		this.rerender();
 		return false;
 	},
 	unload: function(){

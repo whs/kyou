@@ -18,6 +18,7 @@ widgets["twitter"] = Widget.extend({
 			this.$(".twconfig_"+this.$("select[name=t_type]").val()).show().attr("required", true);
 		}
 	}),
+	disable_config: ["width", "height", "background-color", "background-image", "background-repeat", "text-align", "padding-top", "padding-right", "padding-bottom", "padding-left"],
 	renderer: Backbone.View.extend({
 		tagName: "div",
 		initialize: function(){
@@ -26,7 +27,7 @@ widgets["twitter"] = Widget.extend({
 			}, this);
 		},
 		render: function(opt){
-			if(!opt){
+			if(!opt || !opt['dist']){
 				this.el.innerHTML = "Twitter widget (<em>"+this.model.get("t_type")+"</em>): Preview disabled";
 				this.$el.css({
 					display: "block",
@@ -41,7 +42,7 @@ widgets["twitter"] = Widget.extend({
 			}
 		},
 		javascripts: function(opt){
-			if(!opt){
+			if(!opt || !opt['dist']){
 				return [];
 			}
 			var widgetData = {

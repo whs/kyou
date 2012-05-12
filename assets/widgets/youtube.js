@@ -2,6 +2,7 @@ widgets["youtube"] = Widget.extend({
 	type: "youtube",
 	name: "YouTube",
 	description: "YouTube Video",
+	disable_config: ["background-image", "background-repeat", "text-align", "color", "background-color", "padding-top", "padding-right", "padding-bottom", "padding-left"],
 	config: TemplConfigView.extend({
 		template: "youtube",
 		events: function(){

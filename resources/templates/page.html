@@ -377,6 +377,9 @@ $(function(){
 				$("strong", ele).text(widget.name+":");
 				$(".widgetname", ele).text(widget.get("name"));
 				$("<small></small>").text("#"+widget.get("id")).appendTo(ele);
+				if(widget.disable_config.indexOf("*") != -1){
+					$(".cssfix", ele).remove();
+				}
 				ele.appendTo("#widgetlist");
 				v.on("change:name", function(model, val){
 					$(".widgetname", ele).text(val);
@@ -528,7 +531,11 @@ $(function(){
 		curWidget = page.widgets.get($(this).parents("li").data("id"));
 		$("#widgetname").text(curWidget.get("name")+" ");
 		$("<small>").text("#"+curWidget.get("id")).appendTo("#widgetname");
-		widgetConfig = null;
+		widgetConfig = new CSSConfigView({
+			model: curWidget,
+			el: $("#widgetconfig")
+		});
+		widgetConfig.render();
 		return false;
 	});
 	$("#pagesetup").submit(function(){
@@ -573,7 +580,7 @@ $(function(){
 	});
 	$("#newrev").submit(function(){
 		// Rerender
-		page.renderer.render({ preview: true });
+		page.renderer.render({ revision: true });
 		$("input", this).attr("disabled", true);
 		setTimeout(_.bind(function(){
 			$("input", this).attr("disabled", false);

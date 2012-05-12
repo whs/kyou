@@ -2,6 +2,7 @@ widgets["style"] = Widget.extend({
 	type: "style",
 	name: "CSS",
 	description: "Custom CSS",
+	disable_config: ["*"],
 	config: TemplConfigView.extend({
 		template: "style"
 	}),

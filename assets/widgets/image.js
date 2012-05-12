@@ -2,6 +2,7 @@ widgets["image"] = Widget.extend({
 	type: "image",
 	name: "Image",
 	description: "Nice boat!",
+	disable_config: ["background-image", "background-repeat", "color", "background-color", "padding-top", "padding-right", "padding-bottom", "padding-left"],
 	config: TemplConfigView.extend({
 		template: "image"
 	}),
