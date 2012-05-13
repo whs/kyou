@@ -181,9 +181,10 @@ var uploaded = 0;
 var javascripts = [];
 var stylesheets = [];
 var resources = [];
+var page;
 function render(ind){
 	$("#action").text("Rendering "+(ind+1)+"/"+project.pages.length);
-	var page = project.pages.at(ind);
+	page = project.pages.at(ind);
 	var noNLfilter = function(x){
 		return x.indexOf("\n") == -1;
 	}
@@ -309,5 +310,4 @@ $(function(){
 <script src="/assets/handlebars.js" async></script>
 <script src="/layouts.js" async></script>
 <script src="/widgets.js" async></script>
-{$templates}
 {/block}

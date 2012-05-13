@@ -35,6 +35,23 @@ jQuery.fn.extend({
 	}
 });
 
+var $templates = {};
+function load_template(kind, id){
+	if(!Handlebars){
+		throw("Handlebars is not loaded!");
+	}
+	if($templates[kind+"/"+id]){
+		return $templates[kind+"/"+id];
+	}else{
+		//Handlebars.compile($("#tmpl_layout_"+this.model.get("layout")).html().replace(/^<!-- /, "").replace(/ -->$/, ""));
+		$templates[kind+"/"+id] = Handlebars.compile($.ajax({
+			async: false,
+			url: "/handlebars/" + kind +"/" + id + ".html"
+		}).responseText);
+		return $templates[kind+"/"+id];
+	}
+}
+
 var Project = Backbone.Model.extend({
 	urlRoot: "/projects/",
 	initialize: function(){
@@ -111,14 +128,17 @@ var Page = Backbone.Model.extend({
 		render: function(opt){
 			this.rendering = true;
 			var layout = new layouts[this.model.get("layout")];
-			var templ = Handlebars.compile($("#tmpl_layout_"+this.model.get("layout")).html());
+			layout.page = this.model;
+			var layoutRenderer = new layout.renderer({
+				model: layout,
+				el: this.el
+			});
 
-			var javascripts = (_.isFunction(layout.javascripts) ? layout.javascripts() : layout.javascripts) || [];
-			var stylesheets = (_.isFunction(layout.stylesheets) ? layout.stylesheets() : layout.stylesheets) || [];
+			var javascripts = (_.isFunction(layoutRenderer.javascripts) ? layoutRenderer.javascripts() : layoutRenderer.javascripts) || [];
+			var stylesheets = (_.isFunction(layoutRenderer.stylesheets) ? layoutRenderer.stylesheets() : layoutRenderer.stylesheets) || [];
 
-			var tmplData = this.model.toJSON();
-			tmplData.project = this.model.project.toJSON();
-			this.el.innerHTML = templ(tmplData);
+			layoutRenderer.render(opt);
+
 			var target = this.$(".widgetsInject").get(0);
 			// Render each widgets!
 			this.model.widgets.each(function(widget){
@@ -134,20 +154,30 @@ var Page = Backbone.Model.extend({
 				stylesheets = _.union(stylesheets, (_.isFunction(renderer.stylesheets) ? renderer.stylesheets(opt) : renderer.stylesheets) || []);
 			}, this);
 			// Somehow injecting this instantly breaks the iframe.
+			var cssInjectPos = this.$("style,link").eq(0);
 			setTimeout(_.bind(function(){
 				_.each(stylesheets, function(v){
 					if(v.indexOf("\n") != -1){
-						$("<style>").html(v).appendTo(this.$("head"));
+						var ele = $("<style>").html(v)
 					}else{
-						$("<link rel='stylesheet'>").attr('href', (v.indexOf("http") == 0 ? "" : "/")+v).appendTo(this.$("head"));
+						var ele = $("<link rel='stylesheet'>").attr('href', (v.indexOf("http") == 0 ? "" : "/")+v);
+					}
+					if(cssInjectPos.length > 0){
+						ele.insertBefore(this.$("head"));
+					}else{
+						ele.appendTo(this.$("head"));
 					}
 				}, this);
 				setTimeout(_.bind(function(){
 					this.rendering = false;
 				}, this), 50);
 			}, this), 10);
-			_.each(javascripts, function(v){
-				// Fuck jQuery. Injecting <script> does not work. Hardcore time!
+			var inProduction = opt && (opt['dist'] || opt['revision']); // in production mode
+			var loadJS = _.bind(function(){
+				var v = javascripts.shift();
+				if(!v){
+					return;
+				}
 				var ele = document.createElement("script");
 				ele.type = "text/javascript";
 				if(v.indexOf("\n") != -1){
@@ -155,13 +185,26 @@ var Page = Backbone.Model.extend({
 				}else{
 					ele.src = (v.indexOf("http") == 0 ? "" : "/") + v;
 				}
+				if(!inProduction){
+					ele.onload = loadJS;
+				}
 				this.$("body").get(0).appendChild(ele);
 			}, this);
+			if(inProduction){
+				while(javascripts.length > 0){
+					loadJS();
+				}
+			}else{
+				loadJS();
+			}
 			this.model.trigger("render");
 		},
 		stylesheets: function(opt){
 			var layout = new layouts[this.model.get("layout")];
-			var stylesheets = (_.isFunction(layout.stylesheets) ? layout.stylesheets(opt) : layout.stylesheets) || [];
+			var layoutRenderer = new layout.renderer({
+				model: layout
+			});
+			var stylesheets = (_.isFunction(layoutRenderer.stylesheets) ? layoutRenderer.stylesheets(opt) : layoutRenderer.stylesheets) || [];
 			this.model.widgets.each(function(widget){
 				var renderer = new widget.renderer({
 					model: widget
@@ -172,7 +215,10 @@ var Page = Backbone.Model.extend({
 		},
 		javascripts: function(opt){
 			var layout = new layouts[this.model.get("layout")];
-			var javascripts = (_.isFunction(layout.javascripts) ? layout.javascripts(opt) : layout.javascripts) || [];
+			var layoutRenderer = new layout.renderer({
+				model: layout
+			});
+			var javascripts = (_.isFunction(layoutRenderer.javascripts) ? layoutRenderer.javascripts(opt) : layoutRenderer.javascripts) || [];
 			this.model.widgets.each(function(widget){
 				var renderer = new widget.renderer({
 					model: widget
@@ -183,7 +229,10 @@ var Page = Backbone.Model.extend({
 		},
 		resources: function(opt){
 			var layout = new layouts[this.model.get("layout")];
-			var resources = (_.isFunction(layout.resources) ? layout.resources(opt) : layout.resources) || [];
+			var layoutRenderer = new layout.renderer({
+				model: layout
+			});
+			var resources = (_.isFunction(layoutRenderer.resources) ? layoutRenderer.resources(opt) : layoutRenderer.resources) || [];
 			this.model.widgets.each(function(widget){
 				var renderer = new widget.renderer({
 					model: widget
@@ -232,7 +281,7 @@ var Widget = Backbone.Model.extend({
 	}),
 	renderer: Backbone.View.extend({
 		render: function(){
-			this.$el.html("<div class='alert alert-info'>Widget does not define renderer!</div>");
+			this.el.innerHTML = load_template("widgets", this.model.type)(this.model.toJSON());
 		},
 		resources: [],
 		javascripts: [],
@@ -278,9 +327,27 @@ var Layout = Backbone.Model.extend({
 	icon_small: "/assets/img/unknown.small.png",
 	// 64x64
 	icon_large: "/assets/img/unknown.large.png",
-	javascripts: [],
-	stylesheets: [],
-	resources: [],
+	check_depends: function(){
+		return true;
+	},
+	renderer: Backbone.View.extend({
+		get_data: function(opt){
+			var data = this.model.page.toJSON();
+			data.project = this.model.page.project.toJSON();
+			return data;
+		},
+		render: function(opt){
+			this.el.innerHTML = load_template("layout", this.model.type)(this.get_data(opt));
+			// run all JavaScripts
+			var self = this;
+			this.$("script").each(function(){
+				self.el.parentNode.defaultView.eval(this.textContent);
+			});
+		},
+		resources: [],
+		javascripts: [],
+		stylesheets: []
+	})
 });
 
 var TemplConfigView = Backbone.View.extend({
@@ -289,7 +356,7 @@ var TemplConfigView = Backbone.View.extend({
 		"submit form": "save",
 	},
 	initialize: function(){
-		this.template = Handlebars.compile($("#tmpl_config_"+this.template).html());
+		this.template = load_template("config", this.template);
 	},
 	render: function(){
 		var modelData = this.model.toJSON();
@@ -319,6 +386,39 @@ var TemplConfigView = Backbone.View.extend({
 	},
 	unload: function(){
 		this.undelegateEvents();
+	}
+});
+
+var TemplLayoutConfigView = TemplConfigView.extend({
+	render: function(){
+		var modelData = this.model.page.get("config_"+this.model.type) || {};
+		this.el.innerHTML = this.template(modelData);
+		_.each(modelData, function(v,k){
+			var input = this.$("[name="+k+"]");
+			if(input.attr("type") == "checkbox" || input.attr("type") == "radio"){
+				input.attr("checked", v);
+			}else{
+				input.val(v);
+			}
+		}, this);
+	},
+	save: function(e){
+		var setDict = this.model.page.get("config_"+this.model.type) || {};
+		_.each($(e.target).serializeJSON(), function(v,k){
+			setDict[k] = v;
+		}, this);
+		var model = this.model;
+		$("input[type=checkbox]:not(:checked)", e.target).each(function(){
+			setDict[this.name] = false;
+		});
+		this.model.page.set("config_"+this.model.type, setDict).trigger("change");
+
+		this.$("input[type=submit]").val("Saved").attr("disabled", true);
+		page.renderer.render();
+		setTimeout(function(){
+			this.$("input[type=submit]").val("Save").attr("disabled", false);
+		}, 500);
+		return false;
 	}
 });
 
@@ -393,7 +493,6 @@ var CSSConfigView = TemplConfigView.extend({
 		this.$("form .active[data-value]").each(function(){
 			out[$(this).parents("[data-name]").data("name")] = $(this).data("value");
 		});
-		console.log(out);
 		this.model.set("_css", out).trigger("change");
 		this.$("input[type=submit]").val("Saved").attr("disabled", true);
 		setTimeout(function(){

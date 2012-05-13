@@ -104,7 +104,6 @@ class Fuko extends UI{
 			die();
 		}
 		$this->smarty->assign("project", $project);
-		$this->smarty->assign("templates", $this->get_templates("layout").$this->get_templates("widgets"));
 		$this->smarty->display("fuko_2.html");
 	}
 

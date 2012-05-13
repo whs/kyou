@@ -27,7 +27,7 @@ widgets["twitter"] = Widget.extend({
 			}, this);
 		},
 		render: function(opt){
-			if(!opt || !opt['dist']){
+			/*if(!opt || !opt['dist']){
 				this.el.innerHTML = "Twitter widget (<em>"+this.model.get("t_type")+"</em>): Preview disabled";
 				this.$el.css({
 					display: "block",
@@ -39,12 +39,12 @@ widgets["twitter"] = Widget.extend({
 					overflow: "hidden",
 					borderRadius: "10px"
 				});
-			}
+			}*/
 		},
 		javascripts: function(opt){
-			if(!opt || !opt['dist']){
+			/*if(!opt || !opt['dist']){
 				return [];
-			}
+			}*/
 			var widgetData = {
 				version: 2,
 				id: this.model.get("id"),

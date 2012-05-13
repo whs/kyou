@@ -186,12 +186,12 @@ class Deleter extends Base{
 		$project = $this->DB->projects->findOne(array(
 			"_id" => new MongoId($this->phraw->request['pid']),
 			"user" => $this->user['_id']
-		), array("_id"));
+		), array("_id", "user"));
 		if(!$project){
 			$this->fatal_error("Project not found");
 		}
 		if($project['user'][0] != $this->user['_id']){
-			$this->fatal_error("User does not own this project");	
+			$this->fatal_error("User does not own this project");
 		}
 		$this->DB->projects->remove(array(
 			"_id" => $project['_id']

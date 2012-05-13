@@ -256,6 +256,7 @@ $(function(){
 					curProj.off("reset add destroy");
 				}
 				curProj = projects.get($(this).val());
+				document.title = curProj.get("name") + " | {$strings.app}";
 				var owner = curProj.get("user")[0];
 				$("#projowner").val(owner);
 				var userlist = curProj.get("user").slice(1);

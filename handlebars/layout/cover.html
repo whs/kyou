@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>{{project.name}}</title>
+	<link rel="apple-touch-icon" href="icon.png">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=1024,user-scalable=no">
+	<style>
+html,body{height: 100%;}
+#navbar{
+	position: absolute !important;
+	bottom: -80px !important;
+	opacity: 1;
+}
+h1{margin:0; font-size: 18pt;}
+h1 img{
+	vertical-align: middle;
+}
+html{
+	width: 100%;
+	overflow-x: hidden;
+}
+#container{
+	width: 92%;
+	background: transparent;
+	height: 100%;
+	padding-top: 1%;
+	margin-left: 8%;
+}
+.box{
+	float: left;
+	width: 25%;
+	background: #eee;
+	position: relative;
+	-webkit-transition: -webkit-transform ease-out 100ms, -webkit-box-shadow ease-out 100ms;
+}
+.left .box:hover{
+	-webkit-transform: scale(1.1);
+	position: relative;
+	z-index: 5000;
+	-webkit-box-shadow: black 0px 2px 20px;
+}
+.box.double{
+	width: 40%;
+}
+.box.featured{
+	height: 50%;
+	width: 40%;
+	float: left;
+	background: transparent;
+	border: none;
+}
+.box.featured:hover{
+	-webkit-transform: scale(1.1);
+}
+.featured img{
+	max-width: 100%;
+	vertical-align: middle;
+	text-align: center;
+}
+.logobox{
+	margin-top: 5%;
+	color: red;
+	text-shadow: white 0px -1px 5px, white -1px -1px 5px, white -1px 0px 5px, white 1px 0px 5px, white 0px 1px 5px, white 1px 1px 5px;
+	position: relative;
+}
+.logobox .likebox{
+	padding: 5px;
+	-webkit-border-radius: 5px;
+	background: rgba(255,255,255,0.8);
+}
+.box a{
+	width: 100%;
+	height: 100%;
+	display: block;
+	overflow: hidden;
+	line-height: 100%;
+}
+.left .box a img{
+	width: 100%;
+	height: 100%;
+	image-rendering: optimizeQuality;
+}
+.col{
+	height: 100%;
+	width: 50%;
+	float: left;
+	margin-left: 0;
+}
+.right.col .box{
+	width: 88%;
+	float: none;
+	display: block;
+}
+.coverbg{
+	position: absolute;
+	top: 0px;
+	left: -5%;
+	width: 120%;
+	z-index:-1000;
+	image-rendering: optimizeQuality;
+	-webkit-transition: opacity linear 1.5s, -webkit-transform linear 10s;
+}
+#covercontain{
+	position: absolute;
+	height: 100%;
+	overflow: hidden;
+	width: 100%;
+}
+#navbar{
+	background: #111;
+}
+.ads{
+	margin-top: 5%;
+}
+	</style>
+	<script>
+window.coverImg = {{#if config_cover.bg}}{{{config_cover.bg}}}{{else}}[]{{/if}};
+	</script>
+</head>
+<body>
+<div id="covercontain">
+</div>
+<div id="container">
+	<div class="left col widgetsInject"></div>
+	<div class="right col">
+		{{#if config_cover.featured_img}}
+		<div class="box featured" style="display: table;">
+			<a href="{{config_cover.featured_link}}" style="display: table-cell; vertical-align: middle;"><img src="{{config_cover.featured_img}}"></a>
+		</div>
+		{{/if}}
+		<div class="logobox" style="background: transparent; border: none; text-align: center;">
+			<h1>
+				<img src="{{config_cover.img}}" style="display: block; margin: 0 auto 10px auto; height: 20%;">
+				{{{config_cover.issue}}} {{#if config_cover.name}}<span style="color:#ff9600">{{{config_cover.name}}}</span>{{/if}}
+				{{#if config_cover.facebook}}<br><iframe src="https://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2F{{config_cover.facebook}}&amp;width=292&amp;height=62&amp;colorscheme=light&amp;show_faces=false&amp;border_color&amp;stream=false&amp;header=false&amp;appId=210446685685430" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:292px; height:62px;" allowTransparency="true" class="likebox"></iframe>{{/if}}
+			</h1>
+		</div>
+	</div>
+	<br style="clear: both;">
+</div>
+</body>
+</html>
