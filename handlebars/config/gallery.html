@@ -1,0 +1,99 @@
+<form action="" id="form_galleryimg">
+	<ul class="widgetlist">
+		<li>Loading...</li>
+	</ul>
+	<div class="toolbar" style="width: auto;">
+		<input type="text" name="imgname" placeholder="Image description">
+		<button class="btn btn-primary" id="pick_img"><i class="icon-white icon-plus"></i> Add</button>
+	</div>
+</form>
+<form action="" class="form-horizontal">
+	<div class="control-group">
+		<label class="control-label">Widget type</label>
+		<div class="controls">
+			<select name="display">
+				<option value="slider">Slider</option>
+				<option value="images">Images</option>
+			</select>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Image size</label>
+		<div class="controls">
+			<input type="number" name="width" class="input-mini"> x <input type="number" name="height" class="input-mini">
+			<div class="help-block widgetconfig widget_images">Optional, but highly recommended.</div>
+			<div class="help-block widgetconfig widget_slider">Required. Image is not scaled.</div>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_images">
+		<label class="control-label">Margin between images</label>
+		<div class="controls">
+			<input type="number" name="margin" class="input-mini" value="10">
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_images">
+		<label class="control-label">Hover to zoom</label>
+		<div class="controls">
+			<input type="checkbox" name="hoverZoom" value="true">
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_slider">
+		<label class="control-label">Effect</label>
+		<div class="controls">
+			<select name="effect">
+				<option value="random">Random</option>
+				<option value="fade">Fade</option>
+				<option value="fold">Fold</option>
+				<option value="slideInLeft">Slide from left</option>
+				<option value="slideInRight">Slide from right</option>
+			</select>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_slider">
+		<label class="control-label">Effect duration</label>
+		<div class="controls">
+			<input type="number" min="0" name="animSpeed" value="500" class="input-mini">
+			<span class="help-inline">ms</span>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_slider">
+		<label class="control-label">Slide duration</label>
+		<div class="controls">
+			<input type="number" min="0" name="pauseTime" value="3000" class="input-mini">
+			<span class="help-inline">ms</span>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_slider">
+		<label class="control-label">Left/Right button</label>
+		<div class="controls">
+			<input type="checkbox" name="directionNav" value="true" checked>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_slider">
+		<label class="control-label">Left/Right autohide</label>
+		<div class="controls">
+			<input type="checkbox" name="directionNavHide" value="true" checked>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_slider">
+		<label class="control-label">Bottom navigation</label>
+		<div class="controls">
+			<input type="checkbox" name="controlNav" value="true" checked>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_slider">
+		<label class="control-label">Pause on hover</label>
+		<div class="controls">
+			<input type="checkbox" name="pauseOnHover" value="true" checked>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_slider">
+		<label class="control-label">Random start</label>
+		<div class="controls">
+			<input type="checkbox" name="randomStart" value="true">
+		</div>
+	</div>
+	<div class="form-actions">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>

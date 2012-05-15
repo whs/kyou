@@ -19,13 +19,9 @@ widgets["twitter"] = Widget.extend({
 		}
 	}),
 	disable_config: ["width", "height", "background-color", "background-image", "background-repeat", "text-align", "padding-top", "padding-right", "padding-bottom", "padding-left"],
+	render_on_change: true,
 	renderer: Backbone.View.extend({
 		tagName: "div",
-		initialize: function(){
-			this.model.on("change", function(){
-				this.render();
-			}, this);
-		},
 		render: function(opt){
 			/*if(!opt || !opt['dist']){
 				this.el.innerHTML = "Twitter widget (<em>"+this.model.get("t_type")+"</em>): Preview disabled";

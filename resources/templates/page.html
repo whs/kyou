@@ -78,7 +78,7 @@ html,body{
 	color: #888;
 }
 .imgpick{
-	width: 330px;
+	width: 340px;
 	height: 200px;
 	overflow: auto;
 	border: #aaa solid 1px;
@@ -155,7 +155,6 @@ html,body{
 </style>
 {/block}
 {block body}
-<iframe id="pagepreview" sandbox="allow-scripts allow-same-origin"></iframe>
 <div id="sidebar">
 	<div class="toolbar" style="margin: -10px; margin-bottom: 10px; width: auto;">
 		<a href="#" id="popout" class="btn" title="Popout preview"><i class="icon-share-alt"></i></a>
@@ -297,7 +296,7 @@ html,body{
 	</div>
 	<div class="modal-body">
 		<input type="text" name="file" required readonly style="width: 97%; margin-bottom: 10px; border:none; background:transparent; box-shadow: none;">
-		<iframe src="about:blank"></iframe>
+		<iframe src="/project/{$project.id}/files/@pick"></iframe>
 	</div>
 	<div class="modal-footer">
 		<input type="submit" value="Select" class="btn btn-primary">
@@ -307,7 +306,7 @@ html,body{
 <script src="/widgets.js"></script>
 <script>
 var page = new Page({$page|json_encode});
-var curWidget, widgetConfig, curLayout;
+var curWidget, widgetConfig, curLayout, inPopout=false;
 var ASTimer;
 
 function save(){
@@ -338,7 +337,7 @@ function pick_page(cb){
 	return true;
 }
 function pick_file(cb){
-	$("#selectitem iframe").attr("src", "/project/{$project.id}/files/@pick");
+	//$("#selectitem iframe").attr("src", "/project/{$project.id}/files/@pick");
 	$("#selectitem").unbind("submit").bind("submit", function(){
 		cb($("input[name=file]", this).val());
 		$(this).modal("hide");
@@ -362,9 +361,26 @@ $(function(){
 		$("#pagepreview").css("width", $(window).innerWidth() - $("#sidebar:visible").outerWidth());
 		$("#wl_resize").css("width", "auto");
 	}).resize();
-	page.renderer.setElement($("#pagepreview").get(0).contentDocument.documentElement);
+	page.on("beforerender", function(){
+		$("#pagepreview").remove();
+		if(inPopout){
+			var previewWnd = window.open("", "preview", "toolbar=no,menubar=no");
+			page.renderer.setElement(previewWnd.document.documentElement);
+			previewWnd.onunload = function(){
+				inPopout = false;
+				$("#sidebar").css("width", "400px");
+				$("#popout,#pagepreview,#hidesidebar").show();
+				page.renderer.render();
+			};
+		}else{
+			var iframe = $('<iframe id="pagepreview" sandbox="allow-scripts allow-same-origin"></iframe>').css("width", $(window).innerWidth() - $("#sidebar:visible").outerWidth());
+			$("body").prepend(iframe);
+			page.renderer.setElement(iframe.get(0).contentDocument.documentElement);
+		}
+	});
 	page.on("render", function(){
-		$("#pagepreview").css("height", Math.max($(window).height()-5, $("#pagepreview").get(0).contentWindow.innerHeight));
+		//$("#pagepreview").css("height", Math.max($(window).height()-5, $("#pagepreview").get(0).contentWindow.innerHeight));
+		$("#pagepreview").css("height", $(window).height()-3);
 	});
 	page.on("reset", function(){
 		page.widgets.on("reset add destroy", function(){
@@ -379,6 +395,11 @@ $(function(){
 				$("<small></small>").text("#"+widget.get("id")).appendTo(ele);
 				if(widget.disable_config.indexOf("*") != -1){
 					$(".cssfix", ele).remove();
+				}
+				if(widget.render_on_change){
+					v.on("change", function(){
+						page.renderer.render();
+					});
 				}
 				ele.appendTo("#widgetlist");
 				v.on("change:name", function(model, val){
@@ -464,7 +485,8 @@ $(function(){
 		}
 		if(confirm("Delete "+curWidget.name.toLowerCase()+" widget \""+curWidget.get("name")+"\"?")){
 			curWidget.trigger("destroy");
-			page.widgets.remove(curWidget).trigger("destroy");
+			page.widgets.remove(curWidget);
+			page.renderer.render();
 		}else{
 			return;
 		}
@@ -485,17 +507,9 @@ $(function(){
 	});
 	$("#popout").click(function(){
 		$("#pagepreview,#popout,#hidesidebar").hide();
-		var previewWnd = window.open("", "preview", "toolbar=no,menubar=no");
-		page.renderer.setElement(previewWnd.document.documentElement);
-		page.renderer.render();
 		$("#sidebar").css("width", "100%");
-		previewWnd.onunload = function(){
-			$("#sidebar").css("width", "400px");
-			$("#popout,#pagepreview,#hidesidebar").show();
-			$(window).resize();
-			page.renderer.setElement($("#pagepreview").get(0).contentDocument.documentElement);
-			page.renderer.render();
-		};
+		inPopout = true;
+		page.renderer.render();
 		return false;
 	});
 	$(".imgpick").delegate(".pickitem", "click", function(){
@@ -649,10 +663,9 @@ $(function(){
 			$("#widgetlist li").each(function(k,v){
 				var widget = page.widgets.get($(v).data("id"));
 				widget.weight = k * 100;
-				widget.trigger("change");
 			});
 			page.widgets.sort();
-			save();
+			page.widgets.trigger("change");
 		}
 	}).disableSelection();
 	$("#wl_resize").resizable({

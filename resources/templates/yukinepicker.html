@@ -43,6 +43,7 @@
 $(function(){
 	$("a[href=#]").click(function(){
 		parent.window.yukine_select($(this).data("file"));
+		return false;
 	});
 })
 	</script>

@@ -1,0 +1,31 @@
+.widget_gallery.display_images .gallery_image{
+	float: left;
+	border: black solid 1px;
+	box-shadow: black 0px 5px 10px;
+	overflow: hidden;
+	position: relative;
+	background: black;
+	z-index: 400;
+}
+.widget_gallery.display_images .gallery_image div{
+	background: rgba(0,0,0,0.5);
+	color: white;
+	position: absolute;
+	bottom: 0px; left: 0px;
+	width: 100%;
+	font-family: Helvetica, verdana, sans-serif;
+	text-align: center;
+	font-size: 10pt;
+	padding: 5px;
+}
+.hoverzoom .gallery_image{
+	transition: transform ease-out 250ms;
+	-webkit-transition: -webkit-transform ease-out 250ms;
+	-moz-transition: -moz-transform ease-out 250ms;
+}
+.hoverzoom .gallery_image:hover{
+	-webkit-transform: scale(1.5);
+	-moz-transform: scale(1.5);
+	transform: scale(1.5);
+	z-index: 500;
+}

@@ -2,6 +2,8 @@ widgets["text"] = Widget.extend({
 	type: "text",
 	name: "Text",
 	description: "HTML text",
+	icon_large: "/assets/img/html.large.png",
+	icon_small: "/assets/img/html.small.png",
 	config: TemplConfigView.extend({
 		template: "text",
 		events: function(){

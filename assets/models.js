@@ -122,13 +122,17 @@ var Page = Backbone.Model.extend({
 	_renderer: Backbone.View.extend({
 		rendering: false,
 		events: {
-			"click a": "stopClick",
+			"click a[href]": "stopClick",
 			"submit form": "stopClick",
 		},
 		render: function(opt){
+			if(this.rendering) return;
+			console.time("render");
+			this.model.trigger("beforerender");
 			this.rendering = true;
 			var layout = new layouts[this.model.get("layout")];
 			layout.page = this.model;
+			this.el.innerHTML = "";
 			var layoutRenderer = new layout.renderer({
 				model: layout,
 				el: this.el
@@ -138,6 +142,10 @@ var Page = Backbone.Model.extend({
 			var stylesheets = (_.isFunction(layoutRenderer.stylesheets) ? layoutRenderer.stylesheets() : layoutRenderer.stylesheets) || [];
 
 			layoutRenderer.render(opt);
+
+			if(!opt || !!opt.dist){
+				$("<base>").attr("href", window.location.protocol + "//" + window.location.hostname + "/").appendTo(this.$("head"));
+			}
 
 			var target = this.$(".widgetsInject").get(0);
 			// Render each widgets!
@@ -170,6 +178,8 @@ var Page = Backbone.Model.extend({
 				}, this);
 				setTimeout(_.bind(function(){
 					this.rendering = false;
+					this.model.trigger("render");
+					console.timeEnd("render");
 				}, this), 50);
 			}, this), 10);
 			var inProduction = opt && (opt['dist'] || opt['revision']); // in production mode
@@ -197,7 +207,6 @@ var Page = Backbone.Model.extend({
 			}else{
 				loadJS();
 			}
-			this.model.trigger("render");
 		},
 		stylesheets: function(opt){
 			var layout = new layouts[this.model.get("layout")];
@@ -378,6 +387,7 @@ var TemplConfigView = Backbone.View.extend({
 		$("input[type=checkbox]:not(:checked)", e.target).each(function(){
 			model.set(this.name, false);
 		});
+		model.trigger("change");
 		this.$("input[type=submit]").val("Saved").attr("disabled", true);
 		setTimeout(function(){
 			this.$("input[type=submit]").val("Save").attr("disabled", false);
@@ -434,6 +444,9 @@ function format_view(model){
 	if(!css['background-repeat']){
 		css['background-repeat'] = "no-repeat";
 	}
+	if(css['background-image']){
+		css['background-image'] = "url("+css['background-image']+")";
+	}
 	_.each(["width", "height", "margin-top", "margin-right", "margin-bottom", "margin-left"], function(x){
 		if(css[x]){
 			css[x] = css[x] + "px";
@@ -447,7 +460,7 @@ function format_view(model){
 	var customcss = css['customcss'];
 	delete css['customcss'];
 	el.css(css);
-	el.attr("style", (el.attr("style") + " ;; " || "") + customcss);
+	el.attr("style", ((el.attr("style") + " ;; ") || "") + customcss);
 }
 
 var CSSConfigView = TemplConfigView.extend({
