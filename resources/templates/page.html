@@ -380,7 +380,7 @@ $(function(){
 	});
 	page.on("render", function(){
 		//$("#pagepreview").css("height", Math.max($(window).height()-5, $("#pagepreview").get(0).contentWindow.innerHeight));
-		$("#pagepreview").css("height", $(window).height()-3);
+		$("#pagepreview").css("height", $(window).height()-5);
 	});
 	page.on("reset", function(){
 		page.widgets.on("reset add destroy", function(){
@@ -484,9 +484,8 @@ $(function(){
 			return false;
 		}
 		if(confirm("Delete "+curWidget.name.toLowerCase()+" widget \""+curWidget.get("name")+"\"?")){
+			page.widgets.remove(curWidget).trigger("destroy");
 			curWidget.trigger("destroy");
-			page.widgets.remove(curWidget);
-			page.renderer.render();
 		}else{
 			return;
 		}

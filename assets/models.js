@@ -194,11 +194,14 @@ var Page = Backbone.Model.extend({
 					ele.innerHTML = v;
 				}else{
 					ele.src = (v.indexOf("http") == 0 ? "" : "/") + v;
-				}
-				if(!inProduction){
-					ele.onload = loadJS;
+					if(!inProduction){
+						ele.onload = loadJS;
+					}
 				}
 				this.$("body").get(0).appendChild(ele);
+				if(v.indexOf("\n") != -1){
+					loadJS();
+				}
 			}, this);
 			if(inProduction){
 				while(javascripts.length > 0){
@@ -361,6 +364,7 @@ var Layout = Backbone.Model.extend({
 
 var TemplConfigView = Backbone.View.extend({
 	template: "",
+	autocommit: true,
 	events: {
 		"submit form": "save",
 	},
@@ -387,7 +391,9 @@ var TemplConfigView = Backbone.View.extend({
 		$("input[type=checkbox]:not(:checked)", e.target).each(function(){
 			model.set(this.name, false);
 		});
-		model.trigger("change");
+		if(this.autocommit){
+			model.trigger("change");
+		}
 		this.$("input[type=submit]").val("Saved").attr("disabled", true);
 		setTimeout(function(){
 			this.$("input[type=submit]").val("Save").attr("disabled", false);
