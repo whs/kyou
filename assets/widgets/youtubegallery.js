@@ -1,12 +1,9 @@
-widgets["youtube"] = Widget.extend({
-	type: "youtube",
-	name: "YouTube",
-	description: "YouTube Video",
-	icon_large: "/assets/img/youtube.large.png",
-	icon_small: "/assets/img/youtube.small.png",
-	disable_config: ["background-image", "background-repeat", "text-align", "color", "background-color", "padding-top", "padding-right", "padding-bottom", "padding-left"],
+widgets["youtubegallery"] = Widget.extend({
+	type: "youtubegallery",
+	name: "YT Gallery",
+	description: "List of YouTube videos with thumbnail",
 	config: TemplConfigView.extend({
-		template: "youtube",
+		template: "youtubegallery",
 		events: function(){
 			return _.extend({
 				"submit #form_addvideo": "addclip",
@@ -81,25 +78,35 @@ widgets["youtube"] = Widget.extend({
 		}
 	}),
 	renderer: Backbone.View.extend({
-		tagName: "iframe",
+		className: "ytlist",
 		initialize: function(){
 			this.model.on("change", function(){
 				this.render();
 			}, this);
 		},
 		render: function(){
-			this.el.style.border = "none";
-			var param = _.pick(this.model.toJSON(), "playlist", "autohide", "autoplay", "controls", "iv_load_policy", "loop", "modestbranding", "rel", "showinfo", "theme", "start");
-			this.el.style.width = "420px";
-			this.el.style.height = "360px";
-			if(!param['playlist'] || param['playlist'].length == 0){
-				this.el.src = "data:text/plain,No playlist";
+			this.el.innerHTML = "";
+			var param = _.pick(this.model.toJSON(), "autohide", "controls", "iv_load_policy", "loop", "modestbranding", "showinfo", "theme");
+			var playlist = this.model.get("playlist");
+			if(!playlist || playlist.length == 0){
+				this.el.innerHTML = "No playlist."
 				return;
 			}
-			param['playlist'] = _.clone(param['playlist']);
-			var firstClip = param['playlist'].shift();
-			param['playlist'] = param['playlist'].join(",");
-			this.el.src = "http://www.youtube.com/embed/" + firstClip + "?" + $.param(param);
-		}
+			$("<iframe allowfullscreen>").attr("src", "https://www.youtube.com/embed/" + playlist[0] + "?" + $.param(param)).appendTo(this.el);
+			param.autoplay = !!this.model.get("autoplay");
+			var target = $("<div class='ytimg'>").appendTo(this.el).attr("data-config", encodeURI(JSON.stringify(param)));
+			var plName = this.model.get("_playlist");
+			_.each(playlist, function(v,ind){
+				var link = $("<a>").attr("title", plName[v]);
+				if(ind == 0){
+					link.addClass("active");
+				}
+				$("<img>").attr("src", "https://img.youtube.com/vi/"+v+"/1.jpg").appendTo(link);
+				link.appendTo(target);
+			});
+			$("<div style='clear: both;'>").appendTo(this.el);
+		},
+		javascripts: ["assets/jquery.js", "files/ytgallery.js"],
+		stylesheets: ["files/ytgallery.css"],
 	}),
 });

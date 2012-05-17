@@ -2,6 +2,8 @@ widgets["wysiwyg"] = Widget.extend({
 	type: "wysiwyg",
 	name: "WYSIWYG",
 	description: "Free text with What You See Is What You Get editor",
+	icon_large: "/assets/img/wysiwyg.large.png",
+	icon_small: "/assets/img/wysiwyg.small.png",
 	config: Backbone.View.extend({
 		render: function(){
 			this.$el.html("<textarea></textarea><div class='alert alert-info'>To save, click <span style='width:16px;height:16px;background:url(/assets/ckeditor/skins/kama/icons.png) no-repeat 0px -32px;display:inline-block;vertical-align:middle;'></span></div>");

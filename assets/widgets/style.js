@@ -3,6 +3,8 @@ widgets["style"] = Widget.extend({
 	name: "CSS",
 	description: "Custom CSS",
 	disable_config: ["*"],
+	icon_large: "/assets/img/css.large.png",
+	icon_small: "/assets/img/css.small.png",
 	config: TemplConfigView.extend({
 		template: "style"
 	}),

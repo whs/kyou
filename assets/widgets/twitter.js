@@ -2,6 +2,8 @@ widgets["twitter"] = Widget.extend({
 	type: "twitter",
 	name: "Twitter",
 	description: "Live & realtime Twitter data",
+	icon_large: "/assets/img/twitter.large.png",
+	icon_small: "/assets/img/twitter.small.png",
 	config: TemplConfigView.extend({
 		template: "twitter",
 		render: function(){

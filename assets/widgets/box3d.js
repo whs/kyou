@@ -49,7 +49,7 @@ widgets["box3d"] = Widget.extend({
 			this.el.style.height=  "400px";
 		},
 		javascripts: function(opt){
-			var out = ["assets/three.js", "files/box3d.js"];
+			var out = ["assets/jquery.js", "assets/three.js", "files/box3d.js"];
 			var opt = {
 				zoom: parseInt(this.model.get("zoom")) || 700,
 				autorotate: !!this.model.get("autorotate"),
@@ -76,8 +76,6 @@ widgets["box3d"] = Widget.extend({
 				return u.replace(/^\/bookfiles\/[^\/]+\//, "");
 			}
 		},
-		resources: function(){
-			return ["files/help-3d.png"];
-		}
+		resources: ["files/help-3d.png"]
 	}),
 });

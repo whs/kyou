@@ -129,7 +129,7 @@ widgets["gallery"] = Widget.extend({
 		},
 		javascripts: function(opt){
 			var files = {
-				"slider": ["files/jquery.nivo.slider.pack.js"],
+				"slider": ["assets/jquery.js", "files/jquery.nivo.slider.pack.js"],
 				"images": []
 			}
 			var out = files[this.model.get("display")] || [];

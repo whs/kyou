@@ -2,6 +2,8 @@ widgets["cover_item"] = Widget.extend({
 	type: "cover_item",
 	name: "Item",
 	description: "Item in the front page",
+	icon_large: "/assets/img/img.large.png",
+	icon_small: "/assets/img/img.small.png",
 	config: TemplConfigView.extend({
 		template: "cover_item"
 	}),

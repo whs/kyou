@@ -1,0 +1,104 @@
+<form action="" class="form-horizontal" id="form_addvideo">
+	<fieldset>
+		<legend>Playlist</legend>
+		<ul class="widgetlist">
+			<li>Loading...</li>
+		</ul>
+		<div class="toolbar" style="width: auto;">
+			<input type="text" name="videoid" placeholder="Video ID" pattern="[a-zA-Z0-9-_]+" style="width: 310px;">
+			<button type="submit" class="btn btn-primary"><i class="icon-plus icon-white"></i></button>
+		</div>
+	</fieldset>
+</form>
+<form action="" class="form-horizontal">
+	<fieldset>
+		<legend>Parameters</legend>
+		<div class="control-group">
+			<label class="control-label">Autohide</label>
+			<div class="controls">
+				<select name="autohide">
+					<option value="2">Only progress bar</option>
+					<option value="1">Controls</option>
+					<option value="0">Disable</option>
+				</select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Autoplay</label>
+			<div class="controls">
+				<select name="autoplay">
+					<option value="1">On</option>
+					<option value="0">Off</option>
+				</select>
+				<div class="help-block">Take effect only when the user manually change video.</div>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Controls</label>
+			<div class="controls">
+				<select name="controls">
+					<option value="1">On</option>
+					<option value="0">Off</option>
+				</select>
+				<div class="help-block">Setting this to off is not recommended.</div>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Annotations</label>
+			<div class="controls">
+				<select name="iv_load_policy">
+					<option value="3">Off</option>
+					<option value="1">On</option>
+				</select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Loop</label>
+			<div class="controls">
+				<select name="loop">
+					<option value="0">Off</option>
+					<option value="1">On</option>
+				</select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Hide YT logo</label>
+			<div class="controls">
+				<select name="modestbranding">
+					<option value="0">Off</option>
+					<option value="1">On</option>
+				</select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Show related videos</label>
+			<div class="controls">
+				<select name="rel">
+					<option value="0">Off</option>
+					<option value="1">On</option>
+				</select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Show video info</label>
+			<div class="controls">
+				<select name="showinfo">
+					<option value="1">On</option>
+					<option value="0">Off</option>
+				</select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Theme</label>
+			<div class="controls">
+				<select name="theme">
+					<option value="dark">Dark</option>
+					<option value="light">Light</option>
+				</select>
+			</div>
+		</div>
+	</fieldset>
+	<div class="form-actions">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>

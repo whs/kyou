@@ -1,0 +1,26 @@
+.ytlist{
+	background: #222;
+	margin-bottom: 10px;
+}
+.ytlist iframe{
+	float: left;
+	margin: 5px;
+	width: 560px;
+	height: 315px;
+	border: none;
+}
+.ytlist .ytimg{
+	float: left;
+	width: 400px;
+	margin-left: 10px;
+}
+.ytlist a img{
+	padding: 1px;
+	opacity: 0.5;
+	cursor: pointer;
+}
+.ytlist .active img{
+	border: #555 solid 1px;
+	opacity: 1;
+	padding: 0;
+}
