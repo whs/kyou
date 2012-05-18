@@ -141,10 +141,15 @@ var Page = Backbone.Model.extend({
 			var javascripts = (_.isFunction(layoutRenderer.javascripts) ? layoutRenderer.javascripts() : layoutRenderer.javascripts) || [];
 			var stylesheets = (_.isFunction(layoutRenderer.stylesheets) ? layoutRenderer.stylesheets() : layoutRenderer.stylesheets) || [];
 
+			// Sometimes the layout put some image in. This should fix the link.
+			if((!opt || !opt.dist) && window["page"]){
+				$("<base>").attr("href", window.location.protocol + "//" + window.location.hostname + "/bookfiles/" + page.project.id + "/").appendTo(this.el);
+			}
+
 			layoutRenderer.render(opt);
 
-			if(!opt || !!opt.dist){
-				$("<base>").attr("href", window.location.protocol + "//" + window.location.hostname + "/").appendTo(this.$("head"));
+			if((!opt || !opt.dist) && window["page"]){
+				$("<base>").attr("href", window.location.protocol + "//" + window.location.hostname + "/bookfiles/" + page.project.id + "/").appendTo(this.$("head"));
 			}
 
 			var target = this.$(".widgetsInject").get(0);
@@ -376,8 +381,11 @@ var TemplConfigView = Backbone.View.extend({
 		this.el.innerHTML = this.template(modelData);
 		_.each(modelData, function(v,k){
 			var input = this.$("[name="+k+"]");
-			if(input.attr("type") == "checkbox" || input.attr("type") == "radio"){
+			if(input.attr("type") == "checkbox"){
 				input.attr("checked", v);
+			}else if(input.attr("type") == "radio"){
+				input.attr("checked", false);
+				this.$("[name="+k+"][value="+v+"]").attr("checked", true);
 			}else{
 				input.val(v);
 			}
@@ -411,8 +419,11 @@ var TemplLayoutConfigView = TemplConfigView.extend({
 		this.el.innerHTML = this.template(modelData);
 		_.each(modelData, function(v,k){
 			var input = this.$("[name="+k+"]");
-			if(input.attr("type") == "checkbox" || input.attr("type") == "radio"){
+			if(input.attr("type") == "checkbox"){
 				input.attr("checked", v);
+			}else if(input.attr("type") == "radio"){
+				input.attr("checked", false);
+				this.$("[name="+k+"][value="+v+"]").attr("checked", true);
 			}else{
 				input.val(v);
 			}

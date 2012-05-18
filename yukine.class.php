@@ -80,7 +80,7 @@ class Yukine extends Base{
 			die();
 		}
 		$this->smarty->assign("dir", scandir($abspath));
-		$this->smarty->assign("path", $path);
+		$this->smarty->assign("path", substr($path, 1));
 		$this->smarty->assign("abspath", $abspath);
 		$this->smarty->display("yukinepicker.html");
 	}

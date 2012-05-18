@@ -55,15 +55,15 @@ $(function(){
 		{foreach explode("/", $path) as $pfrag}
 		{if $pfrag==""}{continue}{/if}
 		{$curP="$curP$pfrag/"}
-		<li><a href="?path={$curP}">{$pfrag|escape}</a> <span class="divider">/</span></li>
+		<li><a href="?path=/{$curP}">{$pfrag|escape}</a> <span class="divider">/</span></li>
 		{/foreach}
 	</ul>
 	<div id="itemlist">
 		{foreach $dir as $file}
 		{if $file == "."}{continue}{/if}
-		{if $path == "/" && $file == ".."}{continue}{/if}
+		{if $path == "" && $file == ".."}{continue}{/if}
 		<div class="item">
-			<a href="{if is_dir("$abspath/$file")}?path={$path}{$file}/{else}#{/if}" data-file="/{$abspath}{$file}">
+			<a href="{if is_dir("$abspath/$file")}?path=/{$path}{$file}/{else}#{/if}" data-file="{$path}{$file}">
 				<span class="icon"><img src="{if preg_match('~\.(png|gif|jpg|jpeg)$~', $file)}/{$abspath}{$file}{else}{if is_dir("$abspath/$file")}/assets/img/folder.png{else}/assets/img/file.png{/if}{/if}"></span>
 				<span class="itemname" title="{$file|escape}">{$file|escape}</span>
 			</a>

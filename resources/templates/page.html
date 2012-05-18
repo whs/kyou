@@ -84,10 +84,10 @@ html,body{
 	border: #aaa solid 1px;
 }
 .pickitem{
-	width: 75px;
-	height: 75px;
+	width: 80px;
+	height: 80px;
 	box-shadow: border-box;
-	padding: 10px;
+	padding: 10px 5px 10px 5px;
 	margin: 5px;
 	border: #eee solid 1px;
 	text-align: center;
@@ -106,7 +106,7 @@ html,body{
 }
 .pickitem div{
 	margin-top: 2px;
-	font-size: 10pt;
+	font-size: 9pt;
 	color: #888;
 }
 #widgetconfig .control-label{
@@ -651,7 +651,7 @@ $(function(){
 	});
 	$("#widgetconfig").delegate(".pickpagebtn", "click", function(){
 		pick_page(_.bind(function(f){
-			$("input", $(this).parent()).val("/"+f+".html");
+			$("input", $(this).parent()).val(f+".html");
 		}, this));
 	});
 

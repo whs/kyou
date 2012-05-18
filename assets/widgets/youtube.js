@@ -90,8 +90,8 @@ widgets["youtube"] = Widget.extend({
 		render: function(){
 			this.el.style.border = "none";
 			var param = _.pick(this.model.toJSON(), "playlist", "autohide", "autoplay", "controls", "iv_load_policy", "loop", "modestbranding", "rel", "showinfo", "theme", "start");
-			this.el.style.width = "420px";
-			this.el.style.height = "360px";
+			this.el.style.width = "480px";
+			this.el.style.height = "270px";
 			if(!param['playlist'] || param['playlist'].length == 0){
 				this.el.src = "data:text/plain,No playlist";
 				return;

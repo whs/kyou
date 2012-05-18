@@ -7,6 +7,7 @@ widgets["header"] = Widget.extend({
 	}),
 	renderer: Backbone.View.extend({
 		tagName: "header",
+		className: "header",
 		initialize: function(){
 			this.model.on("change:name change:author change:authorurl", function(){
 				this.render();

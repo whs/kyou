@@ -12,7 +12,7 @@ widgets["box3d"] = Widget.extend({
 					this.model.trigger("change");
 				}
 			}, this);
-			var frontEl = $("<img>").attr("src", this.$("input[name=front]").val()).css({
+			var frontEl = $("<img>").attr("src", "/bookfiles/"+page.project.id+"/"+this.$("input[name=front]").val()).css({
 				"position": "absolute",
 				"top": 0, "left": 0,
 				"pointer-events": "none",
@@ -25,7 +25,7 @@ widgets["box3d"] = Widget.extend({
 				chkLoad();
 				frontEl.remove();
 			}, this));
-			var rearEl = $("<img>").attr("src", this.$("input[name=left]").val()).css({
+			var rearEl = $("<img>").attr("src", "/bookfiles/"+page.project.id+"/"+this.$("input[name=left]").val()).css({
 				"position": "absolute",
 				"top": 0, "left": 0,
 				"pointer-events": "none",
@@ -47,6 +47,18 @@ widgets["box3d"] = Widget.extend({
 		render: function(){
 			this.el.style.width = "100%";
 			this.el.style.height=  "400px";
+			if(!!this.model.get("rotable")){
+				$('<img src="/files/help-3d.png">').appendTo(this.el).css({
+					display: "block",
+					position: "absolute",
+					top: "70%",
+					left: 300,
+					zIndex: 400,
+					"-webkit-transition": "-webkit-transform ease-in 500ms",
+					"transition": "transform ease-in 500ms",
+					"pointer-events": "none"
+				});
+			}
 		},
 		javascripts: function(opt){
 			var out = ["assets/jquery.js", "assets/three.js", "files/box3d.js"];

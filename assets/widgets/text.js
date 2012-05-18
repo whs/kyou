@@ -15,7 +15,7 @@ widgets["text"] = Widget.extend({
 		},
 		linkpage: function(){
 			pick_page(_.bind(function(v, name){
-				this.$("textarea").insertAtCaret("<a href='/"+v+".html'>"+name+"</a>");
+				this.$("textarea").insertAtCaret("<a href='"+v+".html'>"+name+"</a>");
 			}, this));
 			return false;
 		},

@@ -56,16 +56,6 @@ window.box3d_draw = function(target, opt){
 			position: "relative",
 			overflow: "hidden"
 		});
-		$('<img src="files/help-3d.png">').appendTo(target).css({
-			display: "block",
-			position: "absolute",
-			top: "70%",
-			left: 300,
-			zIndex: 400,
-			"-webkit-transition": "-webkit-transform ease-in 500ms",
-			"transition": "transform ease-in 500ms",
-			"pointer-events": "none"
-		});
 	}
 	initAnimator(renderer, scene, camera, mesh, controls);
 }

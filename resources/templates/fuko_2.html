@@ -207,9 +207,9 @@ function render(ind){
 			ele.src = "nav.js";
 			page.renderer.$("body").get(0).appendChild(ele);
 			_.each(["href", "src"], function(attr){
-				page.renderer.$("["+attr+"^=\"/bookfiles/\"]").attr(attr, function(){
+				/*page.renderer.$("["+attr+"^=\"/bookfiles/\"]").attr(attr, function(){
 					return $(this).attr(attr).replace(/^\/bookfiles\/[^\/]+\//, "");
-				});
+				});*/
 				page.renderer.$("["+attr+"^=\"/\"]").attr(attr, function(){
 					return $(this).attr(attr).replace(/^\//, "");
 				});

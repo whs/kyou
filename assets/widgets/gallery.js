@@ -36,7 +36,7 @@ widgets["gallery"] = Widget.extend({
 			this.$(".widget_"+this.$("select[name=display]").val()).show();
 		},
 		render_imglist: function(){
-			var images = this.model.get("images") || {};
+			var images = this.model.get("images") || [];
 			this.$(".widgetlist").empty();
 			_.each(images, _.bind(function(v){
 				var item = $('<li><span class="ui-icon ui-icon-grip-solid-horizontal grip"></span><button class="btn" type="button"><span class="ui-icon ui-icon-trash"></span></button><strong></strong></li>').data("item", v);
@@ -49,7 +49,7 @@ widgets["gallery"] = Widget.extend({
 		},
 		addimg: function(e){
 			pick_file(_.bind(function(f){
-				var images = this.model.get("images") || {};
+				var images = this.model.get("images") || [];
 				images.push({"img": f, "desc": this.$("input[name=imgname]").val()});
 				this.$("input[name=imgname]").val("");
 				this.model.set("images", images).trigger("change");
@@ -59,7 +59,7 @@ widgets["gallery"] = Widget.extend({
 		},
 		delimg: function(e){
 			var delWhat = $(e.target).parents("li").data("item");
-			var images = _.filter(this.model.get("images") || {}, function(item){
+			var images = _.filter(this.model.get("images") || [], function(item){
 				if(item == delWhat){
 					return false;
 				}else{
@@ -138,6 +138,7 @@ widgets["gallery"] = Widget.extend({
 					effect: this.model.get("effect"),
 					animSpeed: parseInt(this.model.get("animSpeed")),
 					pauseTime: parseInt(this.model.get("pauseTime")),
+					manualAdvance: this.model.get("pauseTime") == "-1" ? true : false,
 					directionNav: !!this.model.get("directionNav"),
 					directionNavHide: !!this.model.get("directionNavHide"),
 					controlNav: !!this.model.get("controlNav"),
