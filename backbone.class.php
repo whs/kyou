@@ -64,6 +64,37 @@ class Loader extends Base{
 		return $this->output($out);
 	}
 
+	public function iimg_by_id(){
+		// Check ACL
+		$project = $this->DB->projects->findOne(array(
+			"_id" => new MongoId($this->phraw->request['pid']),
+			"user" => $this->user['_id']
+		));
+		if(!$project){
+			$this->fatal_error("Project not found");
+		}
+		$iimg = $this->DB->iimg->findOne(array(
+			"project" => $project['_id'],
+			"file" => $this->phraw->request['id']
+		));
+		$filePath = "bookfiles/".(string) $project['_id']."/" . $this->phraw->request['id'];
+		$filePathAbs = realpath($filePath);
+		if(!$filePathAbs){
+			$this->fatal_error("File not found");
+		}
+		if(strpos($filePathAbs, realpath("bookfiles/".(string) $project['_id'])) !== 0){
+			$this->fatal_error("File not found"); // Don't tell them the file exists
+		}
+		if(!$iimg){
+			$iimg = array(
+				"project" => $project['_id'],
+				"file" => $this->phraw->request['id']
+			);
+			$this->DB->iimg->insert($iimg);
+		}
+		return $this->output($iimg);
+	}
+
 	public function format_output($v){
 		if(!is_array($v)){
 			$v = iterator_to_array($v, false);
@@ -97,9 +128,9 @@ class Loader extends Base{
 		print json_encode($v);
 	}
 
-	public static function is_assoc ($arr) {
-        return (is_array($arr) && count(array_filter(array_keys($arr),'is_string')) == count($arr));
-    }
+	public static function is_assoc ($arr){
+		return (is_array($arr) && count(array_filter(array_keys($arr),'is_string')) == count($arr));
+	}
 }
 
 class Saver extends Loader{
@@ -164,6 +195,24 @@ class Saver extends Loader{
 			"project" => $project['_id']
 		), $data);
 		return parent::page_by_id();
+	}
+
+	public function iimg_by_id(){
+		$project = $this->DB->projects->findOne(array(
+			"_id" => new MongoId($this->phraw->request['pid']),
+			"user" => $this->user['_id']
+		), array("_id"));
+		if(!$project){
+			$this->fatal_error("Project not found");
+		}
+		$data = $this->get_data();
+		unset($data['id']);
+		$data['project'] = $project['_id'];
+		$this->DB->iimg->update(array(
+			"project" => $project['_id'],
+			"file" => $this->phraw->request['id']
+		), $data);
+		return parent::iimg_by_id();
 	}
 
 	public function get_data(){

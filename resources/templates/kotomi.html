@@ -1,0 +1,526 @@
+{extends "base.html"}
+{block title}{$project.name|escape} | {$strings.iimg}{/block}
+{block head}
+<style>
+.scene{
+	display: none;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	-webkit-transition: -webkit-transform ease-out 1s;
+	transition: transform ease-out 1s;
+}
+body{
+	background: #444;
+}
+.pickerframe{
+	width: 640px;
+	height: 600px;
+	margin: auto;
+	margin-top: 10px;
+	background: #fff;
+	box-shadow: black 0px 0px 50px;
+	border-radius: 10px;
+	padding: 15px;
+}
+#scene-picker h1{
+	width: 640px;
+	margin: auto;
+	margin-top : 20px;
+	color: #ccc;
+	font-family: HelveticaNeue-UltraLight, Helvetica, sans-serif;
+	font-weight: normal;
+}
+iframe{
+	border: none;
+	width: 100%;
+	height: 550px;
+	border-radius: 5px;
+}
+#imgcontain{
+	float: left;
+	width: 80%;
+	height: 100%;
+	overflow: auto;
+	background: black;
+}
+#imgin{
+	margin: auto;
+	overflow: hidden;
+}
+.menu{
+	float: left;
+	padding: 5px;
+	width: 20%;
+	height: 100%;
+	background: #555;
+	box-sizing: border-box;
+	background: white;
+	overflow: auto;
+}
+.widgetlist{
+	margin: auto;
+	margin-bottom: 0;
+	list-style: none;
+	border: #ccc solid 1px;
+	overflow: auto;
+	border-radius: 5px 5px 0px 0px;
+	border-bottom: none;
+	color: black;
+	min-height: 200px;
+}
+.widgetlist li{
+	padding: 5px 10px 5px 10px;
+	border-bottom: #ddd solid 1px;
+	cursor: pointer;
+}
+.widgetlist li:hover{
+	background: #c6f0ff;
+}
+.widgetlist li.active{
+	background: #0088cc;
+	color: white;
+}
+.widgetlist li span{
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border: #555 solid 1px;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+.toolbar{
+	background: #eee;
+	padding: 5px;
+	border: #ccc solid 1px;
+	border-top: none;
+	margin-bottom: 20px;
+	width: 100%;
+}
+#imgin{
+	position: relative;
+}
+.modal-backdrop{
+	z-index: 20000;
+}
+.modal.fade{
+	z-index: 20050;
+	top: -100%;
+}
+.hotspot{
+	position: absolute;
+	box-sizing: border-box;
+	cursor: pointer;
+}
+.hotspot.active{
+	opacity: 1 !important;
+	box-shadow: black 0px 0px 40px, white 0px 0px 60px;
+}
+#autosave{
+	display: inline-block;
+	color: #888;
+}
+#imgin.nooverlay .hotspot{
+	background-color: transparent !important;
+	opacity: 1 !important;
+	box-shadow: none !important;
+}
+.newbg{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+</style>
+{/block}
+{block body}
+<form id="scene-picker" class="scene">
+	<h1>{$strings.iimg}</h1>
+	<div class="pickerframe">
+		<input type="submit" value="Next" class="btn btn-primary" style="float: right;">
+		<input value="danshichars/danshichar.jpg" type="text" name="file" style="width: 550px; margin-bottom: 10px; border:none; background:transparent; box-shadow: none;" required readonly>
+		<iframe src="/project/{$project.id}/files/@pick"></iframe>
+	</div>
+</form>
+<div id="scene-editor" class="scene">
+	<div id="imgcontain">
+		<div id="imgin"></div>
+	</div>
+	<div class="menu">
+		<div class="toolbar" style="margin: -10px; margin-bottom: 10px; width: auto; margin-right:-5px;">
+			<a href="/" class="btn pull-right" title="Project home" style="margin-top: 5px;"><i class="icon-home"></i></a>
+			<br style="clear: both;">
+		</div>
+		<ul class="widgetlist">
+		</ul>
+		<div class="toolbar" style="width: auto;">
+			<button id="add" class="btn btn-primary"><i class='icon-plus icon-white'></i></button>
+			<div id="autosave"></div>
+			<button id="del" class="btn btn-danger" style="float: right;"><i class='icon-trash icon-white'></i></button>
+			<button id="hideoverlay" class="btn" style="float: right; margin-right: 10px;"><i class='icon-eye-open'></i></button>
+		</div>
+		<form id="widgetsetup">
+			<label>
+				Action
+				<select name="action">
+					<option value="bg">Change image</option>
+					<option value="txt">Display text</option>
+					<option value="link">Link</option>
+				</select>
+			</label>
+			<label>
+				Hit icon
+				<div class="input-append">
+					<input type="text" name="icon" class="span2">
+					<button type="button" class="btn pickbtn" style="margin-top: -9px; margin-left: -6px;">Pick</button>
+				</div>
+			</label>
+			<label class="setup setup_bg">
+				New image
+				<div class="input-append">
+					<input type="text" name="bgimg" class="span2">
+					<button type="button" class="btn pickbtn" style="margin-top: -9px; margin-left: -6px;">Pick</button>
+				</div>
+				<div class="alert alert-info">Must be the same size</div>
+			</label>
+			<label class="setup setup_txt">
+				Text
+				<textarea name="text"></textarea>
+			</label>
+			<label class="setup setup_link">
+				Link
+				<div class="input-append">
+					<input type="text" name="link" class="span2">
+					<button type="button" class="btn pickpagebtn" style="margin-top: -9px; margin-left: -6px;">Pick</button>
+				</div>
+			</label>
+			<div class="form-actions">
+				<input type="submit" class="btn btn-primary" value="Save">
+			</div>
+		</form>
+	</div>
+</div>
+<form class="modal fade form-horizontal" id="selectitem" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Select resource file</h3>
+	</div>
+	<div class="modal-body">
+		<input type="text" name="file" required readonly style="width: 97%; margin-bottom: 10px; border:none; background:transparent; box-shadow: none;">
+		<iframe src="/project/{$project.id}/files/@pick"></iframe>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Select" class="btn btn-primary">
+	</div>
+</form>
+<form class="modal fade form-horizontal" id="selectpage" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Select page</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Page</label>
+			<div class="controls">
+				<select name="page">
+				</select>
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Select" class="btn btn-primary">
+	</div>
+</form>
+<script src="/assets/jquery.ui.js"></script>
+<script>
+var yukine_lastClick;
+function yukine_select(f){
+	var oV = $("#scene-picker input[name=file]").val();
+	if(oV == f && new Date().getTime() - yukine_lastClick < 250){
+		$("#scene-picker").submit();
+	}else{
+		$("#scene-picker input[name=file]").val(f);
+		yukine_lastClick = new Date().getTime();
+	}
+}
+function pick_file(cb){
+	$("#selectitem").unbind("submit").bind("submit", function(){
+		cb($("input[name=file]", this).val());
+		$(this).modal("hide");
+		return false;
+	}).modal();
+	return true;
+}
+function pick_page(cb){
+	$("#selectpage").unbind("submit").bind("submit", function(){
+		cb($("select", this).val(), $("option:selected", this).text());
+		$(this).modal("hide");
+		return false;
+	}).modal();
+	return true;
+}
+function bindExit(){
+	$("#autosave").html("Unsaved").stop(true).show().css("display", "inline-block").css("opacity", 1);
+	window.onbeforeunload = function(e){
+		var s = "You have unsaved changes.\n\nIf you close this page, the unsaved changes will be lost.";
+		e.returnValue = s;
+		return s;
+	}
+}
+function save(){
+	file.save();
+}
+function unloadWidget(){
+	$(".newbg").remove();
+}
+function loadWidget(item){
+	if(item.action == "bg"){
+		var bgimg = item.bgimg;
+		if(!bgimg[0].match(/^(http:\/\/|\/)/)){
+			bgimg = "/bookfiles/{$project.id}/" + bgimg;
+		}
+		$("<img>").attr("src", bgimg).addClass("newbg").insertAfter("#imgin img");
+	}
+}
+function updateWidget(){
+	unloadWidget();
+	var ind = parseInt($.trim($(".widgetlist .active").text())) - 1;
+	var item = file.get("items")[ind];
+	$("#widgetsetup input").not("input[type=submit]").val("");
+	_.each(item, function(v,k){
+		var input = $("#widgetsetup [name="+k+"]");
+		if(input.attr("type") == "checkbox"){
+			input.attr("checked", v);
+		}else if(input.attr("type") == "radio"){
+			input.attr("checked", false);
+			$("#widgetsetup [name="+k+"][value="+v+"]").attr("checked", true);
+		}else{
+			input.val(v);
+		}
+	}, this);
+	loadWidget(item);
+	$("#widgetsetup select").change();
+	$("#widgetsetup").data("item", item);
+}
+function unfocusWidget(){
+	unloadWidget();
+	$(".widgetlist .active, #imgin .active").removeClass("active");
+	$("#widgetsetup").hide();
+}
+function startEditor(){
+	window.yukine_select = function(f){
+		var oV = $("#selectitem input[name=file]").val();
+		if(oV == f && new Date().getTime() - yukine_lastClick < 250){
+			$("#selectitem").submit();
+		}else{
+			$("#selectitem input[name=file]").val(f);
+			yukine_lastClick = new Date().getTime();
+		}
+	}
+	document.title = project.get("name") + " :: " + file.get("file") + " | {$strings.iimg}";
+	// Build the editor scene
+	$("<img>").attr("src", "/bookfiles/{$project.id}/"+file.get("file")).load(function(){
+		$("#imgin").css({
+			width: $(this).width(),
+			height: $(this).height()
+		});
+	}).appendTo("#imgin");
+	$("#imgin,#imgin img").disableSelection();
+	file.on("change:items", function(){
+		var active = parseInt($.trim($(".widgetlist .active").text()));
+		$(".widgetlist").empty();
+		$("#imgin .hotspot").remove();
+		_.each(file.get("items"), function(v,k){
+			var el = $("<li>").text(" "+(k+1));
+			$("<span class='icon'>").prependTo(el).css({
+				backgroundColor: v.color
+			});
+			el.appendTo(".widgetlist");
+			var hotspot = $("<div class='hotspot'>").addClass("hotspot_"+(k+1));
+			var color = v.color.substr(1);
+			var red = parseInt(color.substr(0, 2), 16);
+			var green = parseInt(color.substr(2, 2), 16);
+			var blue = parseInt(color.substr(4, 2), 16);
+			hotspot.css({
+				top: v.top,
+				left: v.left,
+				width: v.width,
+				height: v.height,
+				backgroundColor: "rgba("+red+","+green+","+blue+", 0.8)",
+				opacity: 0.7,
+			}).data("id", v.id).data("obj", v).data("el", el);
+			if(v.icon){
+				var icon = v.icon;
+				if(!icon[0].match(/^(http:\/\/|\/)/)){
+					icon = "/bookfiles/{$project.id}/" + icon;
+				}
+				hotspot.css({
+					"background-image": "url("+icon+")",
+					"background-repeat": "no-repeat",
+					"background-position": "center center"
+				});
+			}
+			hotspot.appendTo("#imgin").draggable({
+				containment: "#imgin",
+				opacity: 1,
+				stack: ".hotspot",
+				stop: function(e, ui){
+					var obj = $(this).data("obj");
+					obj.top = ui.position.top;
+					obj.left = ui.position.left;
+					file.trigger("change:items");
+					bindExit();
+				}
+			}).resizable({
+				autoHide: true,
+				containment: "#imgin",
+				minWidth: 10,
+				minHeight: 10,
+				stop: function(e, ui){
+					var obj = $(this).data("obj");
+					obj.width = ui.size.width;
+					obj.height = ui.size.height;
+					file.trigger("change:items");
+					bindExit();
+				}
+			});
+			if(k+1 == active){
+				hotspot.addClass("active");
+				el.addClass("active");
+				$("#widgetsetup").show();
+			}
+		});
+	}).trigger("change:items");
+	file.on("change", function(){
+		bindExit();
+		save();
+	});
+	file.on("sync", function(){
+		$("#autosave").html("Saved").stop(true).show().fadeOut(2000);
+		window.onbeforeunload = null;
+		file.trigger("change:items");
+	});
+	$("#widgetsetup").hide();
+	$("#imgin").delegate(".hotspot", "click", function(e){
+		$(".hotspot.active,.widgetlist .active").removeClass("active");
+		$(this).addClass("active");
+		$(this).data("el").addClass("active");
+		$("#widgetsetup").show();
+		updateWidget();
+		e.stopPropagation();
+	});
+	$(".widgetlist").delegate("li", "click", function(){
+		$(".hotspot.active,.widgetlist .active").removeClass("active");
+		$(this).addClass("active");
+		var ind = parseInt($.trim(this.textContent));
+		$(".hotspot_"+ind).addClass("active");
+		$("#widgetsetup").show();
+		updateWidget();
+	});
+	$("#scene-editor").css({
+		"-webkit-transform": "translateX(100%)",
+		"transform": "translateX(100%)",
+	}).show();
+	setTimeout(function(){
+		$("#scene-editor").css({
+			"-webkit-transform": "translateX(0)",
+			"transform": "translateX(0)",
+		});
+	}, 10);
+}
+var file, project = new Project({$project|json_encode});
+$(function(){
+	project.pages.on("reset", function(){
+		$("#selectpage select").empty();
+		project.pages.each(function(v){
+			$("<option>").attr("value", v.id).text(v.get("name")).appendTo("#selectpage select");
+		});
+	});
+	project.pages.fetch();
+	$("#scene-picker").show();
+	$("#scene-picker").submit(function(){
+		file = new KotomiFile({ file: $("#scene-picker input[name=file]").val() });
+		file.project = project;
+		file.fetch({
+			success: startEditor,
+			error: function(model, res){
+				console.error(res);
+				alert(res.responseText);
+			}
+		});
+		$("#scene-picker").css({
+			"-webkit-transform": "translateX(-100%)",
+			"transform": "translateX(-100%)",
+		});
+		return false;
+	}).submit();
+	$(".menu").delegate(".pickbtn", "click", function(){
+		pick_file(_.bind(function(f){
+			$("input", $(this).parent()).val(f);
+		}, this));
+	});
+	$(".menu").delegate(".pickpagebtn", "click", function(){
+		pick_page(_.bind(function(f){
+			$("input", $(this).parent()).val(f+".html");
+		}, this));
+	});
+	$("select[name=action]").change(function(){
+		$("#widgetsetup .setup").hide();
+		$("#widgetsetup .setup_"+$(this).val()).show();
+	});
+	$("#widgetsetup").submit(function(){
+		var item = $(this).data("item");
+		_.each($(this).serializeJSON(), function(v,k){
+			item[k] = v;
+		}, this);
+		$("input[type=checkbox]:not(:checked)", this).each(function(){
+			item[this.name] = false;
+		});
+		$("input[type=submit]:first", this).val("Saved").attr("disabled", true);
+		setTimeout(function(){
+			$("#widgetsetup input[type=submit]:first").val("Save").attr("disabled", false);
+		}, 500);
+		loadWidget(item);
+		file.trigger("change:items change");
+		save();
+		return false;
+	});
+	$("#add").click(function(){
+		var items = file.get("items");
+		if(!items){
+			file.set("items", []);
+			items = file.get("items")
+		}
+		items.push({
+			color: '#'+Math.floor(Math.random()*0xffffff).toString(16),
+			id: new Date().getTime().toString(36),
+			top: 0,
+			left: 0,
+			width: 50,
+			height: 50
+		});
+		file.trigger("change:items change");
+		return false;
+	});
+	$("#del").click(function(){
+		var ind = parseInt($.trim($(".widgetlist .active").text())) - 1;
+		var items = file.get("items");
+		items.splice(ind, 1);
+		file.trigger("change");
+		unfocusWidget();
+	});
+	$("#hideoverlay").click(function(){
+		$("#imgin").toggleClass("nooverlay");
+		if($("#imgin").hasClass("nooverlay")){
+			$(this).find("i").addClass("icon-eye-close").removeClass("icon-eye-open");
+		}else{
+			$(this).find("i").addClass("icon-eye-open").removeClass("icon-eye-close");
+		}
+	});
+	$("#imgcontain").click(function(){
+		unfocusWidget();
+	});
+});
+</script>
+{/block}

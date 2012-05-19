@@ -5,3 +5,4 @@ $strings['resman'] = "Resman";
 $strings['kara'] = "Karaoke";
 $strings['dist'] = "Distribution";
 $strings['sharing'] = "Collaboration";
+$strings['iimg'] = "IImage";

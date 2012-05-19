@@ -19,6 +19,7 @@ $router = new URLRouter(array(
 	"page\/(?P<page>[a-f0-9]+)\/@save"			=> array("ui.class.php", array("UI", "ushio_save")),
 	"page\/@load"								=> array("ui.class.php", array("UI", "ushio_load")),
 	"rev\/(?P<rev>[a-f0-9]+)"					=> array("ui.class.php", array("UI", "ushio_rev")),
+	"project\/(?P<pid>[a-f0-9]+)\/iimg\/"		=> array("ui.class.php", array("UI", "kotomi_app")),
 
 	"_users"									=> array("ui.class.php", array("UI", "ac_users")),
 	"auth"										=> array("auth.class.php", array("AuthUI", "auth")),
@@ -37,11 +38,13 @@ $router = new URLRouter(array(
 	"GET projects\/(?P<pid>[a-f0-9]+)"				=> array("backbone.class.php", array("Loader", "project_by_id")),
 	"GET projects\/(?P<pid>[a-f0-9]+)\/pages"		=> array("backbone.class.php", array("Loader", "pages")),
 	"GET projects\/(?P<pid>[a-f0-9]+)\/pages\/(?P<page>[a-f0-9]+)"	=> array("backbone.class.php", array("Loader", "page_by_id")),
+	"GET projects\/(?P<pid>[a-f0-9]+)\/iimg\/(?P<id>.+)"		=> array("backbone.class.php", array("Loader", "iimg_by_id")),
 
 	"POST projects"									=> array("backbone.class.php", array("Saver", "projects")),
 	"PUT projects\/(?P<pid>[a-f0-9]+)"				=> array("backbone.class.php", array("Saver", "project_by_id")),
-	"POST projects\/(?P<pid>[a-f0-9]+)\/pages"	=> array("backbone.class.php", array("Saver", "pages")),
+	"POST projects\/(?P<pid>[a-f0-9]+)\/pages"		=> array("backbone.class.php", array("Saver", "pages")),
 	"PUT projects\/(?P<pid>[a-f0-9]+)\/pages\/(?P<page>[a-f0-9]+)"	=> array("backbone.class.php", array("Saver", "page_by_id")),
+	"PUT projects\/(?P<pid>[a-f0-9]+)\/iimg\/(?P<id>.+)"			=> array("backbone.class.php", array("Saver", "iimg_by_id")),
 
 	"DELETE projects\/(?P<pid>[a-f0-9]+)"								=> array("backbone.class.php", array("Deleter", "project_by_id")),
 	"DELETE projects\/(?P<pid>[a-f0-9]+)\/pages\/(?P<page>[a-f0-9]+)"	=> array("backbone.class.php", array("Deleter", "page_by_id")),	

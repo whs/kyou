@@ -102,6 +102,12 @@ class UI extends Base{
 		}
 		print $rev['ushio']['html'];
 	}
+	public function kotomi_app(){
+		$this->check_login();
+		$project = $this->loader->project_by_id(false);
+		$this->smarty->assign("project", $project);
+		$this->smarty->display("kotomi.html");
+	}
 
 	public function ac_users(){
 		$this->check_login();

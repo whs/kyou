@@ -367,6 +367,20 @@ var Layout = Backbone.Model.extend({
 	})
 });
 
+var KotomiFile = Backbone.Model.extend({
+	initialize: function(opt){
+		if(_.isObject(opt) && opt.file){
+			this.set("file", opt.file);
+		}
+		this.on("change:project reset", function(){
+			this.project = new Project({id:this.get("project")});
+		}, this).trigger("reset");
+	},
+	url: function(){
+		return "/projects/" + this.project.id + "/iimg/" + this.get("file");
+	},
+});
+
 var TemplConfigView = Backbone.View.extend({
 	template: "",
 	autocommit: true,
@@ -402,9 +416,9 @@ var TemplConfigView = Backbone.View.extend({
 		if(this.autocommit){
 			model.trigger("change");
 		}
-		this.$("input[type=submit]").val("Saved").attr("disabled", true);
+		this.$("input[type=submit]:first", e.target).val("Saved").attr("disabled", true);
 		setTimeout(function(){
-			this.$("input[type=submit]").val("Save").attr("disabled", false);
+			this.$("input[type=submit]:first", e.target).val("Save").attr("disabled", false);
 		}, 500);
 		return false;
 	},
@@ -440,10 +454,10 @@ var TemplLayoutConfigView = TemplConfigView.extend({
 		});
 		this.model.page.set("config_"+this.model.type, setDict).trigger("change");
 
-		this.$("input[type=submit]").val("Saved").attr("disabled", true);
+		this.$("input[type=submit]:first", e.target).val("Saved").attr("disabled", true);
 		page.renderer.render();
 		setTimeout(function(){
-			this.$("input[type=submit]").val("Save").attr("disabled", false);
+			this.$("input[type=submit]:first", e.target).val("Save").attr("disabled", false);
 		}, 500);
 		return false;
 	}
