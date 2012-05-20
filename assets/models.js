@@ -488,7 +488,7 @@ function format_view(model){
 			delete css[x];
 		}
 	})
-	var customcss = css['customcss'];
+	var customcss = css['customcss'] || "";
 	delete css['customcss'];
 	el.css(css);
 	el.attr("style", ((el.attr("style") + " ;; ") || "") + customcss);

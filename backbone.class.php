@@ -64,6 +64,21 @@ class Loader extends Base{
 		return $this->output($out);
 	}
 
+	public function iimg(){
+		// Check ACL
+		$project = $this->DB->projects->findOne(array(
+			"_id" => new MongoId($this->phraw->request['pid']),
+			"user" => $this->user['_id']
+		));
+		if(!$project){
+			$this->fatal_error("Project not found");
+		}
+		$iimg = $this->DB->iimg->find(array(
+			"project" => $project['_id'],
+		), array("file"));
+		return $this->output($iimg);
+	}
+
 	public function iimg_by_id(){
 		// Check ACL
 		$project = $this->DB->projects->findOne(array(

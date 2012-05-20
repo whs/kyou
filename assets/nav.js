@@ -1,6 +1,5 @@
 !(function(){
 var is_mobile = function(){
-	//return true;
 	return navigator.userAgent.match(/iPad|iPod|iPhone|Android/);
 }
 var mouseover = "mouseover";

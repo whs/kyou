@@ -38,6 +38,7 @@ $router = new URLRouter(array(
 	"GET projects\/(?P<pid>[a-f0-9]+)"				=> array("backbone.class.php", array("Loader", "project_by_id")),
 	"GET projects\/(?P<pid>[a-f0-9]+)\/pages"		=> array("backbone.class.php", array("Loader", "pages")),
 	"GET projects\/(?P<pid>[a-f0-9]+)\/pages\/(?P<page>[a-f0-9]+)"	=> array("backbone.class.php", array("Loader", "page_by_id")),
+	"GET projects\/(?P<pid>[a-f0-9]+)\/iimg.json"		=> array("backbone.class.php", array("Loader", "iimg")),
 	"GET projects\/(?P<pid>[a-f0-9]+)\/iimg\/(?P<id>.+)"		=> array("backbone.class.php", array("Loader", "iimg_by_id")),
 
 	"POST projects"									=> array("backbone.class.php", array("Saver", "projects")),
