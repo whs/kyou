@@ -98,3 +98,6 @@ blockquote{
 	width: 850px;
 	background: url(qleft.png) top left no-repeat, url(qright.png) bottom right no-repeat;
 }
+.widget_iimg .txthover h4{
+	margin: 0;
+}

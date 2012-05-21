@@ -1,0 +1,34 @@
+.widget_iimg{
+	position: relative;
+	overflow: hidden;
+}
+.widget_iimg a{
+	position: absolute;
+	display: block;
+	cursor: pointer;
+	z-index: 1000;
+}
+.widget_iimg .txthover{
+	position: absolute;
+	background: rgba(0,0,0,0.8);
+	color: white;
+	padding: 10px;
+	border-radius: 5px;
+	z-index: 500;
+	text-shadow: black 0px 1px 0px;
+	display: none;
+	border: rgba(255,255,255,0.1) solid 5px;
+}
+.widget_iimg .iimg_main{
+	z-index: 10;
+}
+.widget_iimg .help-point{
+	display: block;
+	position: absolute;
+	top: 70%;
+	left: 20%;
+	z-index: 600;
+	-webkit-transition: -webkit-transform ease-in 500ms;
+	transition: transform ease-in 500ms;
+	pointer-events: none;
+}

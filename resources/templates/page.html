@@ -523,7 +523,7 @@ $(function(){
 		var view = widgets[frm.widget];
 		frm.id = "w_"+new Date().getTime().toString(36);
 		view = new view(frm);
-		view.weight = ((($("#widgetlist li").index($("#widgetlist .active"))+1)*100)||1E10) + 1;
+		view.weight = ((($("#widgetlist li").index($("#widgetlist .active")))*100)||1E10) + 1;
 		page.widgets.add(view);
 		$(this).modal("hide");
 		return false;

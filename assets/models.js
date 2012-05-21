@@ -468,6 +468,9 @@ function format_view(model){
 		return false;
 	}
 	var el = model.view.$el;
+	if(el.data("origcss")){
+		el.attr("style", el.data("origcss"));
+	}
 	var css = _.clone(model.get("_css"));
 	if(!css){
 		return;
@@ -490,8 +493,20 @@ function format_view(model){
 	})
 	var customcss = css['customcss'] || "";
 	delete css['customcss'];
+	if(css['float'] == "center"){
+		delete css['float'];
+		delete css['margin-left'];
+		delete css['margin-right'];
+		el.css("float", "none");
+		el.css("margin-left", "auto");
+		el.css("margin-right", "auto");
+		if(el.is("img")){
+			el.css("display", "block");
+		}
+	}
+	el.data("origcss", el.attr("style"));
 	el.css(css);
-	el.attr("style", ((el.attr("style") + " ;; ") || "") + customcss);
+	el.attr("style", (el.attr("style") || "") + customcss);
 }
 
 var CSSConfigView = TemplConfigView.extend({

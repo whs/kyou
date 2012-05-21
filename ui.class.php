@@ -106,6 +106,7 @@ class UI extends Base{
 		$this->check_login();
 		$project = $this->loader->project_by_id(false);
 		$this->smarty->assign("project", $project);
+		$this->smarty->assign("files", $this->loader->iimg());
 		$this->smarty->display("kotomi.html");
 	}
 

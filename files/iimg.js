@@ -23,5 +23,14 @@ $(function(){
 	}).delegate("[data-img]", mouseout, function(){
 		var parent = $(this).parents(".widget_iimg");
 		parent.find(".iimg_img").remove();
+	}).delegate(".hastxthover", mouseover, function(){
+		$(this).next().fadeIn(100);
+	}).delegate(".hastxthover", mouseout, function(){
+		$(this).next().fadeOut(100);
+	}).mouseover(function(){
+		$(".help-point", this).css({webkitTransform: "translateY(300px)", transform: "translateY(300px)"});
+	});
+	$(".widget_iimg .iimg_main").each(function(){
+		$(this).parents(".widget_iimg").css("width", $(this).width()).css("height", $(this).height());
 	});
 });

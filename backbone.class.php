@@ -119,8 +119,10 @@ class Loader extends Base{
 				$x = (string) $x;
 			}
 			if($this->is_assoc($x)){
-				$x['id'] = (string) $x['_id'];
-				unset($x['_id']);
+				if($x['_id']){
+					$x['id'] = (string) $x['_id'];
+					unset($x['_id']);
+				}
 			}
 			if(is_array($x)){
 				foreach($x as &$y){

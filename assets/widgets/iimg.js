@@ -40,10 +40,7 @@ widgets["iimg"] = Widget.extend({
 				async: false, // as the export page can't wait.
 				url: "/projects/" + page.project.id + "/iimg/" + this.model.get("image"),
 			}).responseText);
-			this.$el.empty().css({
-				position: "relative",
-				overflow: "hidden"
-			});
+			this.$el.empty();
 			_.each(this.config.items || [], function(v){
 				var el = $("<a>").attr("id", "iimg_"+v.id).appendTo(this.el);
 				if(v.action == "bg" && v.bgimg){
@@ -51,6 +48,14 @@ widgets["iimg"] = Widget.extend({
 				}
 				if(v.action == "link" && v.link){
 					el.attr("href", v.link);
+				}
+				if(v.action == "txt" && v.text){
+					var txtel = $("<div>").addClass("txthover").css({
+						top: v.txttop || 0,
+						left: v.txtleft || 0,
+						width: v.txtwidth || 150,
+					}).html(v.text).insertAfter(el);
+					el.addClass("hastxthover");
 				}
 				if(v.icon){
 					el.css("background", "url("+v.icon+") center center no-repeat");
@@ -66,8 +71,12 @@ widgets["iimg"] = Widget.extend({
 					zIndex: "1000",
 				});
 			}, this);
-			$("<img>").attr("src", this.model.get("image")).css("z-index", "10").appendTo(this.el);
+			if(this.model.get("help")){
+				$("<img>").addClass("help-point").attr("src", "/files/help-point.png").appendTo(this.el);
+			}
+			$("<img>").addClass("iimg_main").attr("src", this.model.get("image")).appendTo(this.el);
 		},
-		javascripts: ["files/iimg.js"]
+		javascripts: ["files/iimg.js"],
+		stylesheets: ["files/iimg.css"]
 	}),
 });

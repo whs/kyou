@@ -115,7 +115,6 @@ iframe{
 	cursor: pointer;
 }
 .hotspot.active{
-	opacity: 1 !important;
 	box-shadow: black 0px 0px 40px, white 0px 0px 60px;
 }
 #autosave{
@@ -132,14 +131,33 @@ iframe{
 	top: 0;
 	left: 0;
 }
+.txthover{
+	background: rgba(0,0,0,0.8);
+	color: white;
+	padding: 10px;
+	border-radius: 5px;
+	z-index: 1000;
+	text-shadow: black 0px 1px 0px;
+	border: rgba(255,255,255,0.1) solid 5px;
+}
 </style>
 {/block}
 {block body}
 <form id="scene-picker" class="scene">
 	<h1>{$strings.iimg}</h1>
 	<div class="pickerframe">
-		<input type="submit" value="Next" class="btn btn-primary" style="float: right;">
-		<input value="danshichars/danshichar.jpg" type="text" name="file" style="width: 550px; margin-bottom: 10px; border:none; background:transparent; box-shadow: none;" required readonly>
+		<input type="submit" value="Create" class="btn btn-primary pull-right">
+		{if $files|count > 0}
+		<div class="btn-group pull-right" style="margin-right: 10px;">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Open<span class="caret"></span></a>
+			<ul class="dropdown-menu" id="loadfilelist">
+				{foreach $files as $f}
+				<li><a href="#">{$f.file|escape}</a></li>
+				{/foreach}
+			</ul>
+		</div>
+		{/if}
+		<input type="text" name="file" style="width: 500px; margin-bottom: 10px; border:none; background:transparent; box-shadow: none;" required readonly>
 		<iframe src="/project/{$project.id}/files/@pick"></iframe>
 	</div>
 </form>
@@ -185,8 +203,8 @@ iframe{
 				<div class="alert alert-info">Must be the same size</div>
 			</label>
 			<label class="setup setup_txt">
-				Text
-				<textarea name="text"></textarea>
+				Text (HTML OK)
+				<textarea name="text" style="height: 200px;"></textarea>
 			</label>
 			<label class="setup setup_link">
 				Link
@@ -273,20 +291,51 @@ function save(){
 }
 function unloadWidget(){
 	$(".newbg").remove();
+	$(".txthover").remove();
 }
 function loadWidget(item){
-	if(item.action == "bg"){
+	unloadWidget();
+	if(item.action == "bg" && item.bgimg.length > 0){
 		var bgimg = item.bgimg;
 		if(!bgimg[0].match(/^(http:\/\/|\/)/)){
 			bgimg = "/bookfiles/{$project.id}/" + bgimg;
 		}
 		$("<img>").attr("src", bgimg).addClass("newbg").insertAfter("#imgin img");
+	}else if(item.action == "txt"){
+		$("<div>").addClass("txthover").html(item.text).css({
+			position: "absolute",
+			top: item.txttop || 0,
+			left: item.txtleft || 0,
+			width: item.txtwidth || 150,
+		}).resizable({
+			autoHide: true,
+			containment: "#imgin",
+			minHeight: 10,
+			handles: "e",
+			stop: function(e, ui){
+				var obj = $(this).data("obj");
+				obj.txtwidth = ui.size.width;
+				$(this).css("height", "auto");
+				bindExit();
+			}
+		}).draggable({
+			containment: "#imgin",
+			stop: function(e, ui){
+				var obj = $(this).data("obj");
+				obj.txttop = ui.position.top;
+				obj.txtleft = ui.position.left;
+				bindExit();
+			}
+		}).data("obj", item).insertAfter("#imgin img");
 	}
 }
 function updateWidget(){
 	unloadWidget();
 	var ind = parseInt($.trim($(".widgetlist .active").text())) - 1;
 	var item = file.get("items")[ind];
+	if(!item){
+		return false;
+	}
 	$("#widgetsetup input").not("input[type=submit]").val("");
 	_.each(item, function(v,k){
 		var input = $("#widgetsetup [name="+k+"]");
@@ -331,66 +380,68 @@ function startEditor(){
 		var active = parseInt($.trim($(".widgetlist .active").text()));
 		$(".widgetlist").empty();
 		$("#imgin .hotspot").remove();
-		_.each(file.get("items"), function(v,k){
-			var el = $("<li>").text(" "+(k+1));
-			$("<span class='icon'>").prependTo(el).css({
-				backgroundColor: v.color
-			});
-			el.appendTo(".widgetlist");
-			var hotspot = $("<div class='hotspot'>").addClass("hotspot_"+(k+1));
-			var color = v.color.substr(1);
-			var red = parseInt(color.substr(0, 2), 16);
-			var green = parseInt(color.substr(2, 2), 16);
-			var blue = parseInt(color.substr(4, 2), 16);
-			hotspot.css({
-				top: v.top,
-				left: v.left,
-				width: v.width,
-				height: v.height,
-				backgroundColor: "rgba("+red+","+green+","+blue+", 0.8)",
-				opacity: 0.7,
-			}).data("id", v.id).data("obj", v).data("el", el);
-			if(v.icon){
-				var icon = v.icon;
-				if(!icon[0].match(/^(http:\/\/|\/)/)){
-					icon = "/bookfiles/{$project.id}/" + icon;
-				}
-				hotspot.css({
-					"background-image": "url("+icon+")",
-					"background-repeat": "no-repeat",
-					"background-position": "center center"
+		if(_.isArray(file.get("items")) && file.get("items").length > 0){
+			_.each(file.get("items"), function(v,k){
+				var el = $("<li>").text(" "+(k+1));
+				$("<span class='icon'>").prependTo(el).css({
+					backgroundColor: v.color
 				});
-			}
-			hotspot.appendTo("#imgin").draggable({
-				containment: "#imgin",
-				opacity: 1,
-				stack: ".hotspot",
-				stop: function(e, ui){
-					var obj = $(this).data("obj");
-					obj.top = ui.position.top;
-					obj.left = ui.position.left;
-					file.trigger("change:items");
-					bindExit();
+				el.appendTo(".widgetlist");
+				var hotspot = $("<div class='hotspot'>").addClass("hotspot_"+(k+1));
+				var color = v.color.substr(1);
+				var red = parseInt(color.substr(0, 2), 16);
+				var green = parseInt(color.substr(2, 2), 16);
+				var blue = parseInt(color.substr(4, 2), 16);
+				hotspot.css({
+					top: v.top,
+					left: v.left,
+					width: v.width,
+					height: v.height,
+					backgroundColor: "rgba("+red+","+green+","+blue+", 0.8)",
+					opacity: 0.7,
+				}).data("id", v.id).data("obj", v).data("el", el);
+				if(v.icon){
+					var icon = v.icon;
+					if(icon.length > 0){
+						if(!icon[0].match(/^(http:\/\/|\/)/)){
+							icon = "/bookfiles/{$project.id}/" + icon;
+						}
+						hotspot.css({
+							"background-image": "url("+icon+")",
+							"background-repeat": "no-repeat",
+							"background-position": "center center"
+						});
+					}
 				}
-			}).resizable({
-				autoHide: true,
-				containment: "#imgin",
-				minWidth: 10,
-				minHeight: 10,
-				stop: function(e, ui){
-					var obj = $(this).data("obj");
-					obj.width = ui.size.width;
-					obj.height = ui.size.height;
-					file.trigger("change:items");
-					bindExit();
+				hotspot.appendTo("#imgin").draggable({
+					containment: "#imgin",
+					opacity: 0.5,
+					stack: ".hotspot",
+					stop: function(e, ui){
+						var obj = $(this).data("obj");
+						obj.top = ui.position.top;
+						obj.left = ui.position.left;
+						bindExit();
+					}
+				}).resizable({
+					autoHide: true,
+					containment: "#imgin",
+					minWidth: 10,
+					minHeight: 10,
+					stop: function(e, ui){
+						var obj = $(this).data("obj");
+						obj.width = ui.size.width;
+						obj.height = ui.size.height;
+						bindExit();
+					}
+				});
+				if(k+1 == active){
+					hotspot.addClass("active");
+					el.addClass("active");
+					$("#widgetsetup").show();
 				}
 			});
-			if(k+1 == active){
-				hotspot.addClass("active");
-				el.addClass("active");
-				$("#widgetsetup").show();
-			}
-		});
+		}
 	}).trigger("change:items");
 	file.on("change", function(){
 		bindExit();
@@ -454,7 +505,7 @@ $(function(){
 			"transform": "translateX(-100%)",
 		});
 		return false;
-	}).submit();
+	});
 	$(".menu").delegate(".pickbtn", "click", function(){
 		pick_file(_.bind(function(f){
 			$("input", $(this).parent()).val(f);
@@ -490,7 +541,10 @@ $(function(){
 		var items = file.get("items");
 		if(!items){
 			file.set("items", []);
-			items = file.get("items")
+			items = file.get("items");
+		}
+		if(!_.isArray(items)){
+			throw "FUCK";
 		}
 		items.push({
 			color: '#'+Math.floor(Math.random()*0xffffff).toString(16),
@@ -500,14 +554,14 @@ $(function(){
 			width: 50,
 			height: 50
 		});
-		file.trigger("change:items change");
+		file.trigger("change change:items");
 		return false;
 	});
 	$("#del").click(function(){
 		var ind = parseInt($.trim($(".widgetlist .active").text())) - 1;
 		var items = file.get("items");
 		items.splice(ind, 1);
-		file.trigger("change");
+		file.trigger("change change:items");
 		unfocusWidget();
 	});
 	$("#hideoverlay").click(function(){
@@ -520,6 +574,11 @@ $(function(){
 	});
 	$("#imgcontain").click(function(){
 		unfocusWidget();
+	});
+	$("#loadfilelist").delegate("a", "click", function(){
+		$("#scene-picker input[name=file]").val($(this).text());
+		$("#scene-picker").submit();
+		return false;
 	});
 });
 </script>

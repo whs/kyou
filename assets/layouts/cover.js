@@ -8,19 +8,18 @@ layouts["cover"] = Layout.extend({
 		return false;
 	},
 	renderer: Layout.prototype.renderer.extend({
-		javascripts: function(){
-			return [
-				"assets/jquery.js",
-				"files/jquery.backgroundpos.js",
-				"files/cover.js",
-			];
-		},
-		stylesheets: function(){
-			return [
-				"http://fonts.googleapis.com/css?family=Antic",
-				"files/standard.css"
-			];
-		},
+		javascripts: [
+			"assets/jquery.js",
+			"files/jquery.backgroundpos.js",
+			"files/cover.js",
+		],
+		stylesheets: [
+			"http://fonts.googleapis.com/css?family=Antic",
+			"files/standard.css"
+		],
+		resources: [
+			"supermarket.ttf",
+		],
 		get_data: function(opt){
 			var data = Layout.prototype.renderer.prototype.get_data.apply(this, arguments);
 			data.config_cover = _.clone(data.config_cover);
