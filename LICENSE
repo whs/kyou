@@ -1,0 +1,41 @@
+Kyou is (C) Copyright 2012 Manatsawin Hanmongkolchai.
+No part of Kyou may be distributed except for the output files.
+
+Kyou source code is not part of the SUNBURN project.
+Although project member is welcomed to help developing Kyou,    
+the contributions copyrights belongs to the project owner.
+(This is to make relicensing and distribution easy.)
+
+Resource files used exclusively by CoreAnime belongs to 
+SUNBURN project.
+
+The nav.js navigator in CoreAnime 0-1 is also copyrighted by me
+and cannot be used in your own code. Kyou's version of nav.js
+is part of the output file and can be used in your own code.
+
+Kyou's source code is composed from many open source projects.
+Including (may not be complete)
+- jQuery (MIT/GPL)
+- Nivo slider (used only when gallery widget is used -- MIT)
+- Backbone and Underscore (MIT)
+- Phraw (BSD)
+- Smarty (LGPL)
+  Note that Smarty used in Kyou is derived from menome,
+  and does have minor modifications.
+- Handlebars (MIT)
+- CKEditor (used only when wysiwyg is used. Not used in output. -- GPL/LGPL/MPL)
+- Bootstrap (Apache v2.0)
+- Three.js (MIT)
+- ThreeX (MIT)
+- Sparks.js (MIT)
+- Tween.js (MIT)
+- jQuery UI (MIT/GPL)
+- jQuery TokenInput (MIT/GPL)
+
+"Kyou" name and the submodule names are from Clannad.
+Clannad is copyrighted by KEY.
+All the the strings referencing to these modules are in the
+nonfree folder. To prevent copyright issues, the nonfree
+folder is not distributed with Kyou. Without the nonfree folder,
+Kyou will use generic name for modules and some artwork will be
+missing.
