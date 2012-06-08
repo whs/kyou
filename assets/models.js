@@ -500,9 +500,7 @@ function format_view(model){
 		el.css("float", "none");
 		el.css("margin-left", "auto");
 		el.css("margin-right", "auto");
-		if(el.is("img")){
-			el.css("display", "block");
-		}
+		el.css("display", "block");
 	}
 	el.data("origcss", el.attr("style"));
 	el.css(css);

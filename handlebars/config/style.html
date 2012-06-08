@@ -1,17 +1,61 @@
-<form action="" class="form-horizontal">
-	<div class="control-group">
-		<label class="control-label">Name</label>
-		<div class="controls">
-			<input type="text" name="name" required>
+<form action="">
+	<label>
+		Name
+		<input type="text" name="name" required>
+	</label>
+	<div class="row">
+		<div class="span1">
+			<label>
+				Text Color
+				<input type="color" name="color" class="input-mini">
+			</label>
+		</div>
+		<div class="span1">
+			<label>
+				BG Color
+				<input type="color" name="background-color" class="input-mini">
+			</label>
+		</div>
+		<div class="span2">
+			<label>
+				BG Fix
+				<select name="background-attachment" style="width: auto;">
+					<option value="scroll">Move with scrolling</option>
+					<option value="fixed">Fixed</option>
+				</select>
+			</label>
+		</div>
+		<div class="span1">
+			<label for="bgtiling">
+				BG Tile
+				<input type="checkbox" id="bgtiling" name="background-repeat" value="repeat">
+			</label>
 		</div>
 	</div>
-	<div class="control-group">
-		<label class="control-label">CSS</label>
-		<div class="controls">
-			<textarea name="style" style="height: 200px;"></textarea>
-			<p class="help-block">One line = external CSS file.<br>Two lines or more = inline CSS</p>
+	<div class="row">
+		<div class="span3">
+			<label>Background Image</label>
+			<div class="input-append">
+				<input type="text" name="background-image" style="width: 150px;">
+				<button type="button" class="btn pickbtn" type="button" style="margin-left: -5px; margin-top:-9px;">Pick</button>
+			</div>
+		</div>
+		<div class="span2">
+			<label>
+				BG Resize
+				<select name="background-size" style="width: auto;">
+					<option value="auto">No</option>
+					<option value="cover">Cover</option>
+					<option value="contain">Contain</option>
+				</select>
+			</label>
 		</div>
 	</div>
+	<label>
+		Custom CSS
+		<div><textarea name="style" style="height: 200px; width:95%;"></textarea></div>
+		<p class="help-block">One line = external CSS file.<br>Two lines or more = inline CSS</p>
+	</label>
 	<div class="form-actions">
 		<input type="submit" value="Save" class="btn btn-primary">
 	</div>

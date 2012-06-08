@@ -2,7 +2,7 @@ layouts["cover"] = Layout.extend({
 	type: "cover",
 	name: "Cover",
 	check_depends: function(widget){
-		if(widget.type.indexOf("cover_") == 0){
+		if(widget.type.indexOf("cover_") == 0 || widget.type == "style"){
 			return true;
 		}
 		return false;

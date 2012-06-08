@@ -6,17 +6,43 @@ widgets["style"] = Widget.extend({
 	icon_large: "/assets/img/css.large.png",
 	icon_small: "/assets/img/css.small.png",
 	config: TemplConfigView.extend({
-		template: "style"
+		template: "style",
+		render: function(){
+			TemplConfigView.prototype.render.apply(this, arguments);
+			_.each(this.model.toJSON(), function(v,k){
+				var input = this.$("[name="+k+"]");
+				if(input.attr("type") == "checkbox" || input.attr("type") == "radio"){
+					input.attr("checked", v);
+				}else{
+					input.val(v);
+				}
+			}, this);
+		},
 	}),
 	renderer: Backbone.View.extend({
 		tagName: "style",
 		initialize: function(){
-			this.model.on("change:style", function(){
+			this.model.on("change", function(){
 				this.render();
 			}, this);
 		},
 		render: function(){
-			this.el.innerHTML = this.model.get("style") || "";
+			var style = this.model.toJSON();
+			delete style.style;
+			delete style.name;
+			delete style.widget;
+			delete style.type;
+			delete style.id;
+			var addStyle = "body{";
+			_.each(style, function(v,k){
+				if(!v){return;}
+				if(k == "background-image"){
+					v = "url(" + v + ")";
+				}
+				addStyle += k+": "+v+"; ";
+			});
+			addStyle += "}";
+			this.el.innerHTML = (this.model.get("style") || "") + addStyle;
 		}
 	}),
 });

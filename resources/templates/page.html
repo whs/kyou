@@ -12,7 +12,7 @@ html,body{
 	top: 0px;
 	right: 0px;
 	width: 400px;
-	height: 99.5%;
+	height: 100%;
 	box-sizing: border-box;
 	padding: 10px;
 	overflow: auto;
@@ -71,8 +71,9 @@ html,body{
 	margin-left: 10px;
 }
 #pagepreview{
-	height: 99.5%;
+	height: 100%;
 	border: none;
+	display: block;
 }
 #autosave{
 	display: inline-block;
@@ -359,8 +360,7 @@ function yukine_select(f){
 
 $(function(){
 	$(window).resize(function(){
-		$("#pagepreview").css("width", $(window).innerWidth() - $("#sidebar:visible").outerWidth());
-		$("#wl_resize").css("width", "auto");
+		$("#pagepreview").css("width", $(window).innerWidth() - $("#sidebar:visible").outerWidth()).css("height", $(window).height());
 	}).resize();
 	page.on("beforerender", function(){
 		$("#pagepreview").remove();
@@ -381,7 +381,7 @@ $(function(){
 	});
 	page.on("render", function(){
 		//$("#pagepreview").css("height", Math.max($(window).height()-5, $("#pagepreview").get(0).contentWindow.innerHeight));
-		$("#pagepreview").css("height", $(window).height()-5);
+		$("#pagepreview").css("height", $(window).height());
 	});
 	page.on("reset", function(){
 		page.widgets.on("reset add destroy", function(){
