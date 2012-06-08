@@ -9,7 +9,7 @@ layouts["standard"] = Layout.extend({
 			var out = ["files/standard.css"];
 			try{
 				if(this.model.page.get("config_standard").transparentbg){
-					out.push("#container,.dark #container{background: transparent};\n");
+					out.push("#container,.dark #container{background: transparent;}\n");
 				}
 			}catch(e){}
 			return out;
