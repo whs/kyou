@@ -18,12 +18,11 @@ widgets["review"] = Widget.extend({
 				containment: "parent",
 				handle: ".grip",
 				update: _.bind(function(){
-					var playlist = [];
-					this.$(".widgetlist li .itemname").each(function(){
-						playlist.push(this.textContent);
+					var reviews = [];
+					this.$(".widgetlist li").each(function(){
+						reviews.push($(this).data("item"));
 					});
-					this.model.set("playlist", playlist).trigger("change");
-					this.render_list();
+					this.model.set("reviews", reviews);
 				}, this)
 			}).disableSelection().delegate("li", "click", _.bind(function(e){
 				this.$(".widgetlist .active").removeClass("active");
