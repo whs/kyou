@@ -42,7 +42,7 @@ widgets["style"] = Widget.extend({
 				addStyle += k+": "+v+" !important; ";
 			});
 			if(!style['background-repeat']){
-				addStyle += "background-repeat: no-repeat;";
+				addStyle += "background-repeat: no-repeat !important;";
 			}
 			addStyle += "}";
 			this.el.innerHTML = (this.model.get("style") || "") + addStyle;
