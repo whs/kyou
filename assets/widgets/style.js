@@ -39,7 +39,7 @@ widgets["style"] = Widget.extend({
 				if(k == "background-image"){
 					v = "url(" + v + ")";
 				}
-				addStyle += k+": "+v+"; ";
+				addStyle += k+": "+v+" !important; ";
 			});
 			addStyle += "}";
 			this.el.innerHTML = (this.model.get("style") || "") + addStyle;
