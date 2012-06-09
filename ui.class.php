@@ -31,6 +31,17 @@ class UI extends Base{
 		$this->smarty->assign("project", $page['project']);
 		$this->smarty->display("page.html");
 	}
+	public function preview(){
+		$page = $this->DB->pages->findOne(array(
+			"viewtoken" => $this->phraw->request['p']
+		));
+		if(!$page){
+			$this->smarty->display_error();
+		}
+		$page = $this->loader->output($page);
+		$this->smarty->assign("page", $page);
+		$this->smarty->display("preview.html");
+	}
 	public function ushio_world(){
 		$this->check_login();
 		$page = $this->loader->page_by_id(false);

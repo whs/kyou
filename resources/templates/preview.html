@@ -1,0 +1,11 @@
+{extends "base.html"}
+{block body}
+<script src="/assets/handlebars.js"></script>
+<script src="/layouts.js"></script>
+<script src="/widgets.js"></script>
+<script>
+var page = new Page({$page|json_encode});
+page.renderer.setElement($("html").get(0));
+page.renderer.render({ "preview": true });
+</script>
+{/block}

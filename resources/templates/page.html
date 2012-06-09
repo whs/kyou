@@ -160,6 +160,7 @@ html,body{
 <div id="sidebar">
 	<div class="toolbar" style="margin: -10px; margin-bottom: 10px; width: auto;">
 		<a href="#" id="popout" class="btn" title="Popout preview"><i class="icon-share-alt"></i></a>
+		<a href="#" id="viewurl" class="btn" title="View URL"><i class="icon-share"></i></a>
 		<a href="#" id="hidesidebar" class="btn" title="Hide sidebar"><i class="icon-resize-full"></i></a>
 		<div class="btn-group" style="display: inline-block; vertical-align: middle;">
 			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#" title="{$strings.vc}">
@@ -304,6 +305,17 @@ html,body{
 		<input type="submit" value="Select" class="btn btn-primary">
 	</div>
 </form>
+<form class="modal fade form-horizontal" id="viewurlfrm" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>View URL</h3>
+	</div>
+	<div class="modal-body">
+		You can preview the page by entering this URL in any compatible browsers. No authentication is required. Editing cannot be done from the preview.
+		<div style="margin-top: 10px;"><input type="text" name="viewurl" readonly style="width: 99%;"></div>
+		<div style="margin-top: 10px;"><input type="button" class="btn btn-danger" value="Reset (changes the URL)"></div>
+	</div>
+</form>
 <script src="/layouts.js"></script>
 <script src="/widgets.js"></script>
 <script>
@@ -384,6 +396,9 @@ $(function(){
 		$("#pagepreview").css("height", $(window).height());
 	});
 	page.on("reset", function(){
+		if(page.has("viewtoken")){
+			$("#viewurlfrm input[type=text]").val("http://" + window.location.hostname + "/p/" + page.get("viewtoken"));
+		}
 		page.widgets.on("reset add destroy", function(){
 			$("#widgetlist").empty();
 			page.widgets.each(function(v){
@@ -505,6 +520,10 @@ $(function(){
 		$(window).resize();
 		return false;
 	});
+	$("#viewurl").click(function(){
+		$("#viewurlfrm").modal();
+		return false;
+	});
 	$("#popout").click(function(){
 		$("#pagepreview,#popout,#hidesidebar").hide();
 		$("#sidebar").css("width", "100%");
@@ -527,6 +546,11 @@ $(function(){
 		page.widgets.add(view);
 		$(this).modal("hide");
 		return false;
+	});
+	$("#viewurlfrm input[type=button]").click(function(){
+		page.set("viewtoken", (Math.random()).toString(36).replace(/^0./,"").substr(0,8));
+		page.save();
+		$("#viewurlfrm input[type=text]").val("http://" + window.location.hostname + "/p/" + page.get("viewtoken"));
 	});
 	$("#widgetlist").delegate("li", "click", function(){
 		if(widgetConfig){
