@@ -73,7 +73,7 @@ h2{
 	</div>
 </div>
 <iframe id="renderer" sandbox></iframe>
-<div id="box">
+<div id="box" style="margin-top: 50px;">
 	<h2>{$strings.dist}</h2>
 	<form action="#" class="form-horizontal" id="configform">
 		<div class="control-group">
@@ -121,6 +121,13 @@ h2{
 			<div class="controls">
 				<textarea name="description" maxlength="132" class="input-xlarge" required>{$project.description|escape}</textarea>
 				<div class="help-block">Describe your book. Maximum 132 characters. No HTML.</div>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Google Analytics ID</label>
+			<div class="controls">
+				<!-- somehow {8} does not work -->
+				<input type="text" name="gaid" pattern="UA-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9]" title="Google Analytics asset ID, such as UA-27038390-4">
 			</div>
 		</div>
 		<div class="form-actions">
@@ -206,6 +213,16 @@ function render(ind){
 			ele.type = "text/javascript";
 			ele.src = "nav.js";
 			page.renderer.$("body").get(0).appendChild(ele);
+			if(project.get("gaid")){
+				var ele = document.createElement("script");
+				ele.type = "text/javascript";
+				ele.textContent = "var _gaq = _gaq || [];\n";
+				ele.textContent += "_gaq.push(['_setAccount', '"+project.get("gaid")+"']);\n";
+				ele.textContent += "_gaq.push(['_setCustomVar', 1, 'Page', "+JSON.stringify(page.get("name"))+", 3]);\n";
+				ele.textContent += "_gaq.push(['_trackPageview']);\n";
+				ele.textContent += "(function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })();";
+				page.renderer.$("body").get(0).appendChild(ele);
+			}
 			_.each(["href", "src"], function(attr){
 				/*page.renderer.$("["+attr+"^=\"/bookfiles/\"]").attr(attr, function(){
 					return $(this).attr(attr).replace(/^\/bookfiles\/[^\/]+\//, "");
