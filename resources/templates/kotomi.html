@@ -167,6 +167,7 @@ iframe{
 	</div>
 	<div class="menu">
 		<div class="toolbar" style="margin: -10px; margin-bottom: 10px; width: auto; margin-right:-5px;">
+			<a href="#" class="btn btn-danger" id="delbtn" title="Delete" style="margin-top: 5px; margin-left: 5px;"><i class="icon-trash icon-white"></i></a>
 			<a href="/" class="btn pull-right" title="Project home" style="margin-top: 5px;"><i class="icon-home"></i></a>
 			<br style="clear: both;">
 		</div>
@@ -367,6 +368,12 @@ function startEditor(){
 			yukine_lastClick = new Date().getTime();
 		}
 	}
+	window.location.hash = file.get("file");
+	setTimeout(function(){
+		window.onhashchange = function(){
+			window.location.reload();
+		}
+	}, 100);
 	document.title = project.get("name") + " :: " + file.get("file") + " | {$strings.iimg}";
 	// Build the editor scene
 	$("<img>").attr("src", "/bookfiles/{$project.id}/"+file.get("file")).load(function(){
@@ -580,6 +587,21 @@ $(function(){
 		$("#scene-picker").submit();
 		return false;
 	});
+	$("#delbtn").click(function(){
+		if(confirm("Delete this interactive data?\nThis cannot be undone.\n\nImage file will not be deleted.")){
+			file.destroy({
+				success: function(){
+					window.location.hash = "";
+					window.location.reload();
+				}
+			});
+		}
+		return false;
+	});
+	if(window.location.hash.substr(1).length > 0){
+		$("#scene-picker input[name=file]").val(window.location.hash.substr(1));
+		$("#scene-picker").submit();
+	}
 });
 </script>
 {/block}

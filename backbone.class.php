@@ -268,7 +268,6 @@ class Deleter extends Base{
 		$this->DB->revisions->remove(array(
 			"project" => $project['_id']
 		));
-		header("HTTP/1.0 410 Gone");
 	}
 
 	public function page_by_id(){
@@ -283,6 +282,19 @@ class Deleter extends Base{
 			"_id" => new MongoId($this->phraw->request['page']),
 			"project" => $project['_id']
 		));
-		header("HTTP/1.0 410 Gone");
+	}
+
+	public function iimg_by_id(){
+		$project = $this->DB->projects->findOne(array(
+			"_id" => new MongoId($this->phraw->request['pid']),
+			"user" => $this->user['_id']
+		), array("_id"));
+		if(!$project){
+			$this->fatal_error("Project not found");
+		}
+		$this->DB->iimg->remove(array(
+			"project" => $project['_id'],
+			"file" => $this->phraw->request['id']
+		), $data);
 	}
 }

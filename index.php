@@ -50,6 +50,7 @@ $router = new URLRouter(array(
 
 	"DELETE projects\/(?P<pid>[a-f0-9]+)"								=> array("backbone.class.php", array("Deleter", "project_by_id")),
 	"DELETE projects\/(?P<pid>[a-f0-9]+)\/pages\/(?P<page>[a-f0-9]+)"	=> array("backbone.class.php", array("Deleter", "page_by_id")),	
+	"DELETE projects\/(?P<pid>[a-f0-9]+)\/iimg\/(?P<id>.+)"				=> array("backbone.class.php", array("Deleter", "iimg_by_id")),
 ), $SMARTY, array(
 	"phraw" => $phraw,
 	"DB" => $DB,
