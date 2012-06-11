@@ -6,3 +6,4 @@ $strings['kara'] = "Ryou";
 $strings['dist'] = "Fuko";
 $strings['sharing'] = "Nagisa";
 $strings['iimg'] = "Kotomi";
+$strings['qs'] = "Botan";
