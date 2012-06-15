@@ -175,6 +175,7 @@ html,body{
     			<li><a href="#" id="runushio"><i class="icon-time"></i> Run {$strings.vc}</a></li>
   			</ul>
 		</div>
+		<a href="#" id="notebtn" class="btn" title="Note"><i class="icon-comment"></i></a>
 		<a href="/" class="btn pull-right" title="Project home"><i class="icon-home"></i></a>
 		<br style="clear: both;">
 	</div>
@@ -314,7 +315,7 @@ html,body{
 		<h3>View URL</h3>
 	</div>
 	<div class="modal-body">
-		You can preview the page by entering this URL in any compatible browsers. No authentication is required. Editing cannot be done from the preview.
+		You can preview the page by entering this URL in any compatible browsers. No login is required. Editing cannot be done from the preview.
 		<div style="margin-top: 10px;"><input type="text" name="viewurl" readonly style="width: 99%;"></div>
 		<div style="margin-top: 10px;"><input type="button" class="btn btn-danger" value="Reset (changes the URL)"></div>
 	</div>
@@ -332,6 +333,18 @@ html,body{
 			<dd>Open the first widget (or the <i>index</i>-th widget, the first one is 1) of type <i>type</i></dd>
 		</dl>
 		<div>Type <i>n</i>*<i>widgetname</i> to create <i>n</i> widgets of type <i>widgetname</i></div>
+	</div>
+</form>
+<form class="modal fade form-horizontal" id="notefrm" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Note</h3>
+	</div>
+	<div class="modal-body">
+		<textarea id="notebox" style="width:95%; height: 300px;"></textarea>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
 	</div>
 </form>
 <script src="/layouts.js"></script>
@@ -417,6 +430,10 @@ $(function(){
 		if(page.has("viewtoken")){
 			$("#viewurlfrm input[type=text]").val("http://" + window.location.hostname + "/p/" + page.get("viewtoken"));
 		}
+		if(page.get("note_modified") != localStorage[page.id+"_noteread"]){
+			$("#notebtn").addClass("btn-warning");
+		}
+		$("#notebtn").attr("title", "Note (modified "+new Date(parseInt(page.get("note_modified"))).toLocaleString()+")").tooltip({ placement: "bottom" });
 		page.widgets.on("reset add destroy", function(){
 			$("#widgetlist").empty();
 			page.widgets.each(function(v){
@@ -696,6 +713,21 @@ $(function(){
 		pick_page(_.bind(function(f){
 			$("input", $(this).parent()).val(f+".html");
 		}, this));
+	});
+	$("#notebtn").click(function(){
+		$("#notefrm").modal();
+		$("#notefrm textarea").val(page.get("note") || "");
+		$(this).removeClass("btn-warning");
+		localStorage[page.id+"_noteread"] = page.get("note_modified");
+		return false;
+	});
+	$("#notefrm").submit(function(){
+		page.set("note", $("textarea", this).val());
+		page.set("note_modified", (new Date().getTime()).toString()); //cast to string to prevent overflow issue
+		localStorage[page.id+"_noteread"] = page.get("note_modified");
+		save();
+		$("#notefrm").modal("hide");
+		return false;
 	});
 
 	$("#widgetlist").sortable({
