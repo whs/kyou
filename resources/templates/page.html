@@ -776,13 +776,15 @@ $(function(){
 		select: function(event, ui){
 			var terms = this.value.split(" ");
 			var lt = terms.pop();
-			var mod = lt.match(/^([0-9]+)\*/)[1];
+			try{
+				var mod = lt.match(/^([0-9]+)\*/)[1];
+			}catch(e){ var mod = null; }
 			terms.push((mod ? mod+"*" : "") + ui.item.value);
 			terms.push("");
 			this.value = terms.join(" ");
 			return false;
 		}
-	}).data( "autocomplete" )._renderItem = function(ul, item){
+	}).data("autocomplete")._renderItem = function(ul, item){
 		return $("<li></li>")
 			.data("item.autocomplete", item)
 			.append( "<a><strong>" + item.text + "</strong> <span style='color:#aaa'>" + item.label + "</span></a>" )
