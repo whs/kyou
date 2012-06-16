@@ -30,6 +30,9 @@ $(function(){
 	}).mouseover(function(){
 		$(".help-point", this).css({webkitTransform: "translateY(300px)", transform: "translateY(300px)"});
 	});
+	$(".widget_iimg .iimg_main").each(function(){
+		$(this).parents(".widget_iimg").css("width", $(this).width()).css("height", $(this).height());
+	});
 	$(".widget_iimg .iimg_main").load(function(){
 		$(this).parents(".widget_iimg").css("width", $(this).width()).css("height", $(this).height());
 	});

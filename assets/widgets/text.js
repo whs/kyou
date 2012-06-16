@@ -36,11 +36,11 @@ widgets["text"] = Widget.extend({
 		tagName: "p",
 		initialize: function(){
 			this.model.on("change:content", function(){
-				this.$el.html(this.model.get("content"));
+				this.render();
 			}, this);
 		},
 		render: function(){
-			this.$el.html(this.model.get("content"));
+			this.el.innerHTML = this.model.get("content");
 		}
 	}),
 });
