@@ -177,6 +177,7 @@ var Page = Backbone.Model.extend({
 					}
 					if(cssInjectPos.length > 0){
 						ele.insertAfter(cssInjectPos);
+						cssInjectPos = ele;
 					}else{
 						ele.appendTo(this.$("head"));
 					}
