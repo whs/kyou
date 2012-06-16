@@ -176,6 +176,7 @@ li ul{
 				<div id="actionbar">
 					<button class="btn" id="folderbtn"><i class="icon-plus"></i> Create folder</button>
 					<a href="#" class="btn" id="dlbtn"><i class="icon-download-alt"></i> Download</a>
+					<button class="btn" id="renamebtn"><i class="icon-pencil"></i> Rename</button>
 					<button class="btn btn-danger" id="delbtn"><i class="icon-trash icon-white"></i> Delete</button>
 				</div>
 			</div>
@@ -266,6 +267,20 @@ $(function(){
 			$("#info,#icon").hide();
 		}
 		return false;
+	});
+	$("#renamebtn").click(function(){
+		var file = $("#filelist .active a");
+		if(file.length == 0){
+			alert("No file is selected");
+			return false;
+		}
+		var fn = file.attr("title");
+		var nn = prompt("Rename to?", fn);
+		if(fn != nn){
+			$.post("", { path: curPath, old: fn, new: nn }, function(){
+				reloadPath();
+			});
+		}
 	});
 	window.onhashchange = function(){
 		curPath = window.location.hash.replace(/^#/, "");

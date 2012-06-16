@@ -3,7 +3,7 @@
 {if is_dir($absfile)}{continue}{/if}
 <div class="file">
 	<a href="#" title="{$file|escape}" data-link="/{$absfile}">
-		<span class="iconbox"><img src="{if preg_match('~\.(png|gif|jpg|jpeg)$~', $file)}/{$absfile}{else}/assets/img/file.png{/if}"></span>
+		<span class="iconbox"><img src="{if preg_match('~\.(png|gif|jpg|jpeg)$~i', $file)}/{$absfile}{else}/assets/img/file.png{/if}"></span>
 		<span class="fileinfo">
 			<span class="filename">{$file|escape}</span>
 			<span class="filesize">{filesize($absfile)|filesize}</span>

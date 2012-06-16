@@ -43,6 +43,12 @@ class Yukine extends Base{
 			}
 			@rmdir($path."/".$_POST['rmdir']);
 			$this->smarty->display("yukinedir.html");
+		}else if(isset($_POST['old'])){
+			if(strstr($_POST['old'], "/") || strstr($_POST['new'], "/") || strstr($_POST['old'], "..") || strstr($_POST['new'], "..")){
+				$this->smarty->display_error(403);
+				die();
+			}
+			rename($path."/".$_POST['old'], $path."/".$_POST['new']);
 		}else if(isset($_GET['path'])){
 			$this->smarty->display("yukinefile.html");
 		}else{

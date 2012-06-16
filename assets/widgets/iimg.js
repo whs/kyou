@@ -77,6 +77,7 @@ widgets["iimg"] = Widget.extend({
 			$("<img>").addClass("iimg_main").attr("src", this.model.get("image")).appendTo(this.el);
 		},
 		javascripts: ["files/iimg.js"],
-		stylesheets: ["files/iimg.css"]
+		stylesheets: ["files/iimg.css"],
+		resources: ["files/help-point.png"]
 	}),
 });
