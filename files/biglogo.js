@@ -31,7 +31,7 @@ $(function(){
 			});
 		});
 	}).resize();
-	$("video").bind("canplaythrough", function(){
+	$(".biglogo video").bind("canplaythrough", function(){
 		$(this).addClass("readyload");
 		if(isFocus){
 			$(this).addClass("playstarted");
@@ -41,11 +41,20 @@ $(function(){
 	var isFocus = true;
 	$(window).blur(function(){
 		isFocus = false;
+		$(".biglogo video").attr("autoplay", false);
 	});
 	$(window).focus(function(){
 		isFocus = true;
-		$("video.readyload:not(.playstarted)").addClass("playstarted").each(function(){
+		$(".biglogo video").attr("autoplay", true);
+		$(".biglogo video.readyload:not(.playstarted)").addClass("playstarted").each(function(){
 			this.play();
+		});
+		// hard scan
+		$(".biglogo video:not(.readyload)").each(function(){
+			if(this.readyState == 4){
+				this.play();
+				$(this).addClass("readyload playstarted");
+			}
 		});
 	});
 });
