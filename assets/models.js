@@ -176,7 +176,7 @@ var Page = Backbone.Model.extend({
 						var ele = $("<link rel='stylesheet'>").attr('href', (v.indexOf("http") == 0 ? "" : "/")+v);
 					}
 					if(cssInjectPos.length > 0){
-						ele.insertBefore(this.$("head"));
+						ele.insertAfter(cssInjectPos);
 					}else{
 						ele.appendTo(this.$("head"));
 					}
