@@ -91,6 +91,25 @@ class Yukine extends Base{
 		$this->smarty->display("yukinepicker.html");
 	}
 
+	public function imageedit(){
+		$this->load_project();
+		$path = $this->path_resolve($this->phraw->request['file']);
+		if(!$path){
+			$this->smarty->display_error(400);
+		}
+		if(strstr($path, "..")){
+			$this->smarty->display_error(403);
+			die();
+		}
+		$file = realpath("bookfiles/".$this->phraw->request['id']."/".$path);
+		if(!is_file($file)){
+			$this->smarty->display_error(403);
+		}
+		$this->smarty->assign("file", $file);
+		$this->smarty->assign("abspath", "/bookfiles/".$this->phraw->request['id']."/".$this->phraw->request['file']);
+		$this->smarty->display("imageeditor.html");
+	}
+
 	public function path_resolve($path){
 		$pattern = '/\w+\/\.\.\//';
 		while(preg_match($pattern,$path)){

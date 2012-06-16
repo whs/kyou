@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Editing {$file|basename|escape}</title>
+	<script type="text/javascript" src="/assets/jquery.js"></script>
+	<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+	<style>
+body{
+	margin: 0; padding: 0;
+	background: #555;
+}
+#toolbar{
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	background: #222;
+	border-bottom: #333 solid 2px;
+	height: 43px;
+	padding: 5px;
+	width: 100%;
+	color: white;
+	box-sizing: border-box;
+	z-index: 10000;
+}
+#img{
+	margin-top: 43px;
+	-webkit-transition: -webkit-transform ease-in 250ms;
+}
+	</style>
+</head>
+<body>
+	<div id="toolbar">
+		Zoom: <select name="zoom" id="zoom">
+			<option value="0.25">25%</option>
+			<option value="0.5">50%</option>
+			<option value="0.75">75%</option>
+			<option value="1" selected>100%</option>
+			<option value="1.25">125%</option>
+			<option value="1.5">150%</option>
+		</select>
+		<div class="btn" id="rleft">Rotate left</div>
+		<div class="btn" id="rright">Rotate right</div>
+	</div>
+	<img src="{$abspath}" id="img">
+
+<script>
+var actions = [];
+$(function(){
+	$("#zoom").change(function(){
+		$("#img").css("transform", "scale("+$(this).val()+")");
+		$("#img").css("-webkit-transform", "scale("+$(this).val()+")");
+	});
+	$("#rleft").click(function(){
+		var deg = $("#img").data("deg") || 0;
+		deg -= 90;
+		$("#img").data("deg", deg);
+		$("#img").css("-webkit-transform", "rotate("+deg+"deg)");
+		actions.push("rotateleft");
+	});
+	$("#rright").click(function(){
+		var deg = $("#img").data("deg") || 0;
+		deg += 90;
+		$("#img").data("deg", deg);
+		$("#img").css("-webkit-transform", "rotate("+deg+"deg)");
+		actions.push("rotateleft");
+	});
+});
+</script>
+</body>
+</html>
