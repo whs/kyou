@@ -747,21 +747,15 @@ $(function(){
 	});
 
 	// Botan
-	var lastSpc = 0;
 	var qsBuilt = false;
 	$(window).keydown(function(e){
-		if(e.keyCode == 9){
-			if(new Date().getTime() - lastSpc < 500){
-				$("#quicksilver").modal(qsBuilt ? "toggle" : undefined);
-				$("#qs").autocomplete("close");
-				setTimeout(function(){
-					$("#qs").get(0).focus();
-				}, 500);
-				qsBuilt = true;
-				lastSpc = 0;
-			}else{
-				lastSpc = new Date().getTime();
-			}
+		if(e.keyCode == 69 && (e.metaKey || e.ctrlKey)){
+			$("#quicksilver").modal(qsBuilt ? "toggle" : undefined);
+			$("#qs").autocomplete("close");
+			setTimeout(function(){
+				$("#qs").get(0).focus();
+			}, 500);
+			qsBuilt = true;
 		}
 	});
 	$("#qs").autocomplete({
