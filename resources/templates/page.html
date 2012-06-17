@@ -1,163 +1,10 @@
 {extends "base.html"}
 {block title}{$page.name|escape} | {$strings.app}{/block}
 {block head}
+<link rel="stylesheet" href="/assets/kyou.css">
 <script src="/assets/jquery.ui.js"></script>
 <script src="/assets/handlebars.js"></script>
-<style>
-html,body{
-	height: 100%;
-}
-#sidebar{
-	position: fixed;
-	top: 0px;
-	right: 0px;
-	width: 400px;
-	height: 100%;
-	box-sizing: border-box;
-	padding: 10px;
-	overflow: auto;
-	box-shadow: rgba(0,0,0,0.5) 0px 0px 50px;
-	background: white;
-}
-#wl_resize{
-	height: 150px;
-}
-.widgetlist{
-	margin: 0;
-	list-style: none;
-	border: #ccc solid 1px;
-	height: 100%;
-	overflow: auto;
-	border-radius: 5px 5px 0px 0px;
-	border-bottom: none;
-}
-.widgetlist li{
-	padding: 5px 10px 5px 10px;
-	border-bottom: #ddd solid 1px;
-	cursor: pointer;
-}
-.widgetlist li:hover{
-	background: #c6f0ff;
-}
-.widgetlist li.active{
-	background: #0088cc;
-	color: white;
-}
-.grip{
-	cursor: move;
-}
-.toolbar{
-	background: #eee;
-	padding: 5px;
-	border: #ccc solid 1px;
-	border-top: none;
-	margin-bottom: 20px;
-	width: 100%;
-}
-.widgetlist .ui-icon{
-	float: right;
-}
-.widgetlist .btn{
-	float: right;
-	padding: 1px;
-	margin-top: -1px;
-}
-.widgetlist img{
-	margin-top: -5px;
-}
-.widgetlist small{
-	font-size: 8pt;
-	color: #aaa;
-	margin-left: 10px;
-}
-#pagepreview{
-	height: 100%;
-	border: none;
-	display: block;
-}
-#autosave{
-	display: inline-block;
-	color: #888;
-}
-.imgpick{
-	width: 340px;
-	height: 300px;
-	overflow: auto;
-	border: #aaa solid 1px;
-}
-.pickitem{
-	width: 80px;
-	height: 80px;
-	box-shadow: border-box;
-	padding: 10px 5px 10px 5px;
-	margin: 5px;
-	border: #eee solid 1px;
-	text-align: center;
-	cursor: pointer;
-	float: left;
-}
-.pickitem:hover{
-	background: #c6f0ff;
-}
-.pickitem.active{
-	background: #00439e;
-	color: white;
-}
-.pickitem.active div{
-	color: #eee;
-}
-.pickitem div{
-	margin-top: 2px;
-	font-size: 9pt;
-	color: #888;
-}
-#widgetconfig .control-label{
-	width: 80px;
-}
-#widgetconfig .controls{
-	margin-left: 100px;
-	margin-right: 20px;
-}
-#showsidebar{
-	position: fixed;
-	top: 10px;
-	right: 10px;
-	padding: 5px 10px;
-	background: rgba(0,0,0,0.6);
-	border-radius: 5px;
-	cursor: pointer;
-	opacity: 0.2;
-	display: none;
-	z-index: 1000;
-}
-#showsidebar:hover{
-	opacity: 1;
-}
-.label{
-	vertical-align: baseline;
-}
-#selectitem iframe{
-	width: 100%;
-	height: 350px;
-	border: none;
-}
-.modal-backdrop{
-	z-index: 20000;
-}
-.modal.fade{
-	z-index: 20050;
-	top: -100%;
-}
-.input-prepend .add-on, .input-prepend .btn{
-	margin-right: -5px;
-}
-.input-prepend input{
-	width: auto !important;
-}
-#qs{
-	width: 95%;
-}
-</style>
+<script src="/assets/jquery.idletimer.js"></script>
 {/block}
 {block body}
 <div id="sidebar">
@@ -332,6 +179,11 @@ html,body{
 		<input type="submit" value="Save" class="btn btn-primary">
 	</div>
 </form>
+<div id="lockexpire">
+	No activity has been detected for 5 minutes, the page lock is expired.<br>
+	Please <a href="#" onclick="window.location.reload(); return false;">refresh</a> this page.
+	<p>All work is automatically saved, none of your work is lost.</p>
+</div>
 <form class="modal fade form-horizontal" id="quicksilver" action="#">
 	<div class="modal-header">
 		<a class="close" data-dismiss="modal">×</a>
@@ -365,7 +217,9 @@ function reqlock(){
 	$.post("/page/{$page.id}/@lock");
 }
 reqlock();
-setInterval(reqlock, 15000);
+var lockTimer = setInterval(reqlock, 15000);
+$.idleTimer(5 * 60000);
+
 window.onunload = function(){
 	$.ajax({
 		async: false,
@@ -402,6 +256,10 @@ function yukine_select(f){
 }
 
 $(function(){
+	$(document).bind("idle.idleTimer", function(){
+		$("#lockexpire").fadeIn();
+		clearTimeout(lockTimer);
+	});
 	$(window).resize(function(){
 		$("#pagepreview").css("width", $(window).innerWidth() - $("#sidebar:visible").outerWidth()).css("height", $(window).height());
 	}).resize();
@@ -430,10 +288,12 @@ $(function(){
 		if(page.has("viewtoken")){
 			$("#viewurlfrm input[type=text]").val("http://" + window.location.hostname + "/p/" + page.get("viewtoken"));
 		}
-		if(page.get("note_modified") != localStorage[page.id+"_noteread"]){
+		if(page.get("note_modified") != localStorage[page.id+"_noteread"] && page.has("note")){
 			$("#notebtn").addClass("btn-warning");
 		}
-		$("#notebtn").attr("title", "Note (modified "+new Date(parseInt(page.get("note_modified"))).toLocaleString()+")").tooltip({ placement: "bottom" });
+		if(page.has("note_modified")){
+			$("#notebtn").attr("title", "Note (modified "+new Date(parseInt(page.get("note_modified"))).toLocaleString()+")").tooltip({ placement: "bottom" });
+		}
 		page.widgets.on("reset add destroy", function(){
 			$("#widgetlist").empty();
 			page.widgets.each(function(v){

@@ -1,0 +1,173 @@
+html,body{
+	height: 100%;
+}
+#sidebar{
+	position: fixed;
+	top: 0px;
+	right: 0px;
+	width: 400px;
+	height: 100%;
+	box-sizing: border-box;
+	padding: 10px;
+	overflow: auto;
+	box-shadow: rgba(0,0,0,0.5) 0px 0px 50px;
+	background: white;
+}
+#wl_resize{
+	height: 150px;
+}
+.widgetlist{
+	margin: 0;
+	list-style: none;
+	border: #ccc solid 1px;
+	height: 100%;
+	overflow: auto;
+	border-radius: 5px 5px 0px 0px;
+	border-bottom: none;
+}
+.widgetlist li{
+	padding: 5px 10px 5px 10px;
+	border-bottom: #ddd solid 1px;
+	cursor: pointer;
+}
+.widgetlist li:hover{
+	background: #c6f0ff;
+}
+.widgetlist li.active{
+	background: #0088cc;
+	color: white;
+}
+.grip{
+	cursor: move;
+}
+.toolbar{
+	background: #eee;
+	padding: 5px;
+	border: #ccc solid 1px;
+	border-top: none;
+	margin-bottom: 20px;
+	width: 100%;
+}
+.widgetlist .ui-icon{
+	float: right;
+}
+.widgetlist .btn{
+	float: right;
+	padding: 1px;
+	margin-top: -1px;
+}
+.widgetlist img{
+	margin-top: -5px;
+}
+.widgetlist small{
+	font-size: 8pt;
+	color: #aaa;
+	margin-left: 10px;
+}
+#pagepreview{
+	height: 100%;
+	border: none;
+	display: block;
+}
+#autosave{
+	display: inline-block;
+	color: #888;
+}
+.imgpick{
+	width: 340px;
+	height: 300px;
+	overflow: auto;
+	border: #aaa solid 1px;
+}
+.pickitem{
+	width: 80px;
+	height: 80px;
+	box-shadow: border-box;
+	padding: 10px 5px 10px 5px;
+	margin: 5px;
+	border: #eee solid 1px;
+	text-align: center;
+	cursor: pointer;
+	float: left;
+}
+.pickitem:hover{
+	background: #c6f0ff;
+}
+.pickitem.active{
+	background: #00439e;
+	color: white;
+}
+.pickitem.active div{
+	color: #eee;
+}
+.pickitem div{
+	margin-top: 2px;
+	font-size: 9pt;
+	color: #888;
+}
+#widgetconfig .control-label{
+	width: 80px;
+}
+#widgetconfig .controls{
+	margin-left: 100px;
+	margin-right: 20px;
+}
+#showsidebar{
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	padding: 5px 10px;
+	background: rgba(0,0,0,0.6);
+	border-radius: 5px;
+	cursor: pointer;
+	opacity: 0.2;
+	display: none;
+	z-index: 1000;
+}
+#showsidebar:hover{
+	opacity: 1;
+}
+.label{
+	vertical-align: baseline;
+}
+#selectitem iframe{
+	width: 100%;
+	height: 350px;
+	border: none;
+}
+.modal-backdrop{
+	z-index: 20000;
+}
+.modal.fade{
+	z-index: 20050;
+	top: -100%;
+}
+.input-prepend .add-on, .input-prepend .btn{
+	margin-right: -5px;
+}
+.input-prepend input{
+	width: auto !important;
+}
+#qs{
+	width: 95%;
+}
+#lockexpire{
+	display: none;
+	width: 100%;
+	position: fixed;
+	background: white;
+	padding: 40px;
+	padding-top: 15%;
+	box-sizing: border-box;
+	font-size: 24pt;
+	font-family: "Myriad Pro", Helvetica, sans-serif;
+	line-height: 2em;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+#lockexpire p{
+	margin-top: 40px;
+	font-size: 12pt;
+}
