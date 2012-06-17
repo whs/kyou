@@ -320,6 +320,18 @@ html,body{
 		<div style="margin-top: 10px;"><input type="button" class="btn btn-danger" value="Reset (changes the URL)"></div>
 	</div>
 </form>
+<form class="modal fade form-horizontal" id="notefrm" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Note</h3>
+	</div>
+	<div class="modal-body">
+		<textarea id="notebox" style="width:95%; height: 300px;"></textarea>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
 <form class="modal fade form-horizontal" id="quicksilver" action="#">
 	<div class="modal-header">
 		<a class="close" data-dismiss="modal">×</a>
@@ -333,18 +345,6 @@ html,body{
 			<dd>Open the first widget (or the <i>index</i>-th widget, the first one is 1) of type <i>type</i></dd>
 		</dl>
 		<div>Type <i>n</i>*<i>widgetname</i> to create <i>n</i> widgets of type <i>widgetname</i></div>
-	</div>
-</form>
-<form class="modal fade form-horizontal" id="notefrm" action="#">
-	<div class="modal-header">
-		<a class="close" data-dismiss="modal">×</a>
-		<h3>Note</h3>
-	</div>
-	<div class="modal-body">
-		<textarea id="notebox" style="width:95%; height: 300px;"></textarea>
-	</div>
-	<div class="modal-footer">
-		<input type="submit" value="Save" class="btn btn-primary">
 	</div>
 </form>
 <script src="/layouts.js"></script>
@@ -750,7 +750,7 @@ $(function(){
 	var lastSpc = 0;
 	var qsBuilt = false;
 	$(window).keydown(function(e){
-		if(e.keyCode == 16){
+		if(e.keyCode == 9){
 			if(new Date().getTime() - lastSpc < 500){
 				$("#quicksilver").modal(qsBuilt ? "toggle" : undefined);
 				$("#qs").autocomplete("close");
