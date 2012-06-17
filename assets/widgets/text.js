@@ -40,7 +40,7 @@ widgets["text"] = Widget.extend({
 			}, this);
 		},
 		render: function(){
-			this.el.innerHTML = this.model.get("content");
+			this.el.innerHTML = this.model.get("content") || "";
 		}
 	}),
 });
