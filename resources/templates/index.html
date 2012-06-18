@@ -220,6 +220,7 @@ ul.token-input-list{
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-danger">Cancel</button>
+		<a class="btn" id="readonlybtn">View as read only</a>
 		<a class="btn btn-primary">Continue</a>
 	</div>
 </form>
@@ -283,7 +284,7 @@ $(function(){
 					})
 					curProj.pages.forEach(function(model){
 						var ele = $("<li><a href='#'></a></li>");
-						$('a', ele).attr("href", "/page/" + model.id).data("id", model.id).html(_.escape(model.get("name"))+" <span class='label'>"+model.stage()+"</span><button class='btn btn-danger'><i class='icon-trash icon-white'></i></button>").data("id", model.id);
+						$('a', ele).attr("href", "/page/" + model.id).data("id", model.id).html(_.escape(model.get("name"))+" <span class='label'>"+model.stage()+"</span><button class='btn btn-danger'><i class='icon-trash icon-white'></i></button>");
 						ele.appendTo("#pagelist");
 					});
 				});
@@ -344,10 +345,16 @@ $(function(){
 			if(x){
 				$("#lockwarn").modal();
 				var d = new Date(x.time.sec*1000);
+				var page = curProj.pages.get($(this).data("id"));
+				if(page.has("viewtoken")){
+					$("#readonlybtn").show().attr("href", "/p/" + page.get("viewtoken"));
+				}else{
+					$("#readonlybtn").hide();
+				}
 				$("#lockuser").text(x.user);
 				$("#locktime").text(d.toLocaleDateString()+" "+d.toLocaleTimeString());
 				$(".label", this).text($(".label", this).data("orig"));
-				$("#lockwarn a.btn").attr("href", this.href);
+				$("#lockwarn a.btn-primary").attr("href", this.href);
 			}else{
 				window.location = this.href;
 			}
