@@ -530,7 +530,7 @@ var CSSConfigView = TemplConfigView.extend({
 				input.val(v);
 			}
 		}, this);
-		_.each(["float", "text-align"], function(v){
+		_.each(["float", "text-align", "clear"], function(v){
 			var el = this.$("[data-name="+v+"] [data-value="+css[v]+"]");
 			if(el.length > 0){
 				el.button('toggle');
