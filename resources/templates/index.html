@@ -263,6 +263,7 @@ $(function(){
 				_.each(userlist, function(x,ind){
 					userlist[ind] = { id: x, name: x };
 				});
+				$("#projmember").prev(".token-input-list-mac").remove();
 				$("#projmember").tokenInput("/_users?owner="+owner, {
 					prePopulate: userlist,
 					preventDuplicates: true,
