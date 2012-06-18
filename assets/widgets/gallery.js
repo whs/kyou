@@ -94,7 +94,11 @@ widgets["gallery"] = Widget.extend({
 				_.each(this.model.get("images"), function(v){
 					var el = $("<div class='gallery_image'><img><div></div></div>");
 					el.find("img").attr("src", v.img).attr("alt", v.desc);
-					el.find("div").html(v.desc);
+					if(v.desc.length > 0){
+						el.find("div").html(v.desc);
+					}else{
+						el.find("div").remove();
+					}
 					this.$el.append(el);
 				}, this);
 				$("<div style='clear:left;'></div>").appendTo(this.el);
