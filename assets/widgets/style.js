@@ -45,7 +45,7 @@ widgets["style"] = Widget.extend({
 				addStyle += "background-repeat: no-repeat !important;";
 			}
 			addStyle += "}";
-			this.el.innerHTML = (this.model.get("style") || "") + addStyle;
+			this.el.innerHTML = addStyle + "\n" + (this.model.get("style") || "");
 		}
 	}),
 });
