@@ -2,6 +2,7 @@ widgets["editortalk"] = Widget.extend({
 	type: "editortalk",
 	name: "Editor talk",
 	description: "Talks. Talks. Talks some more.",
+	disable_config: ["float", "text-align"],
 	config: TemplConfigView.extend({
 		template: "editortalk"
 	}),
