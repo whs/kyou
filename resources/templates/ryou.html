@@ -1,0 +1,318 @@
+{extends "base.html"}
+{block title}{$strings.kara}{/block}
+{block head}
+<style type="text/css">
+#selectitem iframe{
+	border: none;
+	width: 100%;
+	height: 500px;
+	border-radius: 5px;
+}
+#songlist{
+	width: 400px;
+	margin: auto;
+	margin-top: 60px;
+	padding: 10px 0px 20px 0px;
+}
+#songlist h1{
+	padding: 10px;
+}
+#songlist .nav-list li{
+	line-height: 25px;
+}
+.modal-backdrop{
+	z-index: 20000;
+}
+.modal.fade{
+	z-index: 20050;
+	top: -100%;
+}
+#workspace{
+	margin-top: 60px;
+	display: none;
+}
+#timemark{
+	font-size: 24pt;
+	font-family: monospace;
+	color: #555;
+	margin: 20px;
+}
+#lyriclist{
+	border: #ccc solid 1px;
+	background: #eee;
+	padding: 5px;
+	height: 300px;
+	overflow-y: scroll;
+	margin-top: 10px;
+}
+.lyric{
+	padding: 5px;
+	margin: 10px;
+	border: #face00 solid 1px;
+	background: #face11;
+	cursor: pointer;
+}
+.lyric .close{
+	line-height: 12px;
+}
+#lyricinfo{
+	margin-top: 10px;
+}
+#lyricinfo textarea{
+	width: 99%;
+	height: 50px;
+}
+</style>
+{/block}
+{block body}
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+			<a class="brand" href="/">{$strings.kara}</a>
+			<ul class="nav">
+				<li><a href="/">Project Home</a></li>
+				<li><a href="/">Current Project: <strong>{$project.name|escape}</strong></a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+<div id="songlist" class="well">
+	<button id="newbtn" class="btn pull-right" style="margin: 10px;"><i class="icon-plus"></i> New</button>
+	<h1>List of songs</h1>
+	<ul class="nav nav-list">
+		{foreach $files as $item}
+		<li data-id="{$item.id}"><button class="pull-right btn btn-danger"><i class="icon-trash icon-white"></i></button> <a href="#">{$item.name|escape} <span class="label">{$stage[$item.stage]}</span></a></li>
+		{/foreach}
+	</ul>
+</div>
+<div id="workspace" class="container-fluid">
+	<h1 style="margin-bottom: 10px;"></h1>
+	<div class="row-fluid">
+		<div class="span5" style="text-align: center;">
+			<div id="providertarget"></div>
+			<div id="timemark">00:00.00000</div>
+			<div class="well" style="text-align: left; cursor: pointer" id="infobox">
+				<button class="btn pull-right"><i class="icon-pencil"></i> Edit</button>
+				<dl>
+					<dt>Source</dt>
+					<dd></dd>
+					<dt>Stage</dt>
+					<dd></dd>
+				</dl>
+			</div>
+		</div>
+		<div class="span7">
+			<button class="btn" id="addlyricbtn"><i class="icon-plus"></i> Add</button>
+			<div id="lyriclist">
+			</div>
+			<form id="lyricinfo">
+				<label><strong>Time:</strong> <input type="number" name="time" style="display: inline;"></label>
+				<textarea name="lyricinput"></textarea>
+				<div class="form-actions">
+					<input type="submit" value="Save" class="btn btn-primary">
+					<div class="help-inline">HTML OK</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<form class="modal fade form-horizontal" id="newpage" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>New</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="name" required>
+			</div>
+    	</div>
+    	<div class="control-group">
+			<label class="control-label">Source</label>
+			<div class="controls">
+				<select name="source">
+					<option value="file">File</option>
+					<option value="youtube">YouTube</option>
+				</select>
+			</div>
+    	</div>
+    	<div class="control-group" data-source="file">
+			<label class="control-label">File</label>
+			<div class="controls">
+				<div class="input-append">
+					<input type="text" name="file" style="width: 200px;" required>
+					<button class="btn pickbtn" type="button" style="margin-left: -5px;">Pick</button>
+				</div>
+			</div>
+    	</div>
+    	<div class="control-group" data-source="youtube">
+			<label class="control-label">YouTube ID</label>
+			<div class="controls">
+				<input type="text" name="youtubeid" pattern="[a-zA-Z0-9-_]+">
+				<div class="help-block">If the video URL is <code>http://www.youtube.com/watch?v=<strong>YHjgjF5FE-g</strong></code>, enter <code>YHjgjF5FE-g</code></div>
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
+<form class="modal fade form-horizontal" id="selectitem" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Select resource file</h3>
+	</div>
+	<div class="modal-body">
+		<input type="text" name="file" required readonly style="width: 97%; margin-bottom: 10px; border:none; background:transparent; box-shadow: none;">
+		<iframe src="/project/{$project.id}/files/@pick"></iframe>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Select" class="btn btn-primary">
+	</div>
+</form>
+<script>
+var project = new Project({$project|json_encode});
+var currentSong = null, currentTime = 0;
+var yukine_lastClick;
+window.inRyou = true;
+function yukine_select(f){
+	var oV = $("#selectitem input[name=file]").val();
+	if(oV == f && new Date().getTime() - yukine_lastClick < 250){
+		$("#selectitem").submit();
+	}else{
+		$("#selectitem input[name=file]").val(f);
+		yukine_lastClick = new Date().getTime();
+	}
+}
+function pick_file(cb){
+	$("#selectitem").unbind("submit").bind("submit", function(){
+		cb($("input[name=file]", this).val());
+		$(this).modal("hide");
+		return false;
+	}).modal();
+	return true;
+}
+function formatTime(time){
+	var min = Math.floor(time / 60);
+	if(min.toString().length < 2) min = "0" + min;
+	var sec = Math.floor(time - (min * 60));
+	if(sec.toString().length < 2) sec = "0" + sec;
+	var msec = (time - Math.floor(time)).toFixed(5);
+	return min+":"+sec+"."+msec.substr(2);
+}
+function ryoup_update(time){
+	$("#timemark").text(formatTime(time));
+	currentTime = time;
+}
+function loadItem(id){
+	var callback = function(model){
+		window.location.hash = model.id;
+		currentSong = model;
+		$("#songlist").hide();
+		var navItem = $("<li><a href='#'></a></li>");
+		navItem.find("a").html("Current File: <strong></strong>");
+		navItem.find("strong").text(model.get("name"));
+		$(".navbar .nav").append(navItem);
+		$("#workspace").show();
+		$("#workspace h1").text(model.get("name"));
+		$("#infobox dd:eq(0)").text(model.get("source"));
+		$("#infobox dd:eq(1)").text(model.stage());
+		var provider = model.provider();
+		provider.$el.appendTo($("#providertarget"));
+		provider.render();
+		model.on("reset change:lyrics", function(){
+			model.lyrics.on("add change remove reset", function(){
+				$("#lyriclist").empty();
+				model.lyrics.each(function(item){
+					var line = $("<div class='lyric'><a class='close'>×</a><span class='label'>00:00.00</span> <span class='text'></span></div>").appendTo("#lyriclist").data("item", item);
+					line.find(".text").html(item.get("text"));
+					line.find(".label").text(formatTime(item.get("time")));
+				});
+			}).trigger("reset");
+		}).trigger("reset");
+	};
+	if(_.isObject(id)){
+		callback(id);
+	}else{
+		new RyouItem({
+			project: project.id,
+			id: id
+		}).fetch({ success: function(model){
+			callback(model);
+		}});
+	}
+}
+$(function(){
+	$("#newbtn").click(function(){
+		$("#newpage").modal().data("item", null);
+	});
+	$("#newpage select[name=source]").change(function(){
+		$("#newpage div[data-source]").hide();
+		$("#newpage div[data-source] input").attr("required", false);
+		$("#newpage div[data-source="+$(this).val()+"]").show();
+		$("#newpage div[data-source="+$(this).val()+"] input").attr("required", true);
+	}).change();
+	$("body").delegate(".pickbtn", "click", function(){
+		pick_file(_.bind(function(f){
+			$("input", $(this).parent()).val(f);
+		}, this));
+	});
+	$("#songlist .nav-list").delegate("a", "click", function(){
+		loadItem($(this).parent().data("id"));
+		return false;
+	});
+	$("#songlist .nav-list").delegate(".btn-danger", "click", function(){
+		if(confirm("Delete"+$(this).parent().text()+"?")){
+			new RyouItem({
+				project: project.id,
+				id: $(this).parent().data("id")
+			}).destroy({ success: _.bind(function(){
+				$(this).parent().remove();
+			}, this) });
+		}
+		return false;
+	});
+	$("#addlyricbtn").click(function(){
+		var lyric = new RyouLyric({
+			id: new Date().getTime().toString(36),
+			time: currentTime
+		});
+		currentSong.lyrics.add(lyric);
+		currentSong.save();
+	});
+	$("#lyriclist").delegate(".close", "click", function(){
+		var item = $(this).parents(".lyric").data("item");
+		currentSong.lyrics.remove(item);
+		currentSong.save();
+		return false;
+	});
+	$("#newpage").submit(function(){
+		var data = $(this).serializeJSON();
+		var item = $(this).data("item");
+		if(item){
+			_.each(data, function(v,k){
+				item.set(k,v);
+			});
+		}else{
+			$("input[type=submit]", this).attr("disabled", true);
+			data['project'] = project.id;
+			data['stage'] = 0;
+			var item = new RyouItem(data);
+			item.save({}, {
+				success: function(item){
+					$("#newpage").modal("hide");
+					$("#newpage input[type=submit]").attr("disabled", false);
+					loadItem(item);
+				}
+			});
+		}
+		return false;
+	});
+	if(window.location.hash.length > 1){
+		loadItem(window.location.hash.substr(1));
+	}
+});
+</script>
+<script src="/ryou_provider.js"></script>
+{/block}

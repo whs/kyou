@@ -564,7 +564,59 @@ var CSSConfigView = TemplConfigView.extend({
 	}
 });
 
-var widgets = {}, layouts = {};
+var RyouItem = Backbone.Model.extend({
+	initialize: function(opt){
+		this.on("change:project reset", function(){
+			this.project = new Project({id:this.get("project")});
+		}, this).trigger("reset");
+		this.on("change:lyrics reset", function(){
+			this.lyrics = new RyouLyrics(this.get("lyrics"));
+		}, this).trigger("reset");
+	},
+	urlRoot: function(){
+		return "/projects/" + this.project.id + "/lyric/";
+	},
+	stage: function(){
+		var stage = this.get("stage");
+		var stagemap = {
+			0: "Planning",
+			1: "Transcribing",
+			2: "Timing",
+			3: "Typesetting",
+			4: "Done"
+		}
+		return stagemap[stage];
+	},
+	provider: function(opt){
+		if(this.get("source") == this._provider){
+			return this._provider_obj;
+		}
+		this._provider = this.get("source");
+		opt = opt || {};
+		opt.model = this;
+		this._provider_obj = new ryou_provider[this._provider](opt);
+		return this._provider_obj;
+	},
+	toJSON: function(){
+		var out = Backbone.Model.prototype.toJSON.call(this);
+		out.lyrics = this.lyrics.toJSON();
+		return out;
+	}
+});
+var RyouLyric = Backbone.Model.extend({
+
+});
+var RyouLyrics = Backbone.Collection.extend({
+	model: RyouLyric,
+	comparator: function(x){
+		return x.get("time");
+	}
+});
+var RyouProvider = Backbone.View.extend({
+
+});
+
+var widgets = {}, layouts = {}, ryou_provider = {};
 
 if(!window['localStorage']){
 	alert("Browser is not supported!");

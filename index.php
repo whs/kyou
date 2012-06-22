@@ -21,6 +21,7 @@ $router = new URLRouter(array(
 	"page\/@load"								=> array("ui.class.php", array("UI", "ushio_load")),
 	"rev\/(?P<rev>[a-f0-9]+)"					=> array("ui.class.php", array("UI", "ushio_rev")),
 	"project\/(?P<pid>[a-f0-9]+)\/iimg\/"		=> array("ui.class.php", array("UI", "kotomi_app")),
+	"project\/(?P<pid>[a-f0-9]+)\/lyric\/"		=> array("ui.class.php", array("UI", "ryou_app")),
 
 	"_users"									=> array("ui.class.php", array("UI", "ac_users")),
 	"auth"										=> array("auth.class.php", array("AuthUI", "auth")),
@@ -35,6 +36,7 @@ $router = new URLRouter(array(
 
 	"widgets.js"								=> array("ui.class.php", array("UI", "widgets")),
 	"layouts.js"								=> array("ui.class.php", array("UI", "layouts")),
+	"ryou_provider.js"							=> array("ui.class.php", array("UI", "ryou_provider")),
 
 	"GET projects"									=> array("backbone.class.php", array("Loader", "projects")),
 	"GET projects\/(?P<pid>[a-f0-9]+)"				=> array("backbone.class.php", array("Loader", "project_by_id")),
@@ -42,16 +44,21 @@ $router = new URLRouter(array(
 	"GET projects\/(?P<pid>[a-f0-9]+)\/pages\/(?P<page>[a-f0-9]+)"	=> array("backbone.class.php", array("Loader", "page_by_id")),
 	"GET projects\/(?P<pid>[a-f0-9]+)\/iimg.json"					=> array("backbone.class.php", array("Loader", "iimg")),
 	"GET projects\/(?P<pid>[a-f0-9]+)\/iimg\/(?P<id>.+)"			=> array("backbone.class.php", array("Loader", "iimg_by_id")),
+	"GET projects\/(?P<pid>[a-f0-9]+)\/lyric.json"					=> array("backbone.class.php", array("Loader", "ryou")),
+	"GET projects\/(?P<pid>[a-f0-9]+)\/lyric\/(?P<id>.+)"			=> array("backbone.class.php", array("Loader", "ryou_by_id")),
 
 	"POST projects"									=> array("backbone.class.php", array("Saver", "projects")),
 	"PUT projects\/(?P<pid>[a-f0-9]+)"				=> array("backbone.class.php", array("Saver", "project_by_id")),
 	"POST projects\/(?P<pid>[a-f0-9]+)\/pages"		=> array("backbone.class.php", array("Saver", "pages")),
 	"PUT projects\/(?P<pid>[a-f0-9]+)\/pages\/(?P<page>[a-f0-9]+)"	=> array("backbone.class.php", array("Saver", "page_by_id")),
 	"PUT projects\/(?P<pid>[a-f0-9]+)\/iimg\/(?P<id>.+)"			=> array("backbone.class.php", array("Saver", "iimg_by_id")),
+	"POST projects\/(?P<pid>[a-f0-9]+)\/lyric\/"					=> array("backbone.class.php", array("Saver", "ryou")),
+	"PUT projects\/(?P<pid>[a-f0-9]+)\/lyric\/(?P<id>.+)"			=> array("backbone.class.php", array("Saver", "ryou_by_id")),
 
 	"DELETE projects\/(?P<pid>[a-f0-9]+)"								=> array("backbone.class.php", array("Deleter", "project_by_id")),
 	"DELETE projects\/(?P<pid>[a-f0-9]+)\/pages\/(?P<page>[a-f0-9]+)"	=> array("backbone.class.php", array("Deleter", "page_by_id")),	
 	"DELETE projects\/(?P<pid>[a-f0-9]+)\/iimg\/(?P<id>.+)"				=> array("backbone.class.php", array("Deleter", "iimg_by_id")),
+	"DELETE projects\/(?P<pid>[a-f0-9]+)\/lyric\/(?P<id>.+)"			=> array("backbone.class.php", array("Deleter", "ryou_by_id")),	
 ), $SMARTY, array(
 	"phraw" => $phraw,
 	"DB" => $DB,

@@ -120,6 +120,20 @@ class UI extends Base{
 		$this->smarty->assign("files", $this->loader->iimg());
 		$this->smarty->display("kotomi.html");
 	}
+	public function ryou_app(){
+		$this->check_login();
+		$project = $this->loader->project_by_id(false);
+		$this->smarty->assign("project", $project);
+		$this->smarty->assign("files", $this->loader->ryou());
+		$this->smarty->assign("stage", array(
+			0 => "Planning",
+			1 => "Transcribing",
+			2 => "Timing",
+			3 => "Typesetting",
+			4 => "Done"
+		));
+		$this->smarty->display("ryou.html");
+	}
 
 	public function ac_users(){
 		$this->check_login();
@@ -183,6 +197,15 @@ class UI extends Base{
 		foreach(scandir("assets/layouts/") as $f){
 			if(is_file("assets/layouts/".$f)){
 				print file_get_contents("assets/layouts/".$f);
+				print "\n";
+			}
+		}
+	}
+	public function ryou_provider(){
+		header("Content-Type: text/javascript");
+		foreach(scandir("assets/ryou_provider/") as $f){
+			if(is_file("assets/ryou_provider/".$f)){
+				print file_get_contents("assets/ryou_provider/".$f);
 				print "\n";
 			}
 		}

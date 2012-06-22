@@ -110,6 +110,40 @@ class Loader extends Base{
 		return $this->output($iimg);
 	}
 
+	public function ryou(){
+		// Check ACL
+		$project = $this->DB->projects->findOne(array(
+			"_id" => new MongoId($this->phraw->request['pid']),
+			"user" => $this->user['_id']
+		));
+		if(!$project){
+			$this->fatal_error("Project not found");
+		}
+		$lyrics = $this->DB->lyrics->find(array(
+			"project" => $project['_id'],
+		), array("name", "stage"));
+		return $this->output($lyrics);
+	}
+
+	public function ryou_by_id(){
+		// Check ACL
+		$project = $this->DB->projects->findOne(array(
+			"_id" => new MongoId($this->phraw->request['pid']),
+			"user" => $this->user['_id']
+		));
+		if(!$project){
+			$this->fatal_error("Project not found");
+		}
+		$lyric = $this->DB->lyrics->findOne(array(
+			"project" => $project['_id'],
+			"_id" => new MongoId($this->phraw->request['id'])
+		));
+		if(!$lyric){
+			$this->smarty->display_error();
+		}
+		return $this->output($lyric);
+	}
+
 	public function format_output($v){
 		if(!is_array($v)){
 			$v = iterator_to_array($v, false);
@@ -232,6 +266,39 @@ class Saver extends Loader{
 		return parent::iimg_by_id();
 	}
 
+	public function ryou_by_id(){
+		$project = $this->DB->projects->findOne(array(
+			"_id" => new MongoId($this->phraw->request['pid']),
+			"user" => $this->user['_id']
+		), array("_id"));
+		if(!$project){
+			$this->fatal_error("Project not found");
+		}
+		$data = $this->get_data();
+		unset($data['id']);
+		$data['project'] = $project['_id'];
+		$this->DB->lyrics->update(array(
+			"project" => $project['_id'],
+			"_id" => new MongoId($this->phraw->request['id'])
+		), $data);
+		return parent::ryou_by_id();
+	}
+
+	public function ryou(){
+		$project = $this->DB->projects->findOne(array(
+			"_id" => new MongoId($this->phraw->request['pid']),
+			"user" => $this->user['_id']
+		), array("_id"));
+		if(!$project){
+			$this->fatal_error("Project not found");
+		}
+		$data = $this->get_data();
+		unset($data['id']);
+		$data['project'] = $project['_id'];
+		$this->DB->lyrics->insert($data);
+		return $this->output($data);
+	}
+
 	public function get_data(){
 		$data = file_get_contents("php://input");
 		if($_SERVER['CONTENT_TYPE'] == "application/json"){
@@ -296,5 +363,20 @@ class Deleter extends Base{
 			"project" => $project['_id'],
 			"file" => $this->phraw->request['id']
 		), $data);
+	}
+
+	public function ryou_by_id(){
+		// Check ACL
+		$project = $this->DB->projects->findOne(array(
+			"_id" => new MongoId($this->phraw->request['pid']),
+			"user" => $this->user['_id']
+		));
+		if(!$project){
+			$this->fatal_error("Project not found");
+		}
+		$this->DB->lyrics->remove(array(
+			"project" => $project['_id'],
+			"_id" => new MongoId($this->phraw->request['id'])
+		));
 	}
 }
