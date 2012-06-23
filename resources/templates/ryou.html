@@ -1,6 +1,7 @@
 {extends "base.html"}
 {block title}{$strings.kara}{/block}
 {block head}
+<script src="/assets/jquery.scrollto.js"></script>
 <style type="text/css">
 #selectitem iframe{
 	border: none;
@@ -214,11 +215,9 @@ var ryoup_lastele;
 function ryoup_update(time, playing, noScroll){
 	$("#timemark").text(formatTime(time));
 	var currentEle = null;
-	var height = 0;
 	$(".lyric").each(function(){
 		if($(this).data("time") < time){
 			currentEle = this;
-			height += $(this).outerHeight(true);
 		}else{
 			return false;
 		}
@@ -227,7 +226,7 @@ function ryoup_update(time, playing, noScroll){
 	if(currentEle){
 		$(currentEle).addClass("playing");
 		if(currentEle != ryoup_lastele && noScroll !== true){
-			$("#lyriclist").animate({ scrollTop: Math.max(0, height - $(currentEle).outerHeight(true) - 70 ) });
+			$("#lyriclist").stop(true).scrollTo(currentEle, 250, {offset: -30});
 		}
 		ryoup_lastele = currentEle;
 	}
