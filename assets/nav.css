@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css?family=Antic');
 body{
 	margin-bottom: 80px;
 }
@@ -13,7 +14,7 @@ body{
 	color: white;
 	border-top: #888 solid 2px;
 	z-index: 998;
-	font-family: helvetica, Thonburi, tahoma, sans-serif;
+	font-family: Antic, helvetica, Thonburi, tahoma, sans-serif;
 	-webkit-transition: background linear 250ms, bottom ease-out 250ms, opacity linear 250ms;
 	-webkit-user-select: none;
 	-webkit-touch-callout: none;

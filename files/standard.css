@@ -1,5 +1,15 @@
 @charset "UTF-8";
 @font-face{
+	font-family: "Sarabun";
+	font-weight: normal;
+	src: local("TH SarabunPSK"), url(THSarabun.ttf);
+}
+@font-face{
+	font-family: "Sarabun";
+	font-weight: bold;
+	src: local("TH SarabunPSK Bold"), url(THSarabunBold.ttf);
+}
+@font-face{
 	font-family: "Mahaniyom";
 	font-weight: 100;
 	src: local("Layiji MaHaNiYom BAO OT"), local("Layiji MaHaNiYom BAO"), url(bao.otf);
@@ -11,9 +21,10 @@
 body{
 	margin: 0; padding:0;
 	background: #e8e8e8;
-	font-family: sans-serif;
-	font-size: 10pt;
+	font-family: Sarabun, sans-serif;
+	font-size: 18pt;
 	margin-bottom: 80px;
+	-webkit-font-smoothing: subpixel-antialiased;
 }
 .dark{
 	background-color: black;
@@ -84,8 +95,8 @@ small{
 	font-size: 60%;
 }
 p{
-	font-family: helvetica, Thonburi, tahoma, sans-serif;
-	font-size: 12pt;
+	font-family: Sarabun, sans-serif;
+	font-size: 18pt;
 }
 blockquote{
 	font-size: 24pt;

@@ -15,10 +15,12 @@ layouts["standard"] = Layout.extend({
 			return out;
 		},
 		resources: [
-			"bao.otf",
-			"supermarket.ttf",
-			"qleft.png",
-			"qright.png"
+			"files/bao.otf",
+			"files/supermarket.ttf",
+			"files/THSarabun.ttf",
+			"files/THSarabunBold.ttf",
+			"files/qleft.png",
+			"files/qright.png"
 		],
 	}),
 	config: TemplLayoutConfigView.extend({
