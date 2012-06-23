@@ -51,6 +51,14 @@
 	border: #face00 solid 1px;
 	background: #face11;
 	cursor: pointer;
+	box-sizing: border-box;
+}
+.lyric.active{
+	border: none;
+	border-left: #333 solid 6px;
+}
+.lyric.playing{
+	background: #ffffcc;
 }
 .lyric .close{
 	line-height: 12px;
@@ -92,7 +100,7 @@
 			<div id="providertarget"></div>
 			<div id="timemark">00:00.00000</div>
 			<div class="well" style="text-align: left; cursor: pointer" id="infobox">
-				<button class="btn pull-right"><i class="icon-pencil"></i> Edit</button>
+				<button class="btn pull-right" id="editbtn"><i class="icon-pencil"></i> Edit</button>
 				<dl>
 					<dt>Source</dt>
 					<dd></dd>
@@ -104,10 +112,11 @@
 		<div class="span7">
 			<button class="btn" id="addlyricbtn"><i class="icon-plus"></i> Add</button>
 			<div id="lyriclist">
+				<div id="lyriclist-in"></div>
 			</div>
 			<form id="lyricinfo">
-				<label><strong>Time:</strong> <input type="number" name="time" style="display: inline;"></label>
-				<textarea name="lyricinput"></textarea>
+				<label><strong>Time:</strong> <input type="text" pattern="[0-9\.]+" name="time" style="display: inline;"></label>
+				<textarea name="text"></textarea>
 				<div class="form-actions">
 					<input type="submit" value="Save" class="btn btn-primary">
 					<div class="help-inline">HTML OK</div>
@@ -198,16 +207,36 @@ function formatTime(time){
 	if(min.toString().length < 2) min = "0" + min;
 	var sec = Math.floor(time - (min * 60));
 	if(sec.toString().length < 2) sec = "0" + sec;
-	var msec = (time - Math.floor(time)).toFixed(5);
+	var msec = (time - Math.floor(time)).toFixed(3);
 	return min+":"+sec+"."+msec.substr(2);
 }
-function ryoup_update(time){
+var ryoup_lastele;
+function ryoup_update(time, playing, noScroll){
 	$("#timemark").text(formatTime(time));
+	var currentEle = null;
+	var height = 0;
+	$(".lyric").each(function(){
+		if($(this).data("time") < time){
+			currentEle = this;
+			height += $(this).outerHeight();
+		}else{
+			return false;
+		}
+	});
+	$(".lyric.playing").removeClass("playing");
+	if(currentEle){
+		$(currentEle).addClass("playing");
+		if(currentEle != ryoup_lastele && noScroll !== true){
+			$("#lyriclist").animate({ scrollTop: Math.max(0, height - $(currentEle).outerHeight() - 50 ) });
+		}
+		ryoup_lastele = currentEle;
+	}
 	currentTime = time;
 }
 function loadItem(id){
 	var callback = function(model){
 		window.location.hash = model.id;
+		document.title = model.get("name")+ " | "+document.title;
 		currentSong = model;
 		$("#songlist").hide();
 		var navItem = $("<li><a href='#'></a></li>");
@@ -222,13 +251,17 @@ function loadItem(id){
 		provider.$el.appendTo($("#providertarget"));
 		provider.render();
 		model.on("reset change:lyrics", function(){
-			model.lyrics.on("add change remove reset", function(){
-				$("#lyriclist").empty();
+			model.lyrics.on("add change remove reset change", function(){
+				$("#lyriclist-in").empty();
 				model.lyrics.each(function(item){
-					var line = $("<div class='lyric'><a class='close'>×</a><span class='label'>00:00.00</span> <span class='text'></span></div>").appendTo("#lyriclist").data("item", item);
+					var line = $("<div class='lyric'><a class='close'>×</a><span class='label'>00:00.00</span> <span class='text'></span></div>").appendTo("#lyriclist-in").data("item", item).data("time", item.get("time"));
+					if(item.id == $("#lyricinfo").data("item")){
+						line.addClass("active");
+					}
 					line.find(".text").html(item.get("text"));
 					line.find(".label").text(formatTime(item.get("time")));
 				});
+				ryoup_update(currentTime, false, true);
 			}).trigger("reset");
 		}).trigger("reset");
 	};
@@ -276,14 +309,46 @@ $(function(){
 	$("#addlyricbtn").click(function(){
 		var lyric = new RyouLyric({
 			id: new Date().getTime().toString(36),
-			time: currentTime
+			time: currentTime,
+			text: ""
 		});
 		currentSong.lyrics.add(lyric);
 		currentSong.save();
 	});
-	$("#lyriclist").delegate(".close", "click", function(){
+	$("#lyriclist").delegate(".close", "click", function(e){
 		var item = $(this).parents(".lyric").data("item");
 		currentSong.lyrics.remove(item);
+		currentSong.save();
+		e.stopPropagation();
+		return false;
+	});
+	$("#lyriclist").delegate(".lyric", "click", function(){
+		$(".lyric.active").removeClass("active");
+		$(this).addClass("active");
+		$("#lyricinfo").data("item", $(this).data("item").id);
+		var item = $(this).data("item");
+		_.each(item.toJSON(), function(v,k){
+			$("#lyricinfo [name="+k+"]").val(v);
+		}, this);
+		return false;
+	});
+	$("#editbtn").click(function(){
+		$("#newpage").data("item", currentSong).modal();
+		$("#newpage h3").text("Edit");
+		_.each(currentSong.toJSON(), function(v,k){
+			$("#newpage [name="+k+"]").val(v).change();
+		}, this);
+		return false;
+	});
+	$("#lyricinfo").submit(function(){
+		if(!$(this).data("item")){
+			return false;
+		}
+		var item = currentSong.lyrics.get($(this).data("item"));
+		if(!item){
+			return false;
+		}
+		item.set($(this).serializeJSON());
 		currentSong.save();
 		return false;
 	});
@@ -291,8 +356,14 @@ $(function(){
 		var data = $(this).serializeJSON();
 		var item = $(this).data("item");
 		if(item){
+			$("#newpage input[type=submit]").attr("disabled", false);
 			_.each(data, function(v,k){
 				item.set(k,v);
+			});
+			item.save({}, {
+				success: function(){
+					window.location.reload();
+				}
 			});
 		}else{
 			$("input[type=submit]", this).attr("disabled", true);

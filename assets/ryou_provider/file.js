@@ -1,6 +1,6 @@
 window['ryoup_file_init'] = function(){
 	this.addEventListener("timeupdate", function(){
-		ryoup_update.apply(this, [this.currentTime]);
+		ryoup_update.apply(this, [this.currentTime, !this.paused]);
 	}, true);
 }
 
