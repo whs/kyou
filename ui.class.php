@@ -130,7 +130,8 @@ class UI extends Base{
 			1 => "Transcribing",
 			2 => "Timing",
 			3 => "Typesetting",
-			4 => "Done"
+			4 => "QA",
+			5 => "Done"
 		));
 		$this->smarty->display("ryou.html");
 	}

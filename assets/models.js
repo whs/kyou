@@ -583,7 +583,8 @@ var RyouItem = Backbone.Model.extend({
 			1: "Transcribing",
 			2: "Timing",
 			3: "Typesetting",
-			4: "Done"
+			4: "QA",
+			5: "Done"
 		}
 		return stagemap[stage];
 	},
