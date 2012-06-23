@@ -218,7 +218,7 @@ function ryoup_update(time, playing, noScroll){
 	$(".lyric").each(function(){
 		if($(this).data("time") < time){
 			currentEle = this;
-			height += $(this).outerHeight();
+			height += $(this).outerHeight(true);
 		}else{
 			return false;
 		}
@@ -227,7 +227,7 @@ function ryoup_update(time, playing, noScroll){
 	if(currentEle){
 		$(currentEle).addClass("playing");
 		if(currentEle != ryoup_lastele && noScroll !== true){
-			$("#lyriclist").animate({ scrollTop: Math.max(0, height - $(currentEle).outerHeight() - 50 ) });
+			$("#lyriclist").animate({ scrollTop: Math.max(0, height - $(currentEle).outerHeight(true) - 70 ) });
 		}
 		ryoup_lastele = currentEle;
 	}
