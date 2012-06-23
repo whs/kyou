@@ -226,7 +226,7 @@ function ryoup_update(time, playing, noScroll){
 	if(currentEle){
 		$(currentEle).addClass("playing");
 		if(currentEle != ryoup_lastele && noScroll !== true){
-			$("#lyriclist").stop(true).scrollTo(currentEle, 250, {offset: -30});
+			$("#lyriclist").stop(true).scrollTo(currentEle, 250, { offset: -30 });
 		}
 		ryoup_lastele = currentEle;
 	}
