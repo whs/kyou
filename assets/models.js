@@ -609,7 +609,7 @@ var RyouLyric = Backbone.Model.extend({
 var RyouLyrics = Backbone.Collection.extend({
 	model: RyouLyric,
 	comparator: function(x){
-		return x.get("time");
+		return parseFloat(x.get("time"));
 	}
 });
 var RyouProvider = Backbone.View.extend({
