@@ -19,6 +19,8 @@ layouts["standard"] = Layout.extend({
 			"files/supermarket.ttf",
 			"files/THSarabun.ttf",
 			"files/THSarabunBold.ttf",
+			"files/THSarabun.woff",
+			"files/THSarabunBold.woff",
 			"files/qleft.png",
 			"files/qright.png"
 		],
