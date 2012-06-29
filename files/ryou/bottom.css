@@ -1,0 +1,10 @@
+.widget_lyric[data-theme="bottom"] .ryou_list{
+	min-height: 1.2em;
+}
+.widget_lyric[data-theme="bottom"] .ryou_line{
+	display: none;
+}
+.widget_lyric[data-theme="bottom"] .ryou_list .playing{
+	display: block;
+	font-weight: bold;
+}

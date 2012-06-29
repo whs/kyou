@@ -25,7 +25,7 @@ window['ryoup_youtube_init'] = function(){
 	});
 }
 
-if(window['inRyou']){
+if(window['inRyou'] || window['inKyou']){
 ryou_provider['youtube'] = RyouProvider.extend({
 	tagName: "iframe",
 	render: function(){
@@ -36,7 +36,6 @@ ryou_provider['youtube'] = RyouProvider.extend({
 			width: 400,
 			height: 225
 		});
-		ryoup_youtube_init.apply(this.el);
 	},
 });
 }

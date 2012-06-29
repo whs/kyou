@@ -1,0 +1,39 @@
+.widget_lyric[data-theme="right"]{
+	width: 980px;
+	margin: auto;
+}
+.widget_lyric[data-theme="right"] .ryou_list{
+	height: 280px;
+	overflow: auto;
+	float: left;
+	margin-left: 20px;
+	width: 600px;
+	background: rgba(0,0,0,0.7);
+	border: #555 solid 1px;
+	padding: 10px;
+}
+.widget_lyric[data-theme="right"] .ryou_line{
+	margin-bottom: 10px;
+}
+.widget_lyric[data-theme="right"].nowplaying .ryou_line{
+	opacity: 0.4;
+}
+.widget_lyric[data-theme="right"].nowplaying .playing{
+	opacity: 1;
+	font-weight: bold;
+}
+.widget_lyric[data-theme="right"] audio{
+	display: block;
+	float: left;
+}
+.widget_lyric[data-theme="right"]:after{
+	clear: both;
+}
+.jpline{
+	color: red;
+	font-size: 8pt;
+}
+.enline{
+	color: cornflowerblue;
+	font-size: 80%;
+}

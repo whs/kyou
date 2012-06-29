@@ -259,6 +259,7 @@ function loadItem(id){
 		var provider = model.provider();
 		provider.$el.appendTo($("#providertarget"));
 		provider.render();
+		window['ryoup_'+model.get("source")+'_init'].apply(provider.el);
 		model.on("reset change:lyrics", function(){
 			model.lyrics.on("add change remove reset change", function(){
 				$("#lyriclist-in").empty();

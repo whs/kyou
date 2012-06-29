@@ -1,10 +1,10 @@
 window['ryoup_file_init'] = function(){
 	this.addEventListener("timeupdate", function(){
 		ryoup_update.apply(this, [this.currentTime, !this.paused]);
-	}, true);
+	}, false);
 }
 
-if(window['inRyou']){
+if(window['inRyou'] || window['inKyou']){
 ryou_provider['file'] = RyouProvider.extend({
 	tagName: "audio",
 	render: function(){
@@ -15,8 +15,6 @@ ryou_provider['file'] = RyouProvider.extend({
 		}
 		this.el.controls = true;
 		this.el.preload = true;
-		this.el.setAttribute()
-		ryoup_file_init.apply(this.el);
 	},
 });
 }

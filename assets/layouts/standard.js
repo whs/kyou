@@ -6,7 +6,7 @@ layouts["standard"] = Layout.extend({
 			"assets/jquery.js",
 		],
 		stylesheets: function(){
-			var out = ["files/standard.css"];
+			var out = ["files/standard.css", "http://fonts.googleapis.com/css?family=Antic"];
 			try{
 				if(this.model.page.get("config_standard").transparentbg){
 					out.push("#container,.dark #container{background: transparent;}\n");
