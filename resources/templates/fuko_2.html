@@ -287,6 +287,7 @@ function render(ind){
 var project = new Project({$project|json_encode});
 var output;
 var renderTicket;
+window.inKyou = true;
 $(function(){
 	$(".pickbtn").click(function(){
 		pick_file(_.bind(function(f){
@@ -322,7 +323,7 @@ $(function(){
 		render(0);
 	}
 	project.pages.on("reset", startRender);
-})
+});
 </script>
 <script src="/assets/handlebars.js" async></script>
 <script src="/layouts.js" async></script>
