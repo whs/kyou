@@ -35,7 +35,7 @@ widgets["iimg"] = Widget.extend({
 				this.render();
 			}, this);
 		},
-		render: function(){
+		render: function(opt){
 			this.config = JSON.parse($.ajax({
 				async: false, // as the export page can't wait.
 				url: "/projects/" + page.project.id + "/iimg/" + this.model.get("image"),
@@ -44,13 +44,22 @@ widgets["iimg"] = Widget.extend({
 			_.each(this.config.items || [], function(v){
 				var el = $("<a>").attr("id", "iimg_"+v.id).appendTo(this.el);
 				if(v.action == "bg" && v.bgimg){
-					el.attr("data-img", v.bgimg);
+					var d = $("<div>").insertAfter(el).addClass("imghover").attr("style", "background-image: url("+v.bgimg+")");
+					// Somehow in-editor preview does not work without this
+					if(!opt){
+						setTimeout(_.bind(function(d, v){
+							d.css({
+								backgroundImage: "url("+v.bgimg+")"
+							});
+						}, d, d, v), 1);
+					}
+					el.addClass("hasimghover");
 				}
 				if(v.action == "link" && v.link){
 					el.attr("href", v.link);
 				}
 				if(v.action == "txt" && v.text){
-					var txtel = $("<div>").addClass("txthover").css({
+					$("<div>").addClass("txthover").css({
 						top: v.txttop || 0,
 						left: v.txtleft || 0,
 						width: v.txtwidth || 150,

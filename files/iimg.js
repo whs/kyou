@@ -8,25 +8,10 @@ $(function(){
 		mouseover = "touchstart";
 		mouseout = "touchend";
 	}
-	$(".widget_iimg").delegate("[data-img]", mouseover, function(){
-		var parent = $(this).parents(".widget_iimg");
-		$("<div>").addClass("iimg_img").css({
-			width: "100%",
-			height: "100%",
-			position: "absolute",
-			top: 0,
-			left: 0,
-			"background-image": "url("+$(this).data("img")+")",
-			"z-index": "500"
-		}).appendTo(parent);
-		$("#charbox img").remove();
-	}).delegate("[data-img]", mouseout, function(){
-		var parent = $(this).parents(".widget_iimg");
-		parent.find(".iimg_img").remove();
-	}).delegate(".hastxthover", mouseover, function(){
-		$(this).next().fadeIn(100);
-	}).delegate(".hastxthover", mouseout, function(){
-		$(this).next().fadeOut(100);
+	$(".widget_iimg").delegate(".hastxthover, .hasimghover", mouseover, function(){
+		$(this).next().fadeIn($(this).hasClass("hasimghover") ? 0 : 100);
+	}).delegate(".hastxthover, .hasimghover", mouseout, function(){
+		$(this).next().fadeOut($(this).hasClass("hasimghover") ? 0 : 100);
 	}).mouseover(function(){
 		$(".help-point", this).css({webkitTransform: "translateY(300px)", transform: "translateY(300px)"});
 	});
