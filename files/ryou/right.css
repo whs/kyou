@@ -11,6 +11,7 @@
 	background: rgba(0,0,0,0.7);
 	border: #555 solid 1px;
 	padding: 10px;
+	color: white;
 }
 .widget_lyric[data-theme="right"] .ryou_line{
 	margin-bottom: 10px;
