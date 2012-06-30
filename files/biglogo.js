@@ -5,7 +5,8 @@ $(function(){
 	$(".biglogo").css({
 		height: $(window).height(),
 		display: "table",
-		width: "100%"
+		width: "100%",
+		height: "100%"
 	});
 	$(".biglogo img").css({
 		maxWidth: "100%",
@@ -13,7 +14,8 @@ $(function(){
 	});
 	$(".biglogo video").css({
 		width: "100%",
-		height: "100%"
+		height: "100%",
+		position: "absolute"
 	});
 	$(window).resize(function(){
 		$(".biglogo").each(function(){
@@ -33,9 +35,23 @@ $(function(){
 	}).resize();
 	$(".biglogo video").bind("canplaythrough", function(){
 		$(this).addClass("readyload");
+		if($(this).attr("poster")){
+			$("<img>").addClass("poster").attr("src", $(this).attr("poster")).css({
+				maxWidth: "100%",
+				maxHeight: "100%",
+				margin: "auto",
+				display: "block"
+			}).hide().appendTo($(this).parents("header"));
+		}
 		if(isFocus){
 			$(this).addClass("playstarted");
 			$(this).get(0).play();
+		}
+	});
+	$(".biglogo video[poster]").bind("timeupdate", function(){
+		if(this.currentTime >= this.duration - 0.7){
+			$(this).fadeOut();
+			$(this).next(".poster").fadeIn();
 		}
 	});
 	var isFocus = true;
