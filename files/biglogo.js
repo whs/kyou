@@ -31,6 +31,7 @@ $(function(){
 				verticalAlign: position[0] == "t" ? "top" : (position[0] == "m" ? "middle" : "bottom"),
 				textAlign: position[1] == "l" ? "left" : (position[1] == "c" ? "center" : "right")
 			});
+			$(".biglogo").css("height", $(window).height());
 		});
 	}).resize();
 	$(".biglogo video").bind("canplaythrough", function(){
