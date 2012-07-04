@@ -706,6 +706,7 @@ $(function(){
 				return false;
 			}
 			var ind = 0;
+			var idInc = 0;
 			_.each(stanza, function(v){
 				var repeat = v.match(/^([0-9]+)\*/);
 				if(repeat){
@@ -717,15 +718,17 @@ $(function(){
 				var cnt = 0;
 				while(cnt<repeat){
 					var view = widgets[v];
-					var data = { "name": new Date().getTime().toString(36) };
+					var data = { "name": new Date().getTime().toString(36) + idInc.toString(36) };
 					data.id = "w_"+data.name;
 					view = new view(data);
 					view.weight = ((($("#widgetlist li").index($("#widgetlist .active")))*100)||1E10) + 1 + ind;
-					page.widgets.add(view);
+					page.widgets.add(view, { silent: true });
 					ind++;
 					cnt++;
+					idInc++;
 				}
 			});
+			page.widgets.trigger("add");
 			hideQs();
 		}
 		return false;
