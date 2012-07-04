@@ -16,5 +16,12 @@ ryou_provider['file'] = RyouProvider.extend({
 		this.el.controls = true;
 		this.el.preload = true;
 	},
+	seek: function(time){
+		this.el.currentTime = time;
+		ryoup_update.apply(this.el, [this.el.currentTime, !this.el.paused]);
+	},
+	stop: function(){
+		this.el.paused ? this.el.play() : this.el.pause();
+	}
 });
 }

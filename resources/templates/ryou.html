@@ -226,7 +226,7 @@ function ryoup_update(time, playing, noScroll){
 	$("#timemark").text(formatTime(time));
 	var currentEle = null;
 	$(".lyric").each(function(){
-		if($(this).data("time") < time){
+		if($(this).data("time") <= time){
 			currentEle = this;
 		}else{
 			return false;
@@ -300,6 +300,12 @@ $(function(){
 		pick_file(_.bind(function(f){
 			$("input", $(this).parent()).val(f);
 		}, this));
+	}).keyup(function(e){
+		if(e.which == 32 && !$(e.target).is("input,textarea") && currentSong){
+			currentSong.provider().stop();
+			e.preventDefault();
+			return false;
+		}
 	});
 	$("#songlist .nav-list").delegate("a", "click", function(){
 		loadItem($(this).parent().data("id"));
@@ -340,6 +346,9 @@ $(function(){
 		_.each(item.toJSON(), function(v,k){
 			$("#lyricinfo [name="+k+"]").val(v);
 		}, this);
+		var provider = currentSong.provider();
+		//provider.stop();
+		provider.seek(parseFloat($(this).data("time")) + 0.00001);
 		return false;
 	});
 	$("#editbtn").click(function(){

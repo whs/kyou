@@ -16,7 +16,7 @@ window['ryoup_youtube_init'] = function(){
 					this.poller = setInterval(function(){
 						ryoup_update.apply(self, [self.youtube.getCurrentTime(), true]);
 					}, 10);
-				}else{
+				}else if(self.youtube.getCurrentTime){
 					ryoup_update.apply(self, [self.youtube.getCurrentTime(), false]);
 					clearInterval(this.poller);
 				}
@@ -33,9 +33,22 @@ ryou_provider['youtube'] = RyouProvider.extend({
 			src: "http://www.youtube.com/embed/" + this.model.get("youtubeid") + "?rel=0&amp;enablejsapi=1&amp;modestbranding=1",
 			frameborder: "0",
 			allowfullscreen: true,
-			width: 400,
-			height: 225
+			width: 300,
+			height: 169
 		});
 	},
+	seek: function(time){
+		if(!this.el.youtube){
+			return false;
+		}
+		this.el.youtube.seekTo(time, true);
+		ryoup_update.apply(this.el, [this.el.youtube.getCurrentTime(), this.el.youtube.getPlayerState() == 1]);
+	},
+	stop: function(){
+		if(!this.el.youtube){
+			return false;
+		}
+		this.el.youtube.getPlayerState() == 1 ? this.el.youtube.pauseVideo() : this.el.youtube.playVideo();
+	}
 });
 }

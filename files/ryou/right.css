@@ -23,9 +23,10 @@
 	opacity: 1;
 	font-weight: bold;
 }
-.widget_lyric[data-theme="right"] audio{
+.widget_lyric[data-theme="right"] audio, .widget_lyric[data-theme="right"] iframe{
 	display: block;
 	float: left;
+	max-width: 300px;
 }
 .widget_lyric[data-theme="right"]:after{
 	clear: both;
