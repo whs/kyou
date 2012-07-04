@@ -7,7 +7,7 @@
 @font-face{
 	font-family: "Sarabun";
 	font-weight: bold;
-	src: local("TH SarabunPSK Bold"), url(THSarabunBold.woff) format(woff), url url(THSarabunBold.ttf) format(truetype);
+	src: local("TH SarabunPSK Bold"), url(THSarabunBold.woff) format(woff), url(THSarabunBold.ttf) format(truetype);
 }
 @font-face{
 	font-family: "Mahaniyom";

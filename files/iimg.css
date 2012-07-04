@@ -8,7 +8,7 @@
 	cursor: pointer;
 	z-index: 1000;
 }
-.widget_iimg .txthover{
+.widget_iimg .txthover, #imgin .txthover{
 	position: absolute;
 	background: rgba(0,0,0,0.8);
 	color: white;
@@ -17,7 +17,16 @@
 	z-index: 500;
 	text-shadow: black 0px 1px 0px;
 	display: none;
-	border: rgba(255,255,255,0.1) solid 5px;
+	border: rgba(255,255,255,0.1) solid 5px;;
+}
+#imgin .txthover, #imgin .txthover p{
+	font-family: Sarabun;
+	font-size: 18pt;
+	line-height: normal;
+}
+#imgin .txthover p{
+	margin-top: 1em;
+	margin-bottom: 1em;
 }
 .widget_iimg .iimg_main{
 	z-index: 10;

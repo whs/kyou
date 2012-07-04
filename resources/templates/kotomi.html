@@ -2,6 +2,17 @@
 {block title}{$project.name|escape} | {$strings.iimg}{/block}
 {block head}
 <style>
+@import url(/files/iimg.css);
+@font-face{
+	font-family: "Sarabun";
+	font-weight: normal;
+	src: local("TH SarabunPSK"), url(/files/THSarabun.woff) format(woff), url(/files/THSarabun.ttf) format(truetype);
+}
+@font-face{
+	font-family: "Sarabun";
+	font-weight: bold;
+	src: local("TH SarabunPSK Bold"), url(/files/THSarabunBold.woff) format(woff), url(/files/THSarabunBold.ttf) format(truetype);
+}
 .scene{
 	display: none;
 	position: absolute;
@@ -132,13 +143,7 @@ iframe{
 	left: 0;
 }
 .txthover{
-	background: rgba(0,0,0,0.8);
-	color: white;
-	padding: 10px;
-	border-radius: 5px;
-	z-index: 1000;
-	text-shadow: black 0px 1px 0px;
-	border: rgba(255,255,255,0.1) solid 5px;
+	display: block !important;
 }
 </style>
 {/block}
@@ -374,7 +379,7 @@ function startEditor(){
 			window.location.reload();
 		}
 	}, 100);
-	document.title = project.get("name") + " :: " + file.get("file") + " | {$strings.iimg}";
+	document.title = file.get("file") + " :: " + project.get("name") + " | {$strings.iimg}";
 	// Build the editor scene
 	$("<img>").attr("src", "/bookfiles/{$project.id}/"+file.get("file")).load(function(){
 		$("#imgin").css({
