@@ -32,7 +32,7 @@ body{
 	height: 100%;
 	line-height: 50px;
 	font-size: 18pt;
-	font-family: "HelveticaNeue-UltraLight", Helvetica, sans-serif;
+	font-family: Antic, sans-serif;
 }
 #prevpage{
 	position: absolute;
@@ -59,7 +59,8 @@ body{
 	text-align: center;
 	line-height: 24px;
 	border-top: #222 solid 1px;
-	font-family: "HelveticaNeue-UltraLight", Helvetica, sans-serif;
+	font-family: Antic, sans-serif;
+	font-size: 14pt;
 }
 .navpage{
 	display: inline-block;

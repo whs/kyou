@@ -485,9 +485,6 @@ function format_view(model){
 		return false;
 	}
 	var el = model.view.$el;
-	if(el.data("origcss")){
-		el.attr("style", el.data("origcss"));
-	}
 	var css = _.clone(model.get("_css"));
 	if(!css){
 		return;
@@ -519,20 +516,25 @@ function format_view(model){
 		el.css("margin-right", "auto");
 		el.css("display", "block");
 	}
-	el.data("origcss", el.attr("style"));
 	var defaultCSS = {
 		float: "none",
 		"text-align": "left",
 		clear: "none",
 		"background-repeat": "repeat",
 	};
+	var cssStr = "";
 	_.each(css, function(v,k){
 		if(v == defaultCSS[k]){
-			delete css[k];
+			return;
 		}
+		cssStr += k+":"+v+";";
 	});
-	el.css(css);
-	el.attr("style", (el.attr("style") || "") + customcss);
+	var cssel = el.data("cssel");
+	if(!cssel){
+		cssel = $("<style></style>").insertBefore(el);
+		el.data("cssel", cssel);
+	}
+	cssel.text("#" + el.attr("id")+"{"+cssStr+customcss+"}");
 }
 
 var CSSConfigView = TemplConfigView.extend({
