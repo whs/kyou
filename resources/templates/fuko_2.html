@@ -72,7 +72,7 @@ h2{
 		</div>
 	</div>
 </div>
-<iframe id="renderer" sandbox></iframe>
+<iframe id="renderer" sandbox="allow-same-origin"></iframe>
 <div id="box" style="margin-top: 50px;">
 	<h2>{$strings.dist}</h2>
 	<form action="#" class="form-horizontal" id="configform">
@@ -325,7 +325,7 @@ $(function(){
 	project.pages.on("reset", startRender);
 });
 </script>
-<script src="/assets/handlebars.js" async></script>
+<script src="/assets/handlebars.js"></script>
 <script src="/layouts.js" async></script>
 <script src="/widgets.js" async></script>
 <script src="/ryou_provider.js" async></script>
