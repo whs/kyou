@@ -37,10 +37,14 @@ html{
 	-webkit-transition: -webkit-transform ease-out 100ms, -webkit-box-shadow ease-out 100ms;
 }
 .left .box:hover{
+{{#if config_cover.zoom}}
 	-webkit-transform: scale(1.1);
 	position: relative;
 	z-index: 5000;
 	-webkit-box-shadow: black 0px 2px 20px;
+{{else}}
+	opacity: 0.8;
+{{/if}}
 }
 .box.double{
 	width: 40%;
@@ -52,9 +56,11 @@ html{
 	background: transparent;
 	border: none;
 }
+{{#if config_cover.zoom}}
 .box.featured:hover{
 	-webkit-transform: scale(1.1);
 }
+{{/if}}
 .featured img{
 	max-width: 100%;
 	vertical-align: middle;

@@ -20,9 +20,20 @@ layouts["cover"] = Layout.extend({
 		resources: [
 			"supermarket.ttf",
 		],
+		render: function(opt){
+			// render the cover by calling the parent function
+			Layout.prototype.renderer.prototype.render.apply(this, arguments);
+			// add effect to the body
+			var data = this.get_data(opt);
+			if(data.config_cover.effect == "pan"){
+				this.$("body").addClass("cover_pan");
+			}else{
+				this.$("body").addClass("cover_fade");
+			}
+		},
 		get_data: function(opt){
 			var data = Layout.prototype.renderer.prototype.get_data.apply(this, arguments);
-			data.config_cover = _.clone(data.config_cover);
+			data.config_cover = _.clone(data.config_cover) || {};
 			try{
 				if(opt && opt.dist){
 					_.each(data.config_cover.bg, function(v,k){

@@ -1,3 +1,6 @@
+/**
+ * serializeJSON: Used mostly in toJSON()
+ */
 (function( $ ){
 	$.fn.serializeJSON=function() {
 		var json = {};
@@ -7,6 +10,9 @@
 		return json;
 	};
 })(jQuery);
+/**
+ * insertAtCaret: Insert text at the cursor. Used in text widget
+ */
 jQuery.fn.extend({
 	insertAtCaret: function(myValue){
 	  return this.each(function(i) {
@@ -36,6 +42,13 @@ jQuery.fn.extend({
 });
 
 var $templates = {};
+/**
+ * Load template synchronously.
+ * Template is compiled, loaded and subsequential calls will
+ * be much faster.
+ * @param {string} Folder name
+ * @param {string} File name (without .html)
+ */
 function load_template(kind, id){
 	if(!Handlebars){
 		throw("Handlebars is not loaded!");
@@ -52,6 +65,9 @@ function load_template(kind, id){
 	}
 }
 
+/**
+ * Project object
+ */
 var Project = Backbone.Model.extend({
 	urlRoot: "/projects/",
 	initialize: function(){
@@ -504,6 +520,17 @@ function format_view(model){
 		el.css("display", "block");
 	}
 	el.data("origcss", el.attr("style"));
+	var defaultCSS = {
+		float: "none",
+		"text-align": "left",
+		clear: "none",
+		"background-repeat": "repeat",
+	};
+	_.each(css, function(v,k){
+		if(v == defaultCSS[k]){
+			delete css[k];
+		}
+	});
 	el.css(css);
 	el.attr("style", (el.attr("style") || "") + customcss);
 }
@@ -520,7 +547,7 @@ var CSSConfigView = TemplConfigView.extend({
 		var css = this.model.get("_css") || [];
 		this.el.innerHTML = this.template(css);
 		_.each(curWidget.disable_config, function(v){
-			this.$("[name="+v+"],[data-name="+v+"]").closest(".span1,.span2,.span3,.span4,.span5").hide();
+			this.$("[name="+v+"],[data-name="+v+"]").closest(".span1,.span2,.span3,.span4,.span5").remove();
 		});
 		_.each(css, function(v,k){
 			var input = this.$("[name="+k+"]");

@@ -1,3 +1,5 @@
+!(function(){
+var firstTime = true;
 function render_cover(){
 	if($(".coverbg").length > 0){
 		setTimeout(function(){
@@ -12,19 +14,26 @@ function render_cover(){
 	}
 	var curImg = coverImg.shift();
 	coverImg.push(curImg);
-	coverbg=$("<img src='' class='coverbg' />").attr({
-		"src": curImg,
-	}).css({
-		"top": "-35%",
+	var eff = {
 		"opacity": $(".coverbg").length > 0 ? 0 : 1
-	}).appendTo("#covercontain");
+	};
+	if($("body").hasClass("cover_pan")){
+		eff.top = "-35%";
+	}
+	var coverbg=$("<img src='' class='coverbg' />").attr({
+		"src": curImg,
+	}).css(eff).appendTo("#covercontain");
 	setTimeout(function(){
-		coverbg.css({
-			"-webkit-transform": "translateY(20%)",
+		var eff = {
 			"opacity": 1
-		});
+		};
+		if($("body").hasClass("cover_pan")){
+			eff["-webkit-transform"] = "translateY(20%)";
+		}
+		coverbg.css(eff);
 	}, 1, coverbg)
-	setTimeout(render_cover, 8500);
+	setTimeout(render_cover, $("body").hasClass("cover_pan") ? 8500 : (firstTime ? 1500:7000));
+	firstTime = false;
 }
 function resize(){
 	$(".col:first .box").css("width", $(window).width() * 0.20)
@@ -43,3 +52,4 @@ $(function(){
 		}
 	}, 10);
 });
+})();
