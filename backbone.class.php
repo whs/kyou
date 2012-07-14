@@ -23,10 +23,13 @@ class Loader extends Base{
 		return $this->output($out);
 	}
 
-	public function pages(){
+	public function pages($pid=null){
+		if($pid === null){
+			$pid = $this->phraw->request['pid'];
+		}
 		// Check ACL
 		$project = $this->DB->projects->findOne(array(
-			"_id" => new MongoId($this->phraw->request['pid']),
+			"_id" => new MongoId($pid),
 			"user" => $this->user['_id']
 		));
 		if(!$project){

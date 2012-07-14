@@ -24,6 +24,17 @@
 		</div>
 		<a href="#" id="notebtn" class="btn" title="Note"><i class="icon-comment"></i></a>
 		<a href="/" class="btn pull-right" title="Project home"><i class="icon-home"></i></a>
+		<div class="btn-group pull-right" style="display: inline-block; vertical-align: middle;">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+				<i class="icon-folder-open"></i>
+				<span class="caret"></span>
+			</a>
+  			<ul class="dropdown-menu" id="pagelist">
+    			{foreach $pagelist as $p}
+    			<li{if $p.id == $page.id} class="active"{/if}><a href="/page/{$p.id}">{$p.name|escape}</a></li>
+    			{/foreach}
+  			</ul>
+		</div>
 		<br style="clear: both;">
 	</div>
 	<p>

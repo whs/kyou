@@ -29,6 +29,7 @@ class UI extends Base{
 		$page = $this->loader->page_by_id(false);
 		$this->smarty->assign("page", $page);
 		$this->smarty->assign("project", $page['project']);
+		$this->smarty->assign("pagelist", $this->loader->pages($page['project']['id']));
 		$this->smarty->display("page.html");
 	}
 	public function preview(){
