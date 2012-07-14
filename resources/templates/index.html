@@ -102,7 +102,7 @@ ul.token-input-list{
 				<select id="project">
 					<option>Loading...</option>
 				</select>
-				<button id="proj_share" class="btn">Sharing</button>
+				<button id="proj_share" class="btn">Inspect</button>
 				<a href="#" class="btn btn-danger" id="proj_delete">Delete</a>
 				<div class="help-block">
 					Logged in as <strong>{$user._id|escape}</strong> <a href="/auth" class="btn">Relogin</a>
@@ -193,7 +193,13 @@ ul.token-input-list{
 	</div>
 	<div class="modal-body">
 		<div class="control-group">
-			<label class="control-label">Project owner</label>
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="name">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Owner</label>
 			<div class="controls">
 				<input type="text" id="projowner" disabled>
 			</div>
@@ -271,6 +277,7 @@ $(function(){
 					zindex: 20000,
 					theme: "mac"
 				});
+				$("#sharing input[name=name]").val(curProj.get("name"));
 				$("a[data-link]").attr("href", function(){
 					return $(this).data("link").replace("%s", curProj.id);
 				});
@@ -327,6 +334,12 @@ $(function(){
 		}
 		users = _.union([{$user._id|json_encode}], users);
 		curProj.set("user", users);
+		var name = $("input[name=name]", this).val();
+		if(name != curProj.get("name")){
+			curProj.set("name", name);
+			projects.trigger("reset");
+			document.title = name + " | {$strings.app}";
+		}
 		curProj.save();
 		$("#sharing").modal("hide");
 		return false;
