@@ -88,15 +88,15 @@ h2{
 			<label class="control-label">App Icon</label>
 			<div class="controls">
 				<div class="input-prepend input-append">
-					<span class="add-on">16x16</span><input name="icon16" type="text" value="{$project.icon16|escape}">
+					<span class="add-on">16x16</span><input name="icon16" type="text" value="{$project.icon16|escape:html}">
 					<button class="btn pickbtn" type="button">Pick</button>
 				</div>
 				<div class="input-prepend input-append">
-					<span class="add-on">48x48</span><input name="icon48" type="text" value="{$project.icon48|escape}">
+					<span class="add-on">48x48</span><input name="icon48" type="text" value="{$project.icon48|escape:html}">
 					<button class="btn pickbtn" type="button">Pick</button>
 				</div>
 				<div class="input-prepend input-append">
-					<span class="add-on">128x128</span><input name="icon128" type="text" value="{$project.icon128|escape}" required>
+					<span class="add-on">128x128</span><input name="icon128" type="text" value="{$project.icon128|escape:html}" required>
 					<button class="btn pickbtn" type="button">Pick</button>
 				</div>
 				<div class="help-block">128x128 icon is required. Only png is supported. Chrome Web Store also requires 16x16 icon. Read <a href="https://developers.google.com/chrome/web-store/docs/images" target="_blank">the icon guideline</a>.</div>
@@ -105,14 +105,14 @@ h2{
 		<div class="control-group">
 			<label class="control-label">Application ID</label>
 			<div class="controls">
-				<input type="text" name="appid" value="{if $project.appid}{$project.appid|escape}{else}th.in.sunburn.kyou.{$project.name|replace:' ':''|lower|escape}{/if}" required>
+				<input type="text" name="appid" value="{if $project.appid}{$project.appid|escape}{else}th.in.sunburn.kyou.{$project.name|replace:' ':''|lower|escape:html}{/if}" required>
 				<div class="help-block">Reverse domain of your website appended by application name. The default is <em>probably</em> <strong>incorrect</strong>. For example, th.in.sunburn.coreanime.issue1</div>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">Application version</label>
 			<div class="controls">
-				<input type="text" name="appver" value="{$project.appver|default:1.0|escape}" pattern="[0-9\.]*[0-9]" required>
+				<input type="text" name="appver" value="{$project.appver|default:1.0|escape:html}" pattern="[0-9\.]*[0-9]" required>
 				<div class="help-block">Always increase this number on each build. Testing builds do not count, however.</div>
 			</div>
 		</div>
@@ -127,7 +127,7 @@ h2{
 			<label class="control-label">Google Analytics ID</label>
 			<div class="controls">
 				<!-- somehow {8} does not work -->
-				<input type="text" name="gaid" pattern="UA-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9]" title="Google Analytics asset ID, such as UA-27038390-4">
+				<input type="text" name="gaid" pattern="UA-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9]" title="Google Analytics asset ID, such as UA-27038390-4" value="{$project.gaid|escape:html}">
 			</div>
 		</div>
 		<div class="form-actions">
