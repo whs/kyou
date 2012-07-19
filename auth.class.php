@@ -28,12 +28,14 @@ class menome_auth extends Base{
 			$out = json_decode($out);
 			$access_token = $out->access_token;
 			$user = json_decode(file_get_contents($this->endpoint."user/user.json?access_token=" . $access_token));
-			if($user->id){
+			if($user->id && isset($user->badges->kyou)){
 				$this->DB->users->insert(array(
 					"_id" => $user->id
 				));
 				$this->set_user($user->id);
 				header("Location: /");
+			}else if($user->id && !isset($user->badges->kyou)){
+				header("Location: kyouinfo.html");
 			}else{
 				header("Location: /auth");
 			}
