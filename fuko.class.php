@@ -90,7 +90,9 @@ class Fuko extends UI{
 				// PhoneGap Build XML
 				file_put_contents("output/tmp/".$_POST['ticket']."/config.xml", $this->get_phonegap_xml($project));
 				// Copy icon
-				copy("output/tmp/".$_POST['ticket']."/".$project['icon128'], "output/tmp/".$_POST['ticket']."/icon.png");
+				if(!is_file("output/tmp/".$_POST['ticket']."/icon.png")){
+					copy("output/tmp/".$_POST['ticket']."/".$project['icon128'], "output/tmp/".$_POST['ticket']."/icon.png");
+				}
 				// Copy navigator
 				copy("assets/nav.css", "output/tmp/".$_POST['ticket']."/nav.css");
 				file_put_contents("output/tmp/".$_POST['ticket']."/nav.js", $this->gen_navigator($project));
@@ -219,7 +221,7 @@ class Fuko extends UI{
 			"icons" => array(
 				"128" => $project['icon128'],
 			),
-			"minimum_chrome_version" => 16,
+			"minimum_chrome_version" => "16",
 			"offline_enabled" => true,
 			"app" => array(
 				"launch" => array(

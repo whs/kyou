@@ -433,7 +433,7 @@ function startEditor(){
 						var obj = $(this).data("obj");
 						obj.top = ui.position.top;
 						obj.left = ui.position.left;
-						bindExit();
+						save();
 					}
 				}).resizable({
 					autoHide: true,
@@ -444,7 +444,7 @@ function startEditor(){
 						var obj = $(this).data("obj");
 						obj.width = ui.size.width;
 						obj.height = ui.size.height;
-						bindExit();
+						save();
 					}
 				});
 				if(k+1 == active){
