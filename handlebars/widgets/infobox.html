@@ -1,0 +1,15 @@
+<div class="infobox">
+	{{#if img}}
+	<img src="{{img}}">
+	{{/if}}
+	<table>
+		<tr><th colspan="2" class="title">{{{name}}}</th></tr>
+		{{#each data}}
+		{{#if dbl}}
+		<tr><td colspan="2">{{{key}}}</td></tr>
+		{{else}}
+		<tr><th>{{{key}}}</th><td>{{{value}}}</td></tr>
+		{{/if}}
+		{{/each}}
+	</table>
+</div>

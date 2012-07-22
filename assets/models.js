@@ -424,10 +424,16 @@ var TemplConfigView = Backbone.View.extend({
 	},
 	save: function(e){
 		_.each($(e.target).serializeJSON(), function(v,k){
+			if(k.match(/\[\]$/)){
+				return;
+			}
 			this.model.set(k, v);
 		}, this);
 		var model = this.model;
 		$("input[type=checkbox]:not(:checked)", e.target).each(function(){
+			if(this.name.match(/\[\]$/)){
+				return;
+			}
 			model.set(this.name, false);
 		});
 		if(this.autocommit){
