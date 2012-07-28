@@ -8,5 +8,12 @@
 var page = new Page({$page|json_encode});
 page.renderer.setElement($("html").get(0));
 page.renderer.render({ "preview": true });
+$("<img>").attr("src", "/assets/previewbadge.png").css({
+	position: "fixed",
+	top: 0,
+	right: 0,
+	pointerEvents: "none",
+	zindex: 1E10
+}).appendTo("body");
 </script>
 {/block}

@@ -3,3 +3,4 @@ resources/cached/*
 bookfiles/*
 output/*.zip
 output/tmp/*
+.DS_Store

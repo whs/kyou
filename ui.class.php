@@ -39,6 +39,11 @@ class UI extends Base{
 		if(!$page){
 			$this->smarty->display_error();
 		}
+		$project = $this->DB->projects->findOne(array(
+			"_id" => $page['project']
+		), array("name"));
+		$page['project'] = $project;
+		unset($page['note']);
 		$page = $this->loader->output($page);
 		$this->smarty->assign("page", $page);
 		$this->smarty->display("preview.html");

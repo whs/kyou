@@ -188,7 +188,8 @@ iframe{
 			<label>
 				Action
 				<select name="action">
-					<option value="bg">Change image</option>
+					<option value="bg">Change background</option>
+					<option value="img">Display image</option>
 					<option value="txt">Display text</option>
 					<option value="link">Link</option>
 				</select>
@@ -322,7 +323,7 @@ function loadWidget(item){
 				var obj = $(this).data("obj");
 				obj.txtwidth = ui.size.width;
 				$(this).css("height", "auto");
-				bindExit();
+				save();
 			}
 		}).draggable({
 			containment: "#imgin",
@@ -330,9 +331,11 @@ function loadWidget(item){
 				var obj = $(this).data("obj");
 				obj.txttop = ui.position.top;
 				obj.txtleft = ui.position.left;
-				bindExit();
+				save();
 			}
 		}).data("obj", item).insertAfter("#imgin img");
+	}else if(item.action == "img"){
+		
 	}
 }
 function updateWidget(){
@@ -438,12 +441,16 @@ function startEditor(){
 				}).resizable({
 					autoHide: true,
 					containment: "#imgin",
+					handles: "all",
 					minWidth: 10,
 					minHeight: 10,
 					stop: function(e, ui){
 						var obj = $(this).data("obj");
-						obj.width = ui.size.width;
-						obj.height = ui.size.height;
+						// Workaround a bug in jQuery UI
+						var maxWidth = $("#imgin").width() - obj.left;
+						obj.width = ui.size.width > maxWidth ? maxWidth : ui.size.width;
+						var maxHeight = $("#imgin").height() - obj.top;
+						obj.height = ui.size.height > maxHeight ? maxHeight : ui.size.height;
 						save();
 					}
 				});
