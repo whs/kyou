@@ -19,7 +19,7 @@ widgets["infobox"] = Widget.extend({
 			_.each(this.model.get("data") || [], function(v){
 				var el;
 				if(v.dbl){
-					el = $("<tr><td colspan='2'><input type='text' name='key[]' class='input-small'></td><td><input type='checkbox' name='double[]' checked><button type='button' class='btn btn-danger infoboxdel'><i class='icon-trash icon-white'></i></button></td></tr>");
+					el = $("<tr><td colspan='2'><input type='text' name='key[]' class='input-small'></td><td><input type='checkbox' name='double[]' checked> <button type='button' class='btn btn-danger infoboxdel'><i class='icon-trash icon-white'></i></button></td></tr>");
 					el.find("input:first").val(v['key']);
 				}else{
 					el = $("<tr><td><input type='text' class='input-small' name='key[]'></td><td><input type='text' class='input-small' name='value[]'></td><td><input type='checkbox' name='double[]'> <button type='button' class='btn btn-danger infoboxdel'><i class='icon-trash icon-white'></i></button></td></tr>");
