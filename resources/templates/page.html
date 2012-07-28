@@ -29,11 +29,7 @@
 				<i class="icon-folder-open"></i>
 				<span class="caret"></span>
 			</a>
-  			<ul class="dropdown-menu" id="pagelist">
-    			{foreach $pagelist as $p}
-    			<li{if $p.id == $page.id} class="active"{/if}><a href="/page/{$p.id}">{$p.name|escape}</a></li>
-    			{/foreach}
-  			</ul>
+  			<ul class="dropdown-menu" id="pagelist"></ul>
 		</div>
 		<br style="clear: both;">
 	</div>
@@ -190,11 +186,21 @@
 		<input type="submit" value="Save" class="btn btn-primary">
 	</div>
 </form>
-<div id="lockexpire">
-	No activity has been detected for 5 minutes, the page lock is expired.<br>
-	Please <a href="#" onclick="window.location.reload(); return false;">refresh</a> this page.
-	<p>All work is automatically saved, none of your work is lost.</p>
-</div>
+<form class="modal fade" id="lockwarn">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Page under editing</h3>
+	</div>
+	<div class="modal-body">
+		<p>Page is locked by <strong id="lockuser"></strong> at <strong id="locktime"></strong>.</p>
+		<p>If you continue, your changes may overwrite that user's changes.</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger">Cancel</button>
+		<a class="btn" id="readonlybtn">View as read only</a>
+		<a class="btn btn-primary">Continue</a>
+	</div>
+</form>
 <form class="modal fade form-horizontal" id="quicksilver" action="#">
 	<div class="modal-header">
 		<a class="close" data-dismiss="modal">×</a>
@@ -210,6 +216,11 @@
 		<div>Type <i>n</i>*<i>widgetname</i> to create <i>n</i> widgets of type <i>widgetname</i></div>
 	</div>
 </form>
+<div id="lockexpire">
+	No activity has been detected for 5 minutes, the page lock is expired.<br>
+	Please <a href="#" onclick="window.location.reload(); return false;">refresh</a> this page.
+	<p>All work is automatically saved, none of your work is lost.</p>
+</div>
 <script src="/layouts.js"></script>
 <script src="/widgets.js"></script>
 <script src="/ryou_provider.js"></script>
@@ -367,9 +378,14 @@ $(function(){
 		$("<span class='label'>").text(page.stage()).appendTo("#pagename");
 	});
 	page.project.pages.on("reset", function(){
-		$("#selectpage select").empty();
+		$("#selectpage select,#pagelist").empty();
 		page.project.pages.each(function(v){
 			$("<option>").attr("value", v.id).text(v.get("name")).appendTo("#selectpage select");
+			var line = $("<li><a></a></li>").appendTo("#pagelist");
+			line.find("a").attr("href", "/page/"+v.id).text(v.get("name")).data("id", v.id);
+			if(v.id == page.id){
+				line.addClass("active");
+			}
 		});
 	});
 	function bindExit(){
@@ -617,6 +633,32 @@ $(function(){
 	$("#wl_resize").resizable({
 		handles: "s",
 	});
+	$("#pagelist").delegate("li a", "click", function(){
+		$("#pagelist").parent().dropdown("toggle").find(".btn").addClass("disabled");
+		$.getJSON(this.href+"/@lock", _.bind(function(x){
+			$("#pagelist").prev().removeClass("disabled");
+			if(x){
+				$("#lockwarn").modal();
+				var d = new Date(x.time.sec*1000);
+				var targetPage = page.project.pages.get($(this).data("id"));
+				if(targetPage.has("viewtoken")){
+					$("#readonlybtn").show().attr("href", "/p/" + targetPage.get("viewtoken"));
+				}else{
+					$("#readonlybtn").hide();
+				}
+				$("#lockuser").text(x.user);
+				$("#locktime").text(d.toLocaleDateString()+" "+d.toLocaleTimeString());
+				$("#lockwarn a.btn-primary").attr("href", this.href);
+			}else{
+				window.location = this.href;
+			}
+		}, this));
+		return false;
+	});
+	$("#lockwarn .btn-danger").click(function(){
+		$("#lockwarn").modal("hide");
+		return false;
+	});
 
 	// Botan
 	var qsBuilt = false;
@@ -639,8 +681,20 @@ $(function(){
 			term = term.replace(/^[0-9]+\*/, "");
 			var termind = termlist.length;
 			var source = _.map(_.keys(widgets), function(v){
+				var chkdep = new widgets[v];
+				if(_.isFunction(chkdep.check_depends)){
+					if(!chkdep.check_depends(page)){
+						return;
+					}
+				}
+				if(_.isFunction(curLayout.check_depends)){
+					if(!curLayout.check_depends(chkdep)){
+						return;
+					}
+				}
 				return { "text": widgets[v].prototype.name, "label": v }
 			});
+			source = _.filter(source, function(x){ return !!x; });
 			if(termind == 0){
 				source.push({ "text": "Open widget (command)", "label": "open" });
 			}
@@ -706,13 +760,26 @@ $(function(){
 			}
 		}else{
 			// First pass: validation
+			// If one of these widget does not exists, reject the stanza
 			var validation = _.filter(stanza, function(v){
 				v = v.replace(/^[0-9]+\*/, "");
 				if(!widgets[v]){
 					return true;
 				}
+				var chkdep = new widgets[v];
+				if(_.isFunction(chkdep.check_depends)){
+					if(!chkdep.check_depends(page)){
+						return true;
+					}
+				}
+				if(_.isFunction(curLayout.check_depends)){
+					if(!curLayout.check_depends(chkdep)){
+						return true;
+					}
+				}
 				return false;
 			});
+			// Reject the stanza
 			if(validation.length > 0){
 				return false;
 			}
