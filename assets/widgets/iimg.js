@@ -44,7 +44,7 @@ widgets["iimg"] = Widget.extend({
 			_.each(this.config.items || [], function(v){
 				var el = $("<a>").attr("id", "iimg_"+v.id).appendTo(this.el);
 				if(v.action == "bg" && v.bgimg){
-					var d = $("<div>").insertAfter(el).addClass("imghover").attr("style", "background-image: url("+v.bgimg+")");
+					var d = $("<div>").insertAfter(el).addClass("bghover").attr("style", "background-image: url("+v.bgimg+")");
 					// Somehow in-editor preview does not work without this
 					if(!opt){
 						setTimeout(_.bind(function(d, v){

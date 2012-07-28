@@ -145,6 +145,13 @@ iframe{
 .txthover{
 	display: block !important;
 }
+.bghover{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
 </style>
 {/block}
 {block body}
@@ -304,7 +311,7 @@ function save(){
 	file.save();
 }
 function unloadWidget(){
-	$(".newbg,.txthover,.imghover").remove();
+	$(".bghover,.txthover,.imghover").remove();
 }
 function loadWidget(item){
 	unloadWidget();
@@ -313,7 +320,10 @@ function loadWidget(item){
 		if(!bgimg[0].match(/^(http:\/\/|\/)/)){
 			bgimg = "/bookfiles/{$project.id}/" + bgimg;
 		}
-		$("<img>").attr("src", bgimg).addClass("newbg").insertAfter("#imgin img");
+		$("<div>").addClass("bghover").css({
+			backgroundImage: "url("+bgimg+")",
+		}).insertAfter("#imgin img");
+		//$("<img>").attr("src", bgimg).addClass("newbg").insertAfter("#imgin img");
 	}else if(item.action == "txt"){
 		$("<div>").addClass("txthover").html(item.text).css({
 			position: "absolute",
