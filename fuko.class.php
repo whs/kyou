@@ -111,13 +111,12 @@ class Fuko extends UI{
 
 	public function estimated_size(){
 		$project = $this->phraw->request['pid'];
-		$totalSize = 0;
+		$totalSize = 650 * 1024;
 		// Pages
 		$pages = $this->DB->pages->find(array(
 			"project" => new MongoId($project)
 		))->count();
-		$page_size = 10 * 1024; // 2kB
-		$totalSize += $page_size;
+		$totalSize += $pages * 25 * 1024;
 		// Yukine
 		if(is_dir("bookfiles/".$project)){
 			$totalSize += $this->foldersize("bookfiles/".$project);

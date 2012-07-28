@@ -7,8 +7,8 @@ class menome_auth extends Base{
 	public $endpoint;
 	public function __construct(){
 		if($_SERVER['SERVER_NAME'] == "dev.kyou.sunburn.in.th"){
-			$this->id = "4f8d59db0d0b85a268000000";
-			$this->secret = "0dccb8ab8326b3f6c9419410b42642b56de87f42";
+			$this->id = "5012229673fd69eebb000000";
+			$this->secret = "7e3fcc76584e0e887b01f53833a6283d9c703b32";
 			$this->endpoint = "http://api.dev.menome.in.th/1/";
 		}else{
 			$this->id = "4f9ea39c725635520c000267";
