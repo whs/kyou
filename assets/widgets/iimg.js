@@ -53,18 +53,22 @@ widgets["iimg"] = Widget.extend({
 							});
 						}, d, d, v), 1);
 					}
-					el.addClass("hasimghover");
-				}
-				if(v.action == "link" && v.link){
+					el.addClass("hasbghover");
+				}else if(v.action == "link" && v.link){
 					el.attr("href", v.link);
-				}
-				if(v.action == "txt" && v.text){
+				}else if(v.action == "txt" && v.text){
 					$("<div>").addClass("txthover").css({
 						top: v.txttop || 0,
 						left: v.txtleft || 0,
 						width: v.txtwidth || 150,
 					}).html(v.text).insertAfter(el);
 					el.addClass("hastxthover");
+				}else if(v.action == "img" && v.image){
+					$("<img>").addClass("imghover").attr("src", v.image).css({
+						top: v.txttop || 0,
+						left: v.txtleft || 0,
+					}).insertAfter(el);
+					el.addClass("hasimghover");
 				}
 				if(v.icon){
 					el.css("background", "url("+v.icon+") center center no-repeat");

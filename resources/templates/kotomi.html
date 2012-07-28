@@ -209,6 +209,13 @@ iframe{
 				</div>
 				<div class="alert alert-info">Must be the same size</div>
 			</label>
+			<label class="setup setup_img">
+				Image
+				<div class="input-append">
+					<input type="text" name="image" class="span2">
+					<button type="button" class="btn pickbtn" style="margin-top: -9px; margin-left: -6px;">Pick</button>
+				</div>
+			</label>
 			<label class="setup setup_txt">
 				Text (HTML OK)
 				<textarea name="text" style="height: 200px;"></textarea>
@@ -297,8 +304,7 @@ function save(){
 	file.save();
 }
 function unloadWidget(){
-	$(".newbg").remove();
-	$(".txthover").remove();
+	$(".newbg,.txthover,.imghover").remove();
 }
 function loadWidget(item){
 	unloadWidget();
@@ -335,7 +341,23 @@ function loadWidget(item){
 			}
 		}).data("obj", item).insertAfter("#imgin img");
 	}else if(item.action == "img"){
-		
+		var src = item.image;
+		if(!src.match(/^(http:\/\/|\/)/)){
+			src = "/bookfiles/{$project.id}/" + src;
+		}
+		$("<img>").addClass("imghover").attr("src", src).css({
+			position: "absolute",
+			top: item.txttop || 0,
+			left: item.txtleft || 0,
+		}).draggable({
+			containment: "#imgin",
+			stop: function(e, ui){
+				var obj = $(this).data("obj");
+				obj.txttop = ui.position.top;
+				obj.txtleft = ui.position.left;
+				save();
+			}
+		}).data("obj", item).insertAfter("#imgin img");
 	}
 }
 function updateWidget(){

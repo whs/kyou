@@ -8,10 +8,10 @@ $(function(){
 		mouseover = "touchstart";
 		mouseout = "touchend";
 	}
-	$(".widget_iimg").delegate(".hastxthover, .hasimghover", mouseover, function(){
-		$(this).next().fadeIn($(this).hasClass("hasimghover") ? 0 : 100);
-	}).delegate(".hastxthover, .hasimghover", mouseout, function(){
-		$(this).next().fadeOut($(this).hasClass("hasimghover") ? 0 : 100);
+	$(".widget_iimg").delegate(".hastxthover, .hasbghover, .hasimghover", mouseover, function(){
+		$(this).next().fadeIn($(this).hasClass("hasbghover") ? 0 : 100);
+	}).delegate(".hastxthover, .hasbghover, .hasimghover", mouseout, function(){
+		$(this).next().fadeOut($(this).hasClass("hasbghover") ? 0 : 100);
 	}).mouseover(function(){
 		$(".help-point", this).css({webkitTransform: "translateY(300px)", transform: "translateY(300px)"});
 	});
