@@ -154,8 +154,8 @@ var Page = Backbone.Model.extend({
 				el: this.el
 			});
 
-			var javascripts = (_.isFunction(layoutRenderer.javascripts) ? layoutRenderer.javascripts() : layoutRenderer.javascripts) || [];
-			var stylesheets = (_.isFunction(layoutRenderer.stylesheets) ? layoutRenderer.stylesheets() : layoutRenderer.stylesheets) || [];
+			var javascripts = _.clone((_.isFunction(layoutRenderer.javascripts) ? layoutRenderer.javascripts() : layoutRenderer.javascripts) || []);
+			var stylesheets = _.clone((_.isFunction(layoutRenderer.stylesheets) ? layoutRenderer.stylesheets() : layoutRenderer.stylesheets) || []);
 
 			// Sometimes the layout put some image in. This should fix the link.
 			if((!opt || !opt.dist) && window["page"]){
