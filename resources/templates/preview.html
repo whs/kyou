@@ -6,6 +6,7 @@
 <script src="/ryou_provider.js"></script>
 <script>
 var page = new Page({$page|json_encode});
+page.renderer.stopClick = function(){};
 page.renderer.setElement($("html").get(0));
 page.renderer.render({ "preview": true });
 $("<img>").attr("src", "/assets/previewbadge.png").css({

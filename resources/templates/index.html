@@ -79,10 +79,11 @@ h1{
 	background: #f5f5f5;
 	text-decoration: none;
 }
-.popover-content button{
+.popover-content .btn{
 	float: right;
 	padding: 2px 10px 2px 10px;
 	margin-top: -3px;
+	margin-right: 2px;
 }
 .popover-content .label{
 	vertical-align: baseline;
@@ -291,7 +292,12 @@ $(function(){
 					})
 					curProj.pages.forEach(function(model){
 						var ele = $("<li><a href='#'></a></li>");
-						$('a', ele).attr("href", "/page/" + model.id).data("id", model.id).html(_.escape(model.get("name"))+" <span class='label'>"+model.stage()+"</span><button class='btn btn-danger'><i class='icon-trash icon-white'></i></button>");
+						$('a', ele).attr("href", "/page/" + model.id).data("id", model.id).html("<button class='btn btn-danger btn-small'><i class='icon-trash icon-white'></i></button><a class='btn btn-small'><i class='icon-eye-open'></i></a> " + _.escape(model.get("name"))+" <span class='label'>"+model.stage()+"</span>");
+						if(model.has("viewtoken")){
+							$("a.btn", ele).attr("href", "/p/" + model.get("viewtoken"));
+						}else{
+							$("a.btn", ele).remove();
+						}
 						ele.appendTo("#pagelist");
 					});
 				});
@@ -352,7 +358,10 @@ $(function(){
 		curProj.pages.get($(this).parent().data("id")).destroy();
 		return false;
 	});
-	$("#pagelist").delegate("a", "click", function(){
+	$("#pagelist").delegate('a.btn', "click", function(e){
+		e.preventPropagation();
+	});
+	$("#pagelist").delegate('a', "click", function(e){
 		$(".label", this).data("orig", $(".label", this).text()).text("Loading...");
 		$.getJSON(this.href+"/@lock", _.bind(function(x){
 			if(x){
