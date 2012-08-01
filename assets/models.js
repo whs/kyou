@@ -193,7 +193,8 @@ var Page = Backbone.Model.extend({
 					if(v.indexOf("\n") != -1){
 						var ele = $("<style>").html(v)
 					}else{
-						var ele = $("<link rel='stylesheet'>").attr('href', (v.indexOf("http") == 0 ? "" : "/")+v);
+						var src = (v.indexOf("http") == 0 || v.indexOf("rel://") == 0 ? "" : "/") + v.replace(/^rel:\/\//, "");
+						var ele = $("<link rel='stylesheet'>").attr('href', src);
 					}
 					if(cssInjectPos.length > 0){
 						ele.insertAfter(cssInjectPos);
@@ -219,7 +220,7 @@ var Page = Backbone.Model.extend({
 				if(v.indexOf("\n") != -1){
 					ele.innerHTML = v;
 				}else{
-					ele.src = (v.indexOf("http") == 0 ? "" : "/") + v;
+					ele.src = (v.indexOf("http") == 0 || v.indexOf("rel://") == 0 ? "" : "/") + v.replace(/^rel:\/\//, "");
 					if(!inProduction){
 						ele.onload = loadJS;
 					}
