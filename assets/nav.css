@@ -48,6 +48,7 @@ body{
 	font-size: 14pt;
 	color: #aaa;
 	padding-left: 10px;
+	text-decoration: none;
 }
 #nextpage{
 	position: absolute;
@@ -57,6 +58,7 @@ body{
 	font-size: 14pt;
 	color: #aaa;
 	padding-right: 10px;
+	text-decoration: none;
 }
 #navpage{
 	position: absolute;
@@ -74,6 +76,7 @@ body{
 	padding: 2px;
 	line-height: 20px;
 	color: #aaa !important;
+	text-decoration: none;
 }
 .navpage:hover{
 	background: #333;

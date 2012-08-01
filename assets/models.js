@@ -169,19 +169,23 @@ var Page = Backbone.Model.extend({
 			}
 
 			var target = this.$(".widgetsInject").get(0);
-			// Render each widgets!
-			this.model.widgets.each(function(widget){
-				var renderer = new widget.renderer({
-					model: widget
-				});
-				widget.view = renderer;
-				renderer.render(opt);
-				target.appendChild(renderer.$el.get(0));
-				renderer.$el.attr("id", widget.get("id")).addClass("widget_"+widget.type);
-				format_view(widget);
-				javascripts = _.union(javascripts, (_.isFunction(renderer.javascripts) ? renderer.javascripts(opt) : renderer.javascripts) || []);
-				stylesheets = _.union(stylesheets, (_.isFunction(renderer.stylesheets) ? renderer.stylesheets(opt) : renderer.stylesheets) || []);
-			}, this);
+			if(target){
+				// Render each widgets!
+				this.model.widgets.each(function(widget){
+					var renderer = new widget.renderer({
+						model: widget
+					});
+					widget.view = renderer;
+					renderer.render(opt);
+					target.appendChild(renderer.$el.get(0));
+					renderer.$el.attr("id", widget.get("id")).addClass("widget_"+widget.type);
+					format_view(widget);
+					javascripts = _.union(javascripts, (_.isFunction(renderer.javascripts) ? renderer.javascripts(opt) : renderer.javascripts) || []);
+					stylesheets = _.union(stylesheets, (_.isFunction(renderer.stylesheets) ? renderer.stylesheets(opt) : renderer.stylesheets) || []);
+				}, this);
+			}else{
+				console.error("Cannot find .widgetsInject in template!");
+			}
 			// Somehow injecting this instantly breaks the iframe.
 			var cssInjectPos = this.$("style,link").eq(0);
 			setTimeout(_.bind(function(){

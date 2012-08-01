@@ -15,10 +15,11 @@ layouts["cover"] = Layout.extend({
 		],
 		stylesheets: [
 			"http://fonts.googleapis.com/css?family=Antic",
-			"files/standard.css"
+			"files/standard.css",
+			"files/cover.css",
 		],
 		resources: [
-			"supermarket.ttf",
+			"files/supermarket.ttf",
 		],
 		render: function(opt){
 			// render the cover by calling the parent function
