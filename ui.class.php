@@ -186,6 +186,10 @@ class UI extends Base{
 				"page" => new MongoId((string) $this->phraw->request['page']),
 				"user" => $this->user['_id']
 			));
+			header("X-Status: ".json_encode(array(
+				"page" => new MongoId((string) $this->phraw->request['page']),
+				"user" => $this->user['_id']
+			)));
 			print "true";
 		}
 	}

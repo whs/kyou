@@ -217,6 +217,14 @@
 		<div>Type <i>n</i>*<i>widgetname</i> to create <i>n</i> widgets of type <i>widgetname</i></div>
 	</div>
 </form>
+<div class="modal fade form-horizontal" id="lockexpiring">
+	<div class="modal-header">
+		<h3>Lock expiring</h3>
+	</div>
+	<div class="modal-body">
+		<p>Page lock is expiring. If you do nothing for one more minute, the page lock will be freed and other user can edit this page.</p>
+	</div>
+</div>
 <div id="lockexpire">
 	No activity has been detected for 5 minutes, the page lock is expired.<br>
 	Please <a href="#" onclick="window.location.reload(); return false;">refresh</a> this page.
@@ -240,9 +248,6 @@ function save(){
 function reqlock(){
 	$.post("/page/{$page.id}/@lock");
 }
-reqlock();
-var lockTimer = setInterval(reqlock, 15000);
-$.idleTimer(5 * 60000);
 
 window.onunload = function(){
 	$.ajax({
@@ -251,6 +256,9 @@ window.onunload = function(){
 		type: "DELETE"
 	});
 }
+
+window.onbeforeunload = window.onunload;
+
 function pick_page(cb){
 	$("#selectpage").unbind("submit").bind("submit", function(){
 		cb($("select", this).val(), $("option:selected", this).text());
@@ -279,10 +287,26 @@ function yukine_select(f){
 	}
 }
 
+var timeoutTimer;
+reqlock();
+var lockTimer = setInterval(reqlock, 15000);
+$.idleTimer(4 * 60000);
+
 $(function(){
 	$(document).bind("idle.idleTimer", function(){
-		$("#lockexpire").fadeIn();
-		clearTimeout(lockTimer);
+		clearTimeout(timeoutTimer);
+		timeoutTimer = setTimeout(function(){
+			$("#lockexpiring").hide();
+			$("#lockexpire").fadeIn();
+			document.title = "[Lock timeout] " + document.title;
+			clearInterval(lockTimer);
+			$.idleTimer('destroy');
+		}, 60000);
+		$("#lockexpiring").modal();
+	});
+	$(document).bind("active.idleTimer", function(){
+		clearTimeout(timeoutTimer);
+		$("#lockexpiring").modal("hide");
 	});
 	$(window).resize(function(){
 		$("#pagepreview").css("width", $(window).innerWidth() - $("#sidebar:visible").outerWidth()).css("height", $(window).height());
@@ -400,7 +424,7 @@ $(function(){
 	var stopAutoSync = false;
 	page.on("sync", function(){
 		$("#autosave").html("Saved").stop(true).show().fadeOut(2000);
-		window.onbeforeunload = null;
+		window.onbeforeunload = window.onunload;
 		stopAutoSync = true;
 	});
 	page.on("change", function(){
