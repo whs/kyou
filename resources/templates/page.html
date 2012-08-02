@@ -46,7 +46,8 @@
 	<div class="toolbar" style="width: auto;">
 		<button id="addwidget" class="btn btn-primary" title="Add new widget"><i class='icon-plus icon-white'></i></button>
 		<div id="autosave">Autosave ON</div>
-		<button id="delwidget" class="btn btn-danger" style="float: right;" title="Delete this widget"><i class='icon-trash icon-white'></i></button>
+		<button id="delwidget" class="btn btn-danger" style="float: right; margin-left: 5px;" title="Delete selected widget"><i class='icon-trash icon-white'></i></button>
+		<button id="findwidget" class="btn" style="float: right;" title="Select an element in the page to edit it"><i class='icon-search'></i></button>
 	</div>
 	<h1 id="widgetname"></h1>
 	<div id="widgetconfig">
@@ -430,6 +431,23 @@ $(function(){
 		}
 		widgetConfig.undelegateEvents();
 		$("#widgetconfig,#widgetname").empty();
+	});
+	$("#findwidget").click(function(){
+		$(this).addClass("active");
+		var out = page.renderer.findWidget(function(e){
+			$("#findwidget").removeClass("active");
+			var id = $(e).attr("id");
+			var target = $("#widgetlist li.id_" + id).click();
+			// does not work
+			/*if(target){
+				$("#widgetlist").animate({ scrollTop: target.position().top }, 250);
+			}*/
+		});
+		if(out){
+			$(this).addClass("active");
+		}else{
+			$(this).removeClass("active");
+		}
 	});
 	$("#hidesidebar").click(function(){
 		$("#sidebar").hide();

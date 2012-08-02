@@ -137,9 +137,13 @@ var Page = Backbone.Model.extend({
 	},
 	_renderer: Backbone.View.extend({
 		rendering: false,
+		finding: false,
 		events: {
 			"click a[href]": "stopClick",
 			"submit form": "stopClick",
+			"mouseover .widget": "findWidget_over",
+			"mouseout .widget": "findWidget_out",
+			"click .widget": "findWidget_click"
 		},
 		render: function(opt){
 			if(this.rendering) return;
@@ -178,7 +182,7 @@ var Page = Backbone.Model.extend({
 					widget.view = renderer;
 					renderer.render(opt);
 					target.appendChild(renderer.$el.get(0));
-					renderer.$el.attr("id", widget.get("id")).addClass("widget_"+widget.type);
+					renderer.$el.attr("id", widget.get("id")).addClass("widget_"+widget.type).addClass("widget");
 					format_view(widget);
 					javascripts = _.union(javascripts, (_.isFunction(renderer.javascripts) ? renderer.javascripts(opt) : renderer.javascripts) || []);
 					stylesheets = _.union(stylesheets, (_.isFunction(renderer.stylesheets) ? renderer.stylesheets(opt) : renderer.stylesheets) || []);
@@ -280,9 +284,51 @@ var Page = Backbone.Model.extend({
 			}, this);
 			return resources;
 		},
+		/**
+		 * Find a widget
+		 * Calling this method will allow the user to click on a widget
+		 * and the callback function will be called with the DOMObject
+		 * @param <function> Callback function
+		 * @return True if the find process started, false if the old one was canceled
+		 */
+		findWidget: function(cb){
+			if(this.finding){
+				this.finding = false;
+				delete this.findCB;
+				this.$("#kyou_findCSS").remove();
+				this.$(".activeFind").removeClass("activeFind");
+				return false;
+			}
+			this.finding = true;
+			this.findCB = cb;
+			this.$("#kyou_findCSS").remove();
+			$("<style id='kyou_findCSS'>.activeFind{outline: cornflowerblue solid 2px;box-shadow: inset cornflowerblue 0px 0px 50px;}</style>").appendTo(this.$("head"));
+			return true;
+		},
 		stopClick: function(e){
 			e.preventDefault();
 			alert("Link disabled in document preview");
+		},
+		findWidget_over: function(e){
+			if(this.finding){
+				this.$(".activeFind").removeClass("activeFind");
+				$(e.target).closest(".widget").addClass("activeFind");
+			}
+		},
+		findWidget_out: function(e){
+			if(this.finding){
+				$(e.target).closest(".widget").removeClass("activeFind");
+			}
+		},
+		findWidget_click: function(e){
+			if(this.finding){
+				this.finding = false;
+				this.$("#kyou_findCSS").remove();
+				this.findCB($(e.target).closest(".widget").removeClass("activeFind"));
+				delete this.findCB;
+				e.stopPropagation();
+				return false;
+			}
 		}
 	})
 });
