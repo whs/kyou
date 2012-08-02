@@ -557,6 +557,11 @@ function format_view(model){
 			css[x] = css[x] + "px";
 		}
 	});
+	_.each(["font-size"], function(x){
+		if(css[x]){
+			css[x] = css[x] + "pt";
+		}
+	});
 	_.each(css, function(v, x){
 		if(!v){
 			delete css[x];
@@ -610,8 +615,10 @@ var CSSConfigView = TemplConfigView.extend({
 		});
 		_.each(css, function(v,k){
 			var input = this.$("[name="+k+"]");
-			if(input.attr("type") == "checkbox" || input.attr("type") == "radio"){
+			if(input.attr("type") == "checkbox"){
 				input.attr("checked", v);
+			}else if(input.attr("type") == "radio"){
+				input.attr("checked", false).filter("[value=\""+v+"\"]").attr("checked", true);
 			}else{
 				input.val(v);
 			}

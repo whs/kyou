@@ -11,8 +11,10 @@ widgets["style"] = Widget.extend({
 			TemplConfigView.prototype.render.apply(this, arguments);
 			_.each(this.model.toJSON(), function(v,k){
 				var input = this.$("[name="+k+"]");
-				if(input.attr("type") == "checkbox" || input.attr("type") == "radio"){
+				if(input.attr("type") == "checkbox"){
 					input.attr("checked", v);
+				}else if(input.attr("type") == "radio"){
+					input.attr("checked", false).filter("[value=\""+v+"\"]").attr("checked", true);
 				}else{
 					input.val(v);
 				}
@@ -38,6 +40,12 @@ widgets["style"] = Widget.extend({
 				if(!v){return;}
 				if(k == "background-image"){
 					v = "url(" + v + ")";
+				}
+				if(k == "font-size"){
+					v = v + "pt";
+				}
+				if(k == "background-position" && v == "top left"){
+					return;
 				}
 				addStyle += k+": "+v+" !important; ";
 			});

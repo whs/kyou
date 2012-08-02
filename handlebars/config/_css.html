@@ -27,10 +27,14 @@
 				<button type="button" class="btn" data-value="both">Both</button>
 			</div>
 		</div>
+		<div class="span1">
+			<label>Font size</label>
+			<input type="number" name="font-size" class="input-mini">
+		</div>
 	</div>
 	<div class="row">
-		<div class="span3">
-			<label>Size</label>
+		<div class="span2" style="width: 160px;">
+			<label>Size (px)</label>
 			<input type="number" min="0" name="width" class="input-mini"> x <input type="number" name="height" class="input-mini" min="0">
 		</div>
 		<div class="span1">
@@ -89,6 +93,28 @@
 		<div class="span2">
 			<label for="bgtiling">Background Tiling</label>
 			<input type="checkbox" id="bgtiling" name="background-repeat" value="repeat">
+		</div>
+	</div>
+	<div class="row">
+		<div class="span2">
+			<label>BG Position</label>
+			<table>
+				<tr>
+					<td><input type="radio" name="background-position" value="left top" checked></td>
+					<td><input type="radio" name="background-position" value="center top"></td>
+					<td><input type="radio" name="background-position" value="right top"></td>
+				</tr>
+				<tr>
+					<td><input type="radio" name="background-position" value="left center"></td>
+					<td><input type="radio" name="background-position" value="center center"></td>
+					<td><input type="radio" name="background-position" value="right center"></td>
+				</tr>
+				<tr>
+					<td><input type="radio" name="background-position" value="left bottom"></td>
+					<td><input type="radio" name="background-position" value="center bottom"></td>
+					<td><input type="radio" name="background-position" value="right bottom"></td>
+				</tr>
+			</table>
 		</div>
 	</div>
 	<label>Custom CSS</label>
