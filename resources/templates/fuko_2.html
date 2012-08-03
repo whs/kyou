@@ -243,9 +243,11 @@ function render(ind){
 				type: "PUT"
 			}).success(function(){
 				uploaded++;
-				$("#rendering progress").val(parseInt($("#rendering progress").val()) + 1);	
+				$("#rendering progress").val(parseInt($("#rendering progress").val()) + 1);
+				Piecon.setProgress($("#rendering progress").val() * 100 / $("#rendering progress").attr("max"));
 			});
 			$("#rendering progress").val(parseInt($("#rendering progress").val()) + 1);
+			Piecon.setProgress($("#rendering progress").val() * 100 / $("#rendering progress").attr("max"));
 			if(ind < project.pages.length - 1){
 				render(ind+1);
 			}else{
@@ -273,6 +275,7 @@ function render(ind){
 							}
 							$("#rendering,#box h2:first").hide();
 							$("#renderdone").show();
+							Piecon.reset();
 							$("body").css("background", "#eee url(/assets/img/cake.png) bottom right no-repeat");
 						});
 					}else{
@@ -305,6 +308,12 @@ $(function(){
 		project.pages.fetch();
 		$("#configform").hide();
 		$("#rendering").show();
+		Piecon.setOptions({
+			color: '#af88d9',
+			background: '#bbb',
+			shadow: '#fff',
+			fallback: 'true'
+		});
 		$.post("", { act: "ticket", output: postData['output'] }, function(id){
 			renderTicket = id.id;
 		}, "json").error(function(d){
@@ -329,4 +338,5 @@ $(function(){
 <script src="/layouts.js" async></script>
 <script src="/widgets.js" async></script>
 <script src="/ryou_provider.js" async></script>
+<script src="/assets/piecon.min.js" async></script>
 {/block}
