@@ -2,7 +2,7 @@ widgets["biglogo"] = Widget.extend({
 	type: "biglogo",
 	name: "Full-page logo",
 	description: "Large logo that is centered on a blank screen.",
-	disable_config: ["color"],
+	disable_config: ["text", "float", "size"],
 	config: TemplConfigView.extend({
 		template: "biglogo"
 	}),

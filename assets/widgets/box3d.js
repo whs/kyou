@@ -40,7 +40,7 @@ widgets["box3d"] = Widget.extend({
 			return TemplConfigView.prototype.save.apply(this, arguments);
 		}
 	}),
-	disable_config: ["color", "text-align"],
+	disable_config: ["text", "padding"],
 	render_on_change: true,
 	renderer: Backbone.View.extend({
 		tagName: "div",

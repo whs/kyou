@@ -5,7 +5,7 @@ widgets["fullslide_slide"] = Widget.extend({
 	config: TemplConfigView.extend({
 		template: "fullslide_slide"
 	}),
-	disable_config: ["float", "text-align", "clear", "width", "height", "margin", "padding"],
+	disable_config: ["float", "clear", "size", "margin", "padding"],
 	check_depends: function(page){
 		if(page.get("layout") == "fullslide"){
 			return true;

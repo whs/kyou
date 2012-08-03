@@ -2,6 +2,7 @@ widgets["infobox"] = Widget.extend({
 	type: "infobox",
 	name: "Infobox",
 	description: "Metadata of the object in question",
+	disable_config: ["font", "padding"],
 	config: TemplConfigView.extend({
 		template: "infobox",
 		events: function(){

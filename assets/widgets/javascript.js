@@ -2,7 +2,7 @@ widgets["javascript"] = Widget.extend({
 	type: "javascript",
 	name: "JavaScript",
 	description: "For advanced user: manually enter JavaScript code",
-	disable_config: "*",
+	disable_config: ["*"],
 	config: TemplConfigView.extend({
 		template: "javascript"
 	}),

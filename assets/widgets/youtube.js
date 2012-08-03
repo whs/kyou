@@ -4,7 +4,7 @@ widgets["youtube"] = Widget.extend({
 	description: "YouTube Video",
 	icon_large: "/assets/img/youtube.large.png",
 	icon_small: "/assets/img/youtube.small.png",
-	disable_config: ["background-image", "background-repeat", "text-align", "color", "background-color", "padding-top", "padding-right", "padding-bottom", "padding-left"],
+	disable_config: ["background", "text", "padding"],
 	config: TemplConfigView.extend({
 		template: "youtube",
 		events: function(){

@@ -2,7 +2,7 @@ widgets["video"] = Widget.extend({
 	type: "video",
 	name: "Video",
 	description: "HTML5 video. H.264 recommended.",
-	disable_config: ["background-image", "background-repeat", "color", "background-color", "padding-top", "padding-right", "padding-bottom", "padding-left"],
+	disable_config: ["background", "text", "padding"],
 	config: TemplConfigView.extend({
 		template: "video"
 	}),

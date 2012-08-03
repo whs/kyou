@@ -4,6 +4,7 @@ widgets["lyric"] = Widget.extend({
 	type: "lyric",
 	name: "Lyric",
 	description: "Karaoke",
+	disable_config: ["text-align", "padding"],
 	config: TemplConfigView.extend({
 		template: "lyric",
 		list: null,

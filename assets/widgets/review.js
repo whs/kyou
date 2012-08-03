@@ -2,7 +2,7 @@ widgets["review"] = Widget.extend({
 	type: "review",
 	name: "Review",
 	description: "Review of the item from 0-10 from multiple authors",
-	disable_config: ["background-image", "background-repeat", "padding-top", "padding-right", "padding-bottom", "padding-left"],
+	disable_config: ["padding", "text-align"],
 	config: TemplConfigView.extend({
 		template: "review",
 		events: function(){

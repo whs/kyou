@@ -1,4 +1,4 @@
-.infobox{
+.widget_infobox{
 	background: rgba(230,230,230, 0.6);
 	padding: 10px;
 	-webkit-border-radius: 5px;
@@ -10,23 +10,23 @@
 	z-index: 500;
 	position: relative;
 }
-.infobox table{
+.widget_infobox table{
 	width: 100%;
 }
-.infobox th{
+.widget_infobox th{
 	width: 50%;
 	text-align: right;
 }
-.infobox td[colspan="2"]{
+.widget_infobox td[colspan="2"]{
 	text-align: center;
 }
-.infobox th[colspan="2"]{
+.widget_infobox th[colspan="2"]{
 	text-align: center;
 	font-size: 18pt;
 	font-weight: bold;
 	font-family: Antic;
 }
-.infobox img{
+.widget_infobox img{
 	max-width: 200px;
 	display: block;
 	margin: auto;

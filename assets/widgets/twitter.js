@@ -20,7 +20,7 @@ widgets["twitter"] = Widget.extend({
 			this.$(".twconfig_"+this.$("select[name=t_type]").val()).show().attr("required", true);
 		}
 	}),
-	disable_config: ["width", "height", "background-color", "background-image", "background-repeat", "text-align", "padding-top", "padding-right", "padding-bottom", "padding-left"],
+	disable_config: ["size", "background", "text", "padding"],
 	render_on_change: true,
 	renderer: Backbone.View.extend({
 		tagName: "div",

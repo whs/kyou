@@ -2,6 +2,7 @@ widgets["youtubegallery"] = Widget.extend({
 	type: "youtubegallery",
 	name: "YT Gallery",
 	description: "List of YouTube videos with thumbnail",
+	disable_config: ["text", "size", "float", "padding"],
 	config: TemplConfigView.extend({
 		template: "youtubegallery",
 		events: function(){
@@ -95,7 +96,7 @@ widgets["youtubegallery"] = Widget.extend({
 			$("<iframe allowfullscreen>").attr("src", "https://www.youtube.com/embed/" + playlist[0] + "?" + $.param(param)).appendTo(this.el);
 			param.autoplay = !!this.model.get("autoplay");
 			var target = $("<div class='ytimg'>").appendTo(this.el).attr("data-config", encodeURI(JSON.stringify(param)));
-			var plName = this.model.get("_playlist");
+			var plName = this.model.get("_playlist") || {};
 			_.each(playlist, function(v,ind){
 				var link = $("<a>").attr("title", plName[v]);
 				if(ind == 0){

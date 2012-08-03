@@ -610,8 +610,8 @@ var CSSConfigView = TemplConfigView.extend({
 	render: function(){
 		var css = this.model.get("_css") || [];
 		this.el.innerHTML = this.template(css);
-		_.each(curWidget.disable_config, function(v){
-			this.$("[name="+v+"],[data-name="+v+"]").closest(".span1,.span2,.span3,.span4,.span5").remove();
+		_.each(this.model.disable_config, function(v){
+			this.$("[name="+v+"],[data-name="+v+"],.config_"+v).closest(".span1,.span2,.span3,.span4,.span5").remove();
 		});
 		_.each(css, function(v,k){
 			var input = this.$("[name="+k+"]");

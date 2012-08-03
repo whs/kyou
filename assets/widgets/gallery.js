@@ -4,7 +4,7 @@ widgets["gallery"] = Widget.extend({
 	description: "Image gallery",
 	icon_large: "/assets/img/gallery.large.png",
 	icon_small: "/assets/img/gallery.small.png",
-	disable_config: ["background-image", "background-repeat", "background-color", "padding-top", "padding-right", "padding-bottom", "padding-left", "width", "height", "text-align"],
+	disable_config: ["background", "padding", "size"],
 	config: TemplConfigView.extend({
 		template: "gallery",
 		events: function(){

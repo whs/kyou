@@ -2,7 +2,7 @@ widgets["iimg"] = Widget.extend({
 	type: "iimg",
 	name: "Interactive Image",
 	description: "Image with hover points",
-	disable_config: ["background-image", "background-repeat", "background-color", "padding-top", "padding-right", "padding-bottom", "padding-left", "text-align", "width", "height", "color"],
+	disable_config: ["background", "padding", "text", "size"],
 	config: TemplConfigView.extend({
 		template: "iimg",
 		list: null,
