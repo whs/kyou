@@ -74,7 +74,6 @@ widgets["wysiwyg"] = Widget.extend({
 					}else if(ev.data.name == "image"){
 						var dialogDefinition = ev.data.definition;
 						var infoTab = dialogDefinition.getContents('info');
-						console.log(infoTab);
 						infoTab.elements[0].children.push({
 							"type": "button",
 							"label": "Resource",

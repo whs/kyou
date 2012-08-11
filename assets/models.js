@@ -552,7 +552,7 @@ function format_view(model){
 	if(css['background-image']){
 		css['background-image'] = "url("+css['background-image']+")";
 	}
-	_.each(["width", "height", "margin-top", "margin-right", "margin-bottom", "margin-left"], function(x){
+	_.each(["width", "height", "margin-top", "margin-right", "margin-bottom", "margin-left", "padding-top", "padding-right", "padding-bottom", "padding-left"], function(x){
 		if(css[x]){
 			css[x] = css[x] + "px";
 		}
