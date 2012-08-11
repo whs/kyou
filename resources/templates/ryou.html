@@ -152,7 +152,8 @@
 			<label class="control-label">Source</label>
 			<div class="controls">
 				<select name="source">
-					<option value="file">File</option>
+					<option value="file">Music File</option>
+					<option value="video">HTML5 Video</option>
 					<option value="youtube">YouTube</option>
 				</select>
 			</div>
@@ -162,6 +163,15 @@
 			<div class="controls">
 				<div class="input-append">
 					<input type="text" name="file" style="width: 200px;" required>
+					<button class="btn pickbtn" type="button" style="margin-left: -5px;">Pick</button>
+				</div>
+			</div>
+    	</div>
+    	<div class="control-group" data-source="video">
+			<label class="control-label">File</label>
+			<div class="controls">
+				<div class="input-append">
+					<input type="text" name="video" style="width: 200px;" required>
 					<button class="btn pickbtn" type="button" style="margin-left: -5px;">Pick</button>
 				</div>
 			</div>

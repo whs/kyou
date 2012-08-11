@@ -1,8 +1,13 @@
+.widget_lyric[data-theme="bottom"]{
+	width: 300px;
+}
 .widget_lyric[data-theme="bottom"] .ryou_list{
 	min-height: 1.2em;
 }
 .widget_lyric[data-theme="bottom"] .ryou_line{
 	display: none;
+	text-align: center;
+	margin-top: 10px;
 }
 .widget_lyric[data-theme="bottom"] .ryou_list .playing{
 	display: block;
