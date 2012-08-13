@@ -630,7 +630,12 @@ var CSSConfigView = TemplConfigView.extend({
 			}else{
 				this.$("[data-name="+v+"] .btn:first").button("toggle");
 			}
-		})
+		});
+		this.$(".cp").ColorPicker({
+			onSubmit: function(hsb, hex, rgb, el){
+				el.value = "#"+hex;
+			}
+		});
 	},
 	rerender: function(){
 		if(this.model.view){

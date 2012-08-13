@@ -19,6 +19,11 @@ widgets["style"] = Widget.extend({
 					input.val(v);
 				}
 			}, this);
+			this.$(".cp").ColorPicker({
+				onSubmit: function(hsb, hex, rgb, el){
+					el.value = "#"+hex;
+				}
+			});
 		},
 	}),
 	renderer: Backbone.View.extend({
