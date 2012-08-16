@@ -37,7 +37,7 @@ function render_cover(){
 }
 function resize(){
 	$(".col:first .box").css("width", $(window).width() * 0.20)
-		.css("height", Math.min(parseInt($(".box:not(.double):not(.featured)").width()) * 0.8, ($(window).height()-100)/3));
+		.css("height", Math.min(parseInt($(".box:not(.double):not(.featured)").width()) * 0.8, (window.innerHeight-100)/3));
 	$(".col:first .box.double").css("width", $(window).width() * 0.40)
 	$(".ads.box").css("height", ($(".ads.box").width() / 400) * 100);
 	$("#coverbg").css("height", (($(window).width()*1.2/1280)*1024)+"px");

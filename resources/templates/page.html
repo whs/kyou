@@ -311,7 +311,7 @@ $(function(){
 		$("#lockexpiring").modal("hide");
 	});
 	$(window).resize(function(){
-		$("#pagepreview").css("width", $(window).innerWidth() - ($("#sidebar:visible").outerWidth()||0)).css("height", $(window).height());
+		$("#pagepreview").css("width", $(window).innerWidth() - ($("#sidebar:visible").outerWidth()||0)).css("height", window.innerHeight);
 	}).resize();
 	page.on("beforerender", function(){
 		$("#pagepreview").remove();
@@ -331,8 +331,7 @@ $(function(){
 		}
 	});
 	page.on("render", function(){
-		//$("#pagepreview").css("height", Math.max($(window).height()-5, $("#pagepreview").get(0).contentWindow.innerHeight));
-		$("#pagepreview").css("height", $(window).height());
+		$("#pagepreview").css("height", window.innerHeight);
 	});
 	page.on("reset", function(){
 		if(page.has("viewtoken")){
