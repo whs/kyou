@@ -234,6 +234,13 @@ function render(ind){
 					return "index.html";
 				});
 			});
+			var nextPage = project.pages.at(ind+1);
+			if(nextPage){
+				$("<link>").attr({
+					rel: "prerender",
+					href: nextPage.id + ".html"
+				}).appendTo(page.renderer.$("head"));
+			}
 			var html = page.renderer.el.outerHTML;
 			$.ajax({
 				url: "?" + $.param({ "act": "save", "file": (ind == 0 ? "index" : page.id), "ticket": renderTicket }),
