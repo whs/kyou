@@ -24,9 +24,9 @@ widgets["review"] = Widget.extend({
 					});
 					this.model.set("reviews", reviews);
 				}, this)
-			}).disableSelection().delegate("li", "click", _.bind(function(e){
+			}).disableSelection().delegate("li.review_item", "click", _.bind(function(e){
 				this.$(".widgetlist .active").removeClass("active");
-				var item = $(e.target).addClass("active").data("item");
+				var item = $(e.target).closest("li").addClass("active").data("item");
 				$("#review_param").show().data("item", item).data("parent", $(e.target));
 				_.each(item, function(v,k){
 					$("#review_param [name="+k+"]").val(v);
@@ -38,7 +38,7 @@ widgets["review"] = Widget.extend({
 			var reviews = this.model.get("reviews") || [];
 			this.$(".widgetlist").empty();
 			_.each(reviews, _.bind(function(v){
-				var item = $('<li><span class="ui-icon ui-icon-grip-solid-horizontal grip"></span><button class="btn" type="button"><span class="ui-icon ui-icon-trash"></span></button><strong></strong></li>').data("item", v);
+				var item = $('<li class="review_item"><span class="ui-icon ui-icon-grip-solid-horizontal grip"></span><button class="btn" type="button"><span class="ui-icon ui-icon-trash"></span></button><strong></strong></li>').data("item", v);
 				$("strong", item).text(v.reviewer);
 				item.appendTo(this.$(".widgetlist"));
 			}, this));

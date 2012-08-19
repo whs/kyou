@@ -1,0 +1,18 @@
+<a href="#" class="q_next">&gt;</a>
+<a href="#" class="q_prev">&lt;</a>
+<h1>{{{name}}}</h1>
+<div class="q_contain">
+{{#each quiz}}
+<div class="q_item" id="q_{{id}}">
+	<h2>{{{question}}}</h2>
+	<ul>
+		{{#each choices}}
+		<li><label><input type="radio" name="{{parent}}" data-score="{{score}}"> {{{answer}}}</label></li>
+		{{/each}}
+	</ul>
+</div>
+{{/each}}
+<div class="q_ans">
+	<a href="#">ตรวจคำตอบ</a>
+</div>
+</div>
