@@ -11,15 +11,15 @@
 <div class="tab" id="review-{{id}}">
 	<h2>{{{reviewer}}}</h2>
 	<div class="reviewdetail">
-		<h3><div class="miniscore">{{graphics}}</div> Graphics</h3>
+		<h3><div class="miniscore">{{graphics}}</div> {{#if graphicshead}}{{{graphicshead}}}{{else}}Graphics{{/if}}</h3>
 		<div class="progress-out"><div class="progress" style="{{review_css graphics}}"></div></div>
 		<div class="desc">{{{graphicsext}}}</div>
 
-		<h3><div class="miniscore">{{sound}}</div> Sound</h3>
+		<h3><div class="miniscore">{{sound}}</div> {{#if soundhead}}{{{soundhead}}}{{else}}Sound{{/if}}</h3>
 		<div class="progress-out"><div class="progress" style="{{review_css sound}}"></div></div>
 		<div class="desc">{{{soundext}}}</div>
 
-		<h3><div class="miniscore">{{story}}</div> Story</h3>
+		<h3><div class="miniscore">{{story}}</div> {{#if storyhead}}{{{storyhead}}}{{else}}Story{{/if}}</h3>
 		<div class="progress-out"><div class="progress" style="{{review_css story}}"></div></div>
 		<div class="desc">{{{storyext}}}</div>
 	</div>
