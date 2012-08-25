@@ -42,7 +42,9 @@ function render_cover(){
 	setTimeout(render_cover, $("body").hasClass("cover_pan") ? 8500 : (firstTime ? 1500:7000));
 	firstTime = false;
 }
+var hasDOMready = false;
 function resize(){
+	if(!hasDOMready) return;
 	$(".col:first .box").css("width", $(window).width() * 0.20)
 		.css("height", Math.min(parseInt($(".box:not(.double):not(.featured)").width()) * 0.8, (window.innerHeight-100)/3));
 	$(".col:first .box.double").css("width", $(window).width() * 0.40)
@@ -66,6 +68,7 @@ function resize(){
 	}
 }
 $(function(){
+	hasDOMready = true;
 	$(window).resize(resize);
 	resize();
 	var poller = setInterval(function(){
