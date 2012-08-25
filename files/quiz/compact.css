@@ -44,6 +44,9 @@
 	background: #aaccff;
 	color: black;
 }
+.widget_quiz.q_compact .q_contain{
+	margin-top: 10px;
+}
 .widget_quiz.q_compact .q_contain div{
 	position: absolute;
 	-webkit-transition: -webkit-transform ease-out 500ms;

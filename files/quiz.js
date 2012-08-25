@@ -32,6 +32,9 @@ $(function(){
 
 	$(".widget_quiz .q_next:visible").click(function(){
 		var self = $(this);
+		if(self.closest(".widget_quiz").data("inAnimation")){
+			return false;
+		}
 		var cur = self.closest(".widget_quiz").find(".q_contain div:visible");
 		var next = cur.next();
 		if(next.length == 0) return false;
@@ -39,15 +42,20 @@ $(function(){
 		next.css("transform", "translateX("+self.closest(".widget_quiz").width()+"px)");
 		setTimeout(function(){
 			next.show().css("transform", "");
-			self.closest(".widget_quiz").animate({"height": next.height() + 64});
+			self.closest(".widget_quiz").animate({"height": next.height() + 74});
 		}, 1);
+		self.closest(".widget_quiz").data("inAnimation", true);
 		setTimeout(function(){
 			cur.hide();
+			self.closest(".widget_quiz").data("inAnimation", false);
 		}, 500);
 		return false;
 	});
 	$(".widget_quiz .q_prev:visible").click(function(){
 		var self = $(this);
+		if(self.closest(".widget_quiz").data("inAnimation")){
+			return false;
+		}
 		var cur = self.closest(".widget_quiz").find(".q_contain div:visible");
 		var next = cur.prev();
 		if(next.length == 0) return false;
@@ -55,10 +63,12 @@ $(function(){
 		next.css("transform", "translateX(-"+self.closest(".widget_quiz").width()+"px)");
 		setTimeout(function(){
 			next.show().css("transform", "");
-			self.closest(".widget_quiz").animate({"height": next.height() + 64});
+			self.closest(".widget_quiz").animate({"height": next.height() + 74});
 		}, 1);
+		self.closest(".widget_quiz").data("inAnimation", true);
 		setTimeout(function(){
 			cur.hide();
+			self.closest(".widget_quiz").data("inAnimation", false);
 		}, 500);
 		return false;
 	});
