@@ -11,6 +11,7 @@ function render_cover(){
 			$("<video class='coverbg' autoplay muted loop />").attr({
 				"src": coverImg[0],
 			}).appendTo("#covercontain").get(0).play();
+			$("video.coverbg").bind("loadedmetadata", resize);
 		}else{
 			$("<img class='coverbg'>").attr({
 				"src": coverImg[0],
