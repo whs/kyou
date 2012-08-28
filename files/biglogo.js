@@ -19,12 +19,7 @@ $(function(){
 		position: "absolute"
 	});
 	$(".biglogo div:first").css({
-		display: "table-row",
-		position: "absolute",
-		top: 0,
-		left: 0,
-		width: "100%",
-		height: "100%"
+		display: "table-cell",
 	});
 	$(".biglogo").each(function(){
 		if($(this).data("transparent")){
@@ -52,10 +47,7 @@ $(function(){
 	$(".biglogo video[poster]").bind("timeupdate", function(){
 		if(this.currentTime >= this.duration - 0.7){
 			$(this).fadeOut();
-			$(this).next().fadeIn();
 		}
-	}).each(function(){
-		$(this).next().hide();
 	});
 	var isFocus = true;
 	$(window).blur(function(){
