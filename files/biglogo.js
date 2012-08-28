@@ -19,7 +19,8 @@ $(function(){
 		position: "absolute"
 	});
 	$(".biglogo div:first").css({
-		display: "table-cell",
+		display: "table-row",
+		height: "100%"
 	});
 	$(".biglogo").each(function(){
 		if($(this).data("transparent")){
