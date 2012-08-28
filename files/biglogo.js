@@ -6,7 +6,8 @@ $(function(){
 		height: $(window).height(),
 		display: "table",
 		width: "100%",
-		height: "100%"
+		height: "100%",
+		position: "relative"
 	});
 	$(".biglogo img").css({
 		maxWidth: "100%",
@@ -17,33 +18,32 @@ $(function(){
 		height: "100%",
 		position: "absolute"
 	});
+	$(".biglogo div:first").css({
+		display: "table-row",
+		position: "absolute",
+		top: 0,
+		left: 0,
+		width: "100%",
+		height: "100%"
+	});
+	$(".biglogo").each(function(){
+		if($(this).data("transparent")){
+			$(this).insertBefore("#container");
+		}
+		var position = $(this).data("position") || "mc";
+		$(".biglogo div:last").css({
+			display: "table-cell",
+			verticalAlign: position[0] == "t" ? "top" : (position[0] == "m" ? "middle" : "bottom"),
+			textAlign: position[1] == "l" ? "left" : (position[1] == "c" ? "center" : "right")
+		});
+	});
 	$(window).resize(function(){
 		$(".biglogo").each(function(){
-			var position = $(this).data("position") || "mc";
-			if($(this).data("transparent")){
-				$(this).insertBefore("#container");
-			}
-			$(".biglogo div:first").css({
-				display: "table-row",
-			});
-			$(".biglogo div:last").css({
-				display: "table-cell",
-				verticalAlign: position[0] == "t" ? "top" : (position[0] == "m" ? "middle" : "bottom"),
-				textAlign: position[1] == "l" ? "left" : (position[1] == "c" ? "center" : "right")
-			});
 			$(".biglogo").css("height", window.innerHeight);
 		});
 	}).resize();
 	$(".biglogo video").bind("canplaythrough", function(){
 		$(this).addClass("readyload");
-		if($(this).attr("poster")){
-			$("<img>").addClass("poster").attr("src", $(this).attr("poster")).css({
-				maxWidth: "100%",
-				maxHeight: "100%",
-				margin: "auto",
-				display: "block"
-			}).hide().appendTo($(this).parents("header"));
-		}
 		if(isFocus){
 			$(this).addClass("playstarted");
 			$(this).get(0).play();
@@ -52,8 +52,10 @@ $(function(){
 	$(".biglogo video[poster]").bind("timeupdate", function(){
 		if(this.currentTime >= this.duration - 0.7){
 			$(this).fadeOut();
-			$(this).next(".poster").fadeIn();
+			$(this).next().fadeIn();
 		}
+	}).each(function(){
+		$(this).next().hide();
 	});
 	var isFocus = true;
 	$(window).blur(function(){

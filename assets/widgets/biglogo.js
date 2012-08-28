@@ -16,19 +16,22 @@ widgets["biglogo"] = Widget.extend({
 			}, this);
 		},
 		render: function(){
+			this.el.innerHTML = "";
 			if(this.model.get("video")){
 				$("<video>").attr("preload", "auto").appendTo(this.el);
 				$("<source>").attr("src", this.model.get("video")).appendTo(this.$("video"));
 				if(this.model.get("img")){
-					$("<img>").attr("src", this.model.get("img")).appendTo(this.$("video"));
 					this.$("video").attr("poster", this.model.get("img"));
 				}
 				this.el.setAttribute("data-transparent", this.model.get("transparent") ? "true" : "false");
-			}else if(this.model.get("img") || this.model.get("video")){
-				this.el.innerHTML = "<div><div></div></div>";
+			}
+			if(this.model.get("img")){
+				this.$el.append("<div><div></div></div>");
 				$("<img>").attr("src", this.model.get("img")).appendTo(this.$("div div"));
 				this.el.setAttribute("data-position", this.model.get("position"));
 				this.el.setAttribute("data-transparent", this.model.get("transparent") ? "true" : "false");
+			}else if(this.model.get("video")){
+				// no op, just to prevent else from running
 			}else{
 				this.el.innerHTML = "Widget not configured";
 			}
