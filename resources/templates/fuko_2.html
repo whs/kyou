@@ -209,6 +209,7 @@ function render(ind){
 			}else{
 				$("<link rel='stylesheet' href='nav.css'>").insertBefore(firstCSS);
 			}
+			$("<link rel='icon'>").attr("href", project.get("icon16") || project.get("icon128")).appendTo(page.renderer.$("head"));
 			var ele = document.createElement("script");
 			ele.type = "text/javascript";
 			ele.src = "nav.js";
