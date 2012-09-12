@@ -74,18 +74,23 @@ widgets["gallery"] = Widget.extend({
 	render_on_change: true,
 	renderer: Backbone.View.extend({
 		tagName: "div",
-		render: function(){
-			this.$el.removeClass("display_images").removeClass("theme-default").removeClass("hoverzoom");
+		render: function(opt){
+			this.$el.removeClass("display_images").removeClass("hoverzoom");
 			if(this.model.get("display") == "slider"){
-				this.$el.addClass("theme-default").html("<div></div>");
+				this.el.innerHTML = "<ul class='rs-slider'></ul>";
 				_.each(this.model.get("images"), function(v){
-					this.$("div").append($("<img>").attr("src", v.img).attr("title", v.desc).attr("alt", v.desc));
+					var el = $("<li><img></li>");
+					el.find("img").attr("src", !opt ? "/bookfiles/" + page.project.id + "/" + v.img : v.img).attr("alt", v.desc);
+					this.$(".rs-slider").append(el);
 				}, this);
-				var css = "#"+this.model.get("id")+" .nivoSlider{\n"+this.generate_css({
-					width: this.model.get("width")+"px !important",
-					height: this.model.get("height")+"px !important",
-				})+"\n}";
-				$("<style></style>").text(css).prependTo(this.el);
+
+				if(this.model.get("width") || this.model.get("height")){
+					var css = "#"+this.model.get("id")+"{\n"+this.generate_css({
+						width: this.model.get("width")+"px",
+						height: (this.model.get("height")-90)+"px",
+					})+"\n}";
+					$("<style></style>").text(css).prependTo(this.el);
+				}
 			}else if(this.model.get("display") == "images"){
 				this.$el.addClass("display_" + this.model.get("display")).empty();
 				if(this.model.get("hoverZoom")){
@@ -117,7 +122,7 @@ widgets["gallery"] = Widget.extend({
 		generate_css: function(opt){
 			var out = "";
 			_.each(opt, function(v,k){
-				if(!v){return;}
+				if(!v || v == "px"){return;}
 				if(parseInt(v) == v){v = v+"px";}
 				out += k+": "+v+";\n";
 			})
@@ -125,7 +130,7 @@ widgets["gallery"] = Widget.extend({
 		},
 		stylesheets: function(opt){
 			var files = {
-				"slider": ["files/nivo-slider.css", "files/default/default.css"],
+				"slider": ["files/refineslide.css"],
 				"images": ["files/gallery_images.css"]
 			}
 			var out = files[this.model.get("display")] || [];
@@ -133,32 +138,22 @@ widgets["gallery"] = Widget.extend({
 		},
 		javascripts: function(opt){
 			var files = {
-				"slider": ["assets/jquery.js", "files/jquery.nivo.slider.pack.js"],
+				"slider": ["assets/jquery.js", "files/jquery.refineslide.min.js"],
 				"images": []
 			}
 			var out = files[this.model.get("display")] || [];
 			if(this.model.get("display") == "slider"){
 				var config = {
-					effect: this.model.get("effect"),
-					animSpeed: parseInt(this.model.get("animSpeed")),
-					pauseTime: parseInt(this.model.get("pauseTime")),
-					manualAdvance: this.model.get("pauseTime") == "-1" ? true : false,
-					directionNav: !!this.model.get("directionNav"),
-					directionNavHide: !!this.model.get("directionNavHide"),
-					controlNav: !!this.model.get("controlNav"),
-					pauseOnHover: !!this.model.get("pauseOnHover"),
-					randomStart: !!this.model.get("randomStart"),
+					transition: this.model.get("effect"),
+					controls: this.model.get("controls") ? "arrows" : null,
+					autoPlay: this.model.get("pauseTime") <= 0 ? false: true,
+					delay: parseInt(this.model.get("pauseTime")),
+					transitionDuration: parseInt(this.model.get("animSpeed")),
 				};
 				config = JSON.stringify(config);
-				out.push("$(function(){\n$('#"+this.model.get("id")+" div').nivoSlider("+config+");\n});");
+				out.push("$(function(){\n$('#"+this.model.get("id")+" .rs-slider').refineSlide("+config+");\n});");
 			}
 			return out;
 		},
-		resources: function(opt){
-			var files = {
-				"slider": ["files/default/"],
-			}
-			return files[this.model.get("display")] || [];
-		}
 	}),
 });

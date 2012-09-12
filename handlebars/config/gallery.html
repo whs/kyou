@@ -21,8 +21,6 @@
 		<label class="control-label">Image size</label>
 		<div class="controls">
 			<input type="number" name="width" class="input-mini"> x <input type="number" name="height" class="input-mini">
-			<div class="help-block widgetconfig widget_images">Optional, but highly recommended.</div>
-			<div class="help-block widgetconfig widget_slider">Required. Image is not scaled.</div>
 		</div>
 	</div>
 	<div class="control-group widgetconfig widget_images">
@@ -38,14 +36,23 @@
 		</div>
 	</div>
 	<div class="control-group widgetconfig widget_slider">
-		<label class="control-label">Effect</label>
+		<label class="control-label">Transition</label>
 		<div class="controls">
 			<select name="effect">
 				<option value="random">Random</option>
+				<option value="cubeH">Cube (Horizontal)</option>
+				<option value="cubeV">Cube (Vertical)</option>
 				<option value="fade">Fade</option>
-				<option value="fold">Fold</option>
-				<option value="slideInLeft">Slide from left</option>
-				<option value="slideInRight">Slide from right</option>
+				<option value="sliceH">Slice (Horizontal)</option>
+				<option value="sliceV">Slice (Vertical)</option>
+				<option value="slideH">Slide (Horizontal)</option>
+				<option value="slideV">Slide (Vertical)</option>
+				<option value="scale">Scale</option>
+				<option value="blockScale">Block Scale</option>
+				<option value="kaleidoscope">kaleidoscope</option>
+				<option value="fan">Fan</option>
+				<option value="blindH">Blind (Horizontal)</option>
+				<option value="blindV">Blind (Vertical)</option>
 			</select>
 		</div>
 	</div>
@@ -61,37 +68,12 @@
 		<div class="controls">
 			<input type="number" min="-1" name="pauseTime" value="3000" class="input-mini">
 			<span class="help-inline">ms</span>
-			<span class="help-block">-1 to disable auto advance</span>
 		</div>
 	</div>
 	<div class="control-group widgetconfig widget_slider">
 		<label class="control-label">Left/Right button</label>
 		<div class="controls">
-			<input type="checkbox" name="directionNav" value="true" checked>
-		</div>
-	</div>
-	<div class="control-group widgetconfig widget_slider">
-		<label class="control-label">Left/Right autohide</label>
-		<div class="controls">
-			<input type="checkbox" name="directionNavHide" value="true" checked>
-		</div>
-	</div>
-	<div class="control-group widgetconfig widget_slider">
-		<label class="control-label">Bottom navigation</label>
-		<div class="controls">
-			<input type="checkbox" name="controlNav" value="true" checked>
-		</div>
-	</div>
-	<div class="control-group widgetconfig widget_slider">
-		<label class="control-label">Pause on hover</label>
-		<div class="controls">
-			<input type="checkbox" name="pauseOnHover" value="true" checked>
-		</div>
-	</div>
-	<div class="control-group widgetconfig widget_slider">
-		<label class="control-label">Random start</label>
-		<div class="controls">
-			<input type="checkbox" name="randomStart" value="true">
+			<input type="checkbox" name="controls" value="true" checked>
 		</div>
 	</div>
 	<div class="form-actions">
