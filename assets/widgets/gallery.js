@@ -87,7 +87,7 @@ widgets["gallery"] = Widget.extend({
 				if(this.model.get("width") || this.model.get("height")){
 					var css = "#"+this.model.get("id")+"{\n"+this.generate_css({
 						width: this.model.get("width")+"px",
-						height: (this.model.get("height")-90)+"px",
+						height: (this.model.get("height")-(this.model.get("controls") ? 90 : 0))+"px",
 					})+"\n}";
 					$("<style></style>").text(css).prependTo(this.el);
 				}
@@ -145,7 +145,7 @@ widgets["gallery"] = Widget.extend({
 			if(this.model.get("display") == "slider"){
 				var config = {
 					transition: this.model.get("effect"),
-					controls: this.model.get("controls") ? "arrows" : null,
+					controls: this.model.get("controls") ? "thumbs" : null,
 					autoPlay: this.model.get("pauseTime") <= 0 ? false: true,
 					delay: parseInt(this.model.get("pauseTime")),
 					transitionDuration: parseInt(this.model.get("animSpeed")),
