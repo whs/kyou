@@ -80,7 +80,10 @@ widgets["gallery"] = Widget.extend({
 				this.el.innerHTML = "<ul class='rs-slider'></ul>";
 				_.each(this.model.get("images"), function(v){
 					var el = $("<li><img></li>");
-					el.find("img").attr("src", !opt ? "/bookfiles/" + page.project.id + "/" + v.img : v.img).attr("alt", v.desc);
+					el.find("img").attr("src", !opt ? "/bookfiles/" + page.project.id + "/" + v.img : v.img);
+					if(v.desc){
+						$("<div class='rs-caption rs-bottom'></div>").html(v.desc).appendTo(el);
+					}
 					this.$(".rs-slider").append(el);
 				}, this);
 
