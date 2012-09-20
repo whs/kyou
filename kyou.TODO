@@ -1,0 +1,39 @@
+Kyou phase 1:
+ ☐ Standard layout: Change color
+ ☐ Flip tile widget
+ ☐ Cover widget: Video on hover
+ ☐ Manifest version 2
+ ☐ Warn when other user have locked current page
+ ☐ New front page UI
+ ☐ Book paginator
+
+Book paginator:
+- No page numbers
+- Hover to show full table of contents
+- Page should be able to have subpages
+
+Help:
+ ☐ Ushio: Create Revision
+ ☐ Ushio: Run ushio
+ ☐ Standard layout: Layout configuration
+ ☐ Cover layout: Layout configuration
+ ☐ Widget: Gallery
+ ☐ Widget: WYSIWYG
+ ☐ Widget: Quiz
+ ☐ Widget: Style
+ ☐ Widget: YouTube
+ ☐ Kotomi
+ ☐ Ryou
+ ☐ Fuko
+ ☐ Sharing
+ ☐ Front page
+
+Kyou phase 2:
+ ☐ Paginator for books
+ ☐ Move to Riak (with multibackend?)
+ ☐ Backbone.class.php cleanup
+ ☐ Yukine: Move to more complete system
+     - http://www.mollify.org/features.php
+     - http://elfinder.org/
+     - http://extplorer.sourceforge.net/
+ ☐ Use require.js

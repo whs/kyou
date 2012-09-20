@@ -1,5 +1,15 @@
-{extends "base.html"}
-{block body}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>{block title}{$strings.app}{/block}</title>
+	<script src="/assets/jquery.js"></script>
+	<script src="/assets/underscore.js"></script>
+	<script src="/assets/backbone.js"></script>
+	<script src="/assets/jquery.ui.js"></script>
+	<script src="/assets/models.js"></script>
+</head>
+<body>
 <script src="/assets/handlebars.js"></script>
 <script src="/layouts.js"></script>
 <script src="/widgets.js"></script>
@@ -17,4 +27,5 @@ $("<img>").attr("src", "/assets/previewbadge.png").css({
 	zIndex: 1E10
 }).appendTo("body");
 </script>
-{/block}
+</body>
+</html>

@@ -62,8 +62,9 @@ Widget previews should be quick. If you're loading something from other site, ma
 
 ## Things you should know when writing widgets
 
-- Always unbind your configuration events.
-- Never, ever include any external CSS in the page. While it does work, it breaks the page preview. Please use the stylesheets option for this, or if you can't use `setTimeout` to workaround this problem.
+- Always unbind your configuration view's events. (The event bound using Backbone's event system is automatically unbound with the `unload()` method.)
+- Never, ever inject any external CSS in the page. While it does work, it breaks the page preview. Please use the stylesheets option for this, or if you can't use `setTimeout` to workaround this problem.
 - Never put a / in front of stylesheet/javascript URL. The packaging process does not copy any files that have / prefix.
 - A newline in stylesheet/javascript URL make the engine treating such string as inline script.
 - When running resource file collection pass, the widget's `render()` function is not called.
+- Some layout may not include jQuery. Add `assets/jquery.js` if your widget requires one. Layouts shipped with Kyou are all equipped with jQuery.

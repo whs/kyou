@@ -148,6 +148,9 @@ html,body{
 .input-prepend input{
 	width: auto !important;
 }
+#helpscreen .modal-body{
+	height: 400px;
+}
 #qs{
 	width: 95%;
 }

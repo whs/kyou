@@ -114,6 +114,7 @@
     	</div>
 	</div>
 	<div class="modal-footer">
+		<a href="#" class="btn btn-warning" data-help="page-layoutsettings"><i class="icon-question-sign"></i> Help</a>
 		<input type="submit" value="Save" class="btn btn-primary">
 	</div>
 </form>
@@ -173,7 +174,10 @@
 	<div class="modal-body">
 		You can preview the page by entering this URL in any compatible browsers. No login is required. Editing cannot be done from the preview.
 		<div style="margin-top: 10px;"><input type="text" name="viewurl" readonly style="width: 99%;"></div>
-		<div style="margin-top: 10px;"><input type="button" class="btn btn-danger" value="Reset (changes the URL)"></div>
+		<div style="margin-top: 10px;">
+			<input type="button" class="btn btn-danger" value="Reset (changes the URL)"> 
+			<a href="#" class="btn btn-warning" data-help="page-viewurl"><i class="icon-question-sign"></i> Help</a>
+		</div>
 	</div>
 </form>
 <form class="modal fade form-horizontal" id="notefrm" action="#">
@@ -188,7 +192,7 @@
 		<input type="submit" value="Save" class="btn btn-primary">
 	</div>
 </form>
-<form class="modal fade" id="lockwarn">
+<div class="modal fade" id="lockwarn">
 	<div class="modal-header">
 		<a class="close" data-dismiss="modal">×</a>
 		<h3>Page under editing</h3>
@@ -199,10 +203,10 @@
 	</div>
 	<div class="modal-footer">
 		<button class="btn btn-danger">Cancel</button>
-		<a class="btn" id="readonlybtn">View as read only</a>
-		<a class="btn btn-primary">Continue</a>
+		<a href="#" class="btn" id="readonlybtn">View as read only</a>
+		<a href="#" class="btn btn-primary">Continue</a>
 	</div>
-</form>
+</div>
 <form class="modal fade form-horizontal" id="quicksilver" action="#">
 	<div class="modal-header">
 		<a class="close" data-dismiss="modal">×</a>
@@ -218,6 +222,22 @@
 		<div>Type <i>n</i>*<i>widgetname</i> to create <i>n</i> widgets of type <i>widgetname</i></div>
 	</div>
 </form>
+<div class="modal fade" id="helpscreen">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<div class="btn-group pull-right" id="helplang" style="margin-right: 10px;" data-toggle="buttons-radio">
+			<button type="button" class="btn" data-lang="th">ไทย</button>
+			<button type="button" class="btn active" data-lang="en">EN</button>
+		</div>
+		<h3>Help</h3>
+	</div>
+	<div class="modal-body">
+		Loading...
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn btn-primary" data-dismiss="modal">Hide</a>
+	</div>
+</div>
 <div class="modal fade form-horizontal" id="lockexpiring">
 	<div class="modal-header">
 		<h3>Lock expiring</h3>
@@ -236,7 +256,7 @@
 <script src="/ryou_provider.js"></script>
 <script>
 var page = new Page({$page|json_encode});
-var curWidget, widgetConfig, curLayout, inPopout=false;
+var curWidget, widgetConfig, curLayout, inPopout=false, helpLang="en";
 var ASTimer;
 
 function save(){
@@ -658,6 +678,16 @@ $(function(){
 		save();
 		$("#notefrm").modal("hide");
 		return false;
+	});
+	$("body").delegate("[data-help]", "click", function(){
+		$("#helpscreen").modal().data("help", $(this).data("help"));
+		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $(this).data("help") + ".html");
+		return false;
+	});
+	$("#helplang").delegate("button", "click", function(e){
+		helpLang = $(this).data("lang");
+		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $("#helpscreen").data("help") + ".html");
+		e.preventDefault();
 	});
 
 	$("#widgetlist").sortable({
