@@ -1,5 +1,5 @@
 {extends "base.html"}
-{block title}{$strings.vc} of {$page.name|escape} | {$strings.app}{/block}
+{block title}Revisions of {$page.name|escape} | {$strings.app}{/block}
 {block head}
 <script src="/assets/three.js"></script>
 <script src="/assets/shaderextras.js"></script>
@@ -83,6 +83,7 @@ body{
 			<a href="#" class="btn" id="next"><i class="icon-arrow-down"></i></a>
 			<a href="#" class="btn btn-primary" id="save"><i class="icon-ok icon-white"></i></a>
 			<a href="/page/{$page.id}" class="btn btn-primary"><i class="icon-home icon-white"></i></a>
+			<a href="#" class="btn btn-warning" data-help="ushio"><i class="icon-question-sign"></i> Help</a>
 		</div>
 	</div>
 </div>
@@ -101,9 +102,25 @@ body{
 		<button class="btn btn-primary">Revert</button>
 	</div>
 </div>
+<div class="modal fade" id="helpscreen">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<div class="btn-group pull-right" id="helplang" style="margin-right: 10px;" data-toggle="buttons-radio">
+			<button type="button" class="btn" data-lang="th">ไทย</button>
+			<button type="button" class="btn" data-lang="en">EN</button>
+		</div>
+		<h3>Help</h3>
+	</div>
+	<div class="modal-body">
+		Loading...
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn btn-primary" data-dismiss="modal">Hide</a>
+	</div>
+</div>
 <script>
 var revisions = {$rev|json_encode};
-var curRevInd = 0;
+var curRevInd = 0, helpLang=localStorage.helpLang || "en";
 var bgImg = {if $nonfree}Math.random() < 0.5 ? "/nonfree/ushio.jpg" : "/nonfree/ushio2.jpg"{else}""{/if};
 
 function reqlock(){
@@ -204,6 +221,17 @@ $(function(){
 		$("#confirm").modal("hide");
 		return false;
 	});
+	$("body").delegate("[data-help]", "click", function(){
+		$("#helpscreen").modal().data("help", $(this).data("help"));
+		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $(this).data("help") + ".html");
+		return false;
+	});
+	$("#helplang").delegate("button", "click", function(e){
+		localStorage.helpLang = helpLang = $(this).data("lang");
+		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $("#helpscreen").data("help") + ".html");
+		e.preventDefault();
+	});
+	$("#helplang [data-lang="+helpLang+"]").addClass("active");
 });
 </script>
 {/block}

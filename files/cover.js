@@ -67,6 +67,7 @@ function resize(){
 		$("video.coverbg").css("top", shift);
 	}
 }
+window.resize = resize;
 $(function(){
 	hasDOMready = true;
 	$(window).resize(resize);

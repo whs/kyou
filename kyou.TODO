@@ -13,10 +13,10 @@ Book paginator:
 - Page should be able to have subpages
 
 Help:
- ☐ Ushio: Create Revision
- ☐ Ushio: Run ushio
+ ✔ Ushio: Create Revision @done (12-09-21 20:51)
+ ✔ Ushio: Run ushio @done (12-09-21 20:53)
  ☐ Standard layout: Layout configuration
- ☐ Cover layout: Layout configuration
+ ✔ Cover layout: Layout configuration @done (12-09-21 21:24)
  ☐ Widget: Gallery
  ☐ Widget: WYSIWYG
  ☐ Widget: Quiz

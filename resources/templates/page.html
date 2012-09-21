@@ -132,6 +132,7 @@
     	</div>
 	</div>
 	<div class="modal-footer">
+		<a href="#" class="btn btn-warning" data-help="ushio"><i class="icon-question-sign"></i> Help</a>
 		<input type="submit" value="Save" class="btn btn-primary">
 	</div>
 </form>
@@ -227,7 +228,7 @@
 		<a class="close" data-dismiss="modal">×</a>
 		<div class="btn-group pull-right" id="helplang" style="margin-right: 10px;" data-toggle="buttons-radio">
 			<button type="button" class="btn" data-lang="th">ไทย</button>
-			<button type="button" class="btn active" data-lang="en">EN</button>
+			<button type="button" class="btn" data-lang="en">EN</button>
 		</div>
 		<h3>Help</h3>
 	</div>
@@ -256,7 +257,7 @@
 <script src="/ryou_provider.js"></script>
 <script>
 var page = new Page({$page|json_encode});
-var curWidget, widgetConfig, curLayout, inPopout=false, helpLang="en";
+var curWidget, widgetConfig, curLayout, inPopout=false, helpLang=localStorage.helpLang || "en";
 var ASTimer;
 
 function save(){
@@ -685,7 +686,7 @@ $(function(){
 		return false;
 	});
 	$("#helplang").delegate("button", "click", function(e){
-		helpLang = $(this).data("lang");
+		localStorage.helpLang = helpLang = $(this).data("lang");
 		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $("#helpscreen").data("help") + ".html");
 		e.preventDefault();
 	});
@@ -895,6 +896,7 @@ $(function(){
 	page.project.pages.fetch();
 	$("#widgetpick .pickitem,#layoutpick .pickitem").tooltip();
 	$(".toolbar a[title],.toolbar button[title],#showsidebar").tooltip({ placement: "bottom" });
+	$("#helplang [data-lang="+helpLang+"]").addClass("active");
 });
 </script>
 {/block}
