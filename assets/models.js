@@ -44,7 +44,7 @@ jQuery.fn.extend({
 var $templates = {};
 /**
  * Load template synchronously.
- * Template is compiled, loaded and subsequential calls will
+ * Templates are compiled, loaded and subsequential calls will
  * be much faster.
  * @param {string} Folder name
  * @param {string} File name (without .html)

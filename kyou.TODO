@@ -1,21 +1,15 @@
 Kyou phase 1:
- ☐ Standard layout: Change color
+ ✔ Standard layout: Change color @done (12-09-29 12:59)
  ☐ Flip tile widget
  ☐ Cover widget: Video on hover
  ☐ Manifest version 2
  ☐ Warn when other user have locked current page
  ☐ New front page UI
- ☐ Book paginator
-
-Book paginator:
-- No page numbers
-- Hover to show full table of contents
-- Page should be able to have subpages
 
 Help:
  ✔ Ushio: Create Revision @done (12-09-21 20:51)
  ✔ Ushio: Run ushio @done (12-09-21 20:53)
- ☐ Standard layout: Layout configuration
+ ✔ Standard layout: Layout configuration @done (12-09-29 14:09)
  ✔ Cover layout: Layout configuration @done (12-09-21 21:24)
  ☐ Widget: Gallery
  ☐ Widget: WYSIWYG
@@ -37,3 +31,8 @@ Kyou phase 2:
      - http://elfinder.org/
      - http://extplorer.sourceforge.net/
  ☐ Use require.js
+
+ Book paginator:
+- No page numbers
+- Hover to show full table of contents
+- Page should be able to have subpages

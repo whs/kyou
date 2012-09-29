@@ -82,9 +82,12 @@
 	padding: 0;
 	height: 11px;
 	line-height: 0.8em;
+	max-width: 40px;
 }
 .colorpicker input:focus{
 	box-shadow: none;
+	border: none;
+	outline: none;
 }
 .colorpicker_hex {
 	position: absolute;

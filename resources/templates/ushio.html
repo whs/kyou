@@ -144,9 +144,11 @@ function checkEnable(){
 	}else{
 		$("#next").removeClass("disabled");
 	}
-	$("#revinfo .name").text(revisions[curRevInd].ushio.description);
-	var d = new Date(revisions[curRevInd].ushio.time.sec*1000);
-	$("#revinfo .meta").text("Saved by "+revisions[curRevInd].ushio.user+" @ "+d.toLocaleDateString()+" "+d.toLocaleTimeString());
+	try{
+		$("#revinfo .name").text(revisions[curRevInd].ushio.description);
+		var d = new Date(revisions[curRevInd].ushio.time.sec*1000);
+		$("#revinfo .meta").text("Saved by "+revisions[curRevInd].ushio.user+" @ "+d.toLocaleDateString()+" "+d.toLocaleTimeString());
+	}catch(e){}
 }
 $(function(){
 	_.each(revisions, function(v){

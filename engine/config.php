@@ -4,4 +4,5 @@ define("SITE_KEY", 'x8fxbbx02xe7x11Ra!x92Hxffxvxd5xc1xa6Tx08TGw`xa3x06xadx85sGx0
 $MONGO = new Mongo("mongodb://kyou:kyou@localhost/kyou");
 $DB = $MONGO->kyou;
 ini_set('display_errors','On');
-error_reporting(E_ALL & ~E_NOTICE);
+// XXX: Remove E_STRICT after backbone.class.php have been rewrote
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);

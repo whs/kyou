@@ -7,11 +7,17 @@ layouts["standard"] = Layout.extend({
 		],
 		stylesheets: function(){
 			var out = ["files/standard.css", "http://fonts.googleapis.com/css?family=Antic"];
-			try{
-				if(this.model.page.get("config_standard").transparentbg){
-					out.push("#container,.dark #container{background: transparent;}\n");
-				}
-			}catch(e){}
+			var config = this.model.page.get("config_standard") || {};
+			var extraCSS = "";
+			if(config.fgcolor){
+				extraCSS += "#container,.dark #container{background: "+config.fgcolor+";}\n";
+			}
+			if(config.transparentbg){
+				extraCSS += "#container,.dark #container{background: transparent;}\n";
+			}
+			if(extraCSS.length > 0){
+				out.push(extraCSS);
+			}
 			return out;
 		},
 		resources: [
@@ -27,5 +33,13 @@ layouts["standard"] = Layout.extend({
 	}),
 	config: TemplLayoutConfigView.extend({
 		template: "layout_standard",
+		render: function(){
+			TemplLayoutConfigView.prototype.render.apply(this, arguments);
+			this.$(".cp").ColorPicker({
+				onSubmit: function(hsb, hex, rgb, el){
+					el.value = "#"+hex;
+				}
+			});
+		},
 	})
 });
