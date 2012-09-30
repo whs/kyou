@@ -242,47 +242,29 @@ var Page = Backbone.Model.extend({
 				loadJS();
 			}
 		},
-		stylesheets: function(opt){
+		_layoutPick: function(name, opt){
 			var layout = new layouts[this.model.get("layout")];
+			layout.page = this.model;
 			var layoutRenderer = new layout.renderer({
 				model: layout
 			});
-			var stylesheets = (_.isFunction(layoutRenderer.stylesheets) ? layoutRenderer.stylesheets(opt) : layoutRenderer.stylesheets) || [];
+			var out = (_.isFunction(layoutRenderer[name]) ? layoutRenderer[name](opt) : layoutRenderer[name]) || [];
 			this.model.widgets.each(function(widget){
 				var renderer = new widget.renderer({
 					model: widget
 				});
-				stylesheets = _.union(stylesheets, (_.isFunction(renderer.stylesheets) ? renderer.stylesheets(opt) : renderer.stylesheets) || []);
+				out = _.union(out, (_.isFunction(renderer[out]) ? renderer[out](opt) : renderer[out]) || []);
 			}, this);
-			return stylesheets;
+			return out;
+		},
+		stylesheets: function(opt){
+			return this._layoutPick("stylesheets", opt);
 		},
 		javascripts: function(opt){
-			var layout = new layouts[this.model.get("layout")];
-			var layoutRenderer = new layout.renderer({
-				model: layout
-			});
-			var javascripts = (_.isFunction(layoutRenderer.javascripts) ? layoutRenderer.javascripts(opt) : layoutRenderer.javascripts) || [];
-			this.model.widgets.each(function(widget){
-				var renderer = new widget.renderer({
-					model: widget
-				});
-				javascripts = _.union(javascripts, (_.isFunction(renderer.javascripts) ? renderer.javascripts(opt) : renderer.javascripts) || []);
-			}, this);
-			return javascripts;
+			return this._layoutPick("javascripts", opt);
 		},
 		resources: function(opt){
-			var layout = new layouts[this.model.get("layout")];
-			var layoutRenderer = new layout.renderer({
-				model: layout
-			});
-			var resources = (_.isFunction(layoutRenderer.resources) ? layoutRenderer.resources(opt) : layoutRenderer.resources) || [];
-			this.model.widgets.each(function(widget){
-				var renderer = new widget.renderer({
-					model: widget
-				});
-				resources = _.union(resources, (_.isFunction(renderer.resources) ? renderer.resources(opt) : renderer.resources) || []);
-			}, this);
-			return resources;
+			return this._layoutPick("resources", opt);
 		},
 		/**
 		 * Find a widget

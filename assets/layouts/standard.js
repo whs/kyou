@@ -7,7 +7,7 @@ layouts["standard"] = Layout.extend({
 		],
 		stylesheets: function(){
 			var out = ["files/standard.css", "http://fonts.googleapis.com/css?family=Antic"];
-			var config = this.model.page.get("config_standard") || {};
+			var config = this.get_data();
 			var extraCSS = "";
 			if(config.fgcolor){
 				extraCSS += "#container,.dark #container{background: "+config.fgcolor+";}\n";

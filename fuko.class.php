@@ -85,8 +85,9 @@ class Fuko extends UI{
 			die();
 		}else if($_POST['act'] == "pack" && preg_match('~^[0-9a-f]+$~', $_POST['ticket'])){
 			if($_POST['output'] == "zip"){
+				$pages = $this->loader->pages();
 				// Write Chrome JSON
-				file_put_contents("output/tmp/".$_POST['ticket']."/manifest.json", $this->get_chrome_json($project));
+				file_put_contents("output/tmp/".$_POST['ticket']."/manifest.json", $this->get_chrome_json($project, $pages));
 				// PhoneGap Build XML
 				file_put_contents("output/tmp/".$_POST['ticket']."/config.xml", $this->get_phonegap_xml($project));
 				// Copy icon
@@ -207,20 +208,19 @@ class Fuko extends UI{
 		return $zip->close();
 	}
 
-	public function get_chrome_json($project){
-		$flag = JSON_PRETTY_PRINT;
-		if(is_string($flag)){
-			$flag = null;
-		}
+	public function get_chrome_json($project, $pages){
 		$out = array(
 			"name" => $project['name'],
 			"version" => $project['appver'],
-			"manifest_version" => 1,
+			"manifest_version" => 2,
 			"description" => $project['description'],
 			"icons" => array(
 				"128" => $project['icon128'],
 			),
-			"minimum_chrome_version" => "16",
+			"sandbox" => array(
+				"pages" => array()
+			),
+			"minimum_chrome_version" => "22",
 			"offline_enabled" => true,
 			"app" => array(
 				"launch" => array(
@@ -228,13 +228,16 @@ class Fuko extends UI{
 				)
 			)
 		);
-		if($project['icon16']){
+		if(!empty($project['icon16'])){
 			$out['icons']['16'] = $project['icon16'];
 		}
-		if($project['icon48']){
+		if(!empty($project['icon48'])){
 			$out['icons']['48'] = $project['icon48'];
 		}
-		return json_encode($out, $flag);
+		foreach($pages as $page){
+			$out['sandbox']['pages'][] = $page['id'] . ".html";
+		}
+		return json_encode($out, JSON_PRETTY_PRINT);
 	}
 	public function get_phonegap_xml($project){
 		$xml = new XMLWriter();
