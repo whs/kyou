@@ -18,7 +18,16 @@
 		<label class="control-label">Image</label>
 		<div class="controls">
 			<div class="input-append">
-				<input type="text" name="src" style="width: 200px;" required>
+				<input type="text" name="src" style="width: 200px;">
+				<button class="btn pickbtn" type="button" style="margin-left: -5px;">Pick</button>
+			</div>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Video</label>
+		<div class="controls">
+			<div class="input-append">
+				<input type="text" name="video" style="width: 200px;">
 				<button class="btn pickbtn" type="button" style="margin-left: -5px;">Pick</button>
 			</div>
 		</div>
@@ -34,6 +43,7 @@
 			</label>
 		</div>
 	</div>
+	<div class="alert alert-info">If only video is supplied, video will loop. If both video and image is supplied, image is the poster image of the video and the video will play on hover</div>
 	<div class="form-actions">
 		<input type="submit" value="Save" class="btn btn-primary">
 	</div>

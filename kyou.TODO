@@ -1,7 +1,7 @@
 Kyou phase 1:
  ✔ Standard layout: Change color @done (12-09-29 12:59)
- ☐ Flip tile widget
- ☐ Cover widget: Video on hover
+ ✔ Flip tile widget @done (12-09-29 15:32)
+ ✔ Cover widget: Video on hover @done (12-09-30 14:38)
  ☐ Manifest version 2
  ☐ Warn when other user have locked current page
  ☐ New front page UI
@@ -19,11 +19,12 @@ Help:
  ☐ Kotomi
  ☐ Ryou
  ☐ Fuko
- ☐ Sharing
+ ☐ Nagisa
  ☐ Front page
 
 Kyou phase 2:
  ☐ Paginator for books
+ ☐ Group CSS
  ☐ Move to Riak (with multibackend?)
  ☐ Backbone.class.php cleanup
  ☐ Yukine: Move to more complete system

@@ -23,9 +23,22 @@ widgets["cover_item"] = Widget.extend({
 			}, this);
 		},
 		render: function(){
-			this.el.innerHTML = '<a><img></a>';
+			this.el.innerHTML = '<a></a>';
 			this.$("a").attr("href", this.model.get("href"));
-			this.$("img").attr("src", this.model.get("src"));
+			if(this.model.get("video")){
+				$("<video loop>").attr("src", this.model.get("video")).attr("poster", this.model.get("src")).appendTo(this.$("a"));
+				if(this.model.get("src")){
+					this.$("video").attr("preload", true);
+					this.$el.addClass("hasPoster");
+				}else{
+					this.$("video").attr("autoplay", true).attr("muted", true);
+					this.$el.removeClass("hasPoster");
+				}
+				this.$el.addClass("hasVideo");
+			}else{
+				$("<img>").attr("src", this.model.get("src")).appendTo(this.$("a"));
+				this.$el.removeClass("hasVideo").removeClass("hasPoster");
+			}
 			this.$el.removeClass("ads").removeClass("double");
 			this.el.title = this.model.get("name");
 			if(this.model.get("ads")){

@@ -78,5 +78,11 @@ $(function(){
 			clearInterval(poller);
 		}
 	}, 10);
+	$(document).on("mouseover touchstart", ".hasPoster", function(){
+		$("video", this).get(0).play();
+	}).on("mouseout touchstop", ".hasPoster", function(){
+		$("video", this).get(0).pause();
+		$("video", this).get(0).currentTime = 0;
+	});
 });
 })();
