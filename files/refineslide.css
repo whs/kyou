@@ -28,6 +28,8 @@
 
 .rs-slide-bg { *zoom: 1 }
 
+.rs-slider { padding: 0; }
+
 .rs-slider > li > a { display: block }
 
 .rs-slider > li {

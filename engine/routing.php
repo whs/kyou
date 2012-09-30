@@ -12,8 +12,8 @@ class URLRouter{
 	/**
 	 * @param Array URL mapping. Supported formats: 
 	 *        - array('regex' => array("file.php", array("cls", "method")))	> Call cls->init(); cls->method(); from file.php. If cls->init() is not exists then it is not called.
-	 *        - array('regex' => array("file.php", "func"))					> Call func(); from file.php
-	 *        - array('regex' => "file.php")								> Include file.php (deprecated)
+	 *        There was some other formats supported, but later removed.
+	 *        regex could be prefixed by http method in uppercase such as 'POST login'
 	 * @param SmartyTemplateEngine Smarty object
 	 * @param Array Mapping of class properties to set in the target class
 	 * @param String Base include path
@@ -39,27 +39,18 @@ class URLRouter{
 				$k = implode(" ", array_slice($k, 1));
 			}
 			if(@$phraw->route($k) && ($method == null || $_SERVER['REQUEST_METHOD'] == $method)){
-				if(is_array($v)){
-					require $this->basepath.$v[0];
-					if(is_array($v[1])){
-						$this->obj = new $v[1][0]();
-						$this->obj->smarty = $this->smarty;
-						foreach($this->passthru as $o => $d){
-							$this->obj->$o = $d;
-						}
-						if(method_exists($this->obj, "init")){
-							call_user_func(array($this->obj, "init"));
-						}
-						call_user_func(array($this->obj, $v[1][1]));
-					}else{
-						call_user_func($v[1]);
-					}
-				}else{
-					// Compat
-					header("X-Warn: using compat layer");
-					global $DB, $SMARTY, $current_user;
-					require $this->basepath.$v;
+				require $this->basepath.$v[0];
+
+				$this->obj = new $v[1][0]();
+				$this->obj->smarty = $this->smarty;
+				foreach($this->passthru as $o => $d){
+					$this->obj->$o = $d;
 				}
+				if(method_exists($this->obj, "init")){
+					call_user_func(array($this->obj, "init"));
+				}
+				call_user_func(array($this->obj, $v[1][1]));
+
 				$routeFound = true;
 				$routeFoundWrongMethod = false;
 				break;

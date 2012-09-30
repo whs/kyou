@@ -1,0 +1,45 @@
+<h2>Gallery widget</h2>
+<p>Gallery widget is used to show a set of images. It have two defined styles, "Slider" and "Images"</p>
+
+<h3>Slider</h3>
+<img src="/help/img/gallery_slider.png" class="thumbnail span3 pull-right">
+<p>The slider style occupy less space but only display one images at a time. All images should have the same dimension</p>
+<dl>
+	<dt>Image Size</dt>
+	<dd>The width x height of the slider. Images will be downsized. This includes the space occupied by the thumbnails if enabled.</dd>
+	<dt>Transition</dt>
+	<dd>
+		The effect used when changing between images
+		<ul>
+			<li><strong>Random:</strong> One of these will be chosen at random.</li>
+			<li><strong>Cube:</strong> The slide is on a 3D box and will be rotated left (horizontal) or down (vertical). Requires 3D CSS support in browser or the effect will not be shown.</li>
+			<li><strong>Fade:</strong> Crossfade between images.</li>
+			<li><strong>Slice:</strong> The image is sliced to several pieces from left to right (horizontal) or bottom to top (vertical) and the pieces are falling apart to the origin of the cut.</li>
+			<li><strong>Slide:</strong> The image moves to left (horizontal) or bottom (vertical).</li>
+			<li><strong>Scale:</strong> The image is zoomed and faded out</li>
+			<li><strong>Block Scale:</strong> The image is sliced to several blocks and the blocks reduce in size.</li>
+			<li><strong>Kaleidoscope:</strong> The image is sliced to several blocks and the blocks fade out from top left to bottom right</li>
+			<li><strong>Fan:</strong> The image is cut to several pieces from left to right and each pieces fall to bottom right</li>
+			<li><strong>Blind:</strong> The image is cut to several pieces from top to bottom (horizontal) or left to right (vertical) and each pieces reduce in size and fade out.</li>
+		</ul>
+		<div class="alert alert-info">Some transition may render incorrectly in preview due to technical limitations</div>
+	</dd>
+	<dt>Effect duration</dt>
+	<dd>How long does the transition takes in milliseconds. (1000ms = 1sec)</dd>
+	<dt>Slide duration</dt>
+	<dd>How long does an image is shown in milliseconds. Enter 0 to disable auto advancing.</dd>
+	<dt>Thumbnails</dt>
+	<dd>Check to enable manual skipping by showing thumbnails of all images</dd>
+</dl>
+
+<h3>Images</h3>
+<img src="/help/img/gallery_images.png" class="thumbnail span3 pull-right">
+<p>The images style is the most basic style. It show all images at the same time. All images must have the same size.</p>
+<dl>
+	<dt>Image size</dt>
+	<dd>The size of each images. All image will use this size regardless of the original size or dimension.</dd>
+	<dt>Margin between images</dt>
+	<dd>Spacing between images.</dd>
+	<dt>Hover to zoom</dt>
+	<dd>If enabled, when the reader move mouse or touch on the image it will be enlarged</dd>
+</dl>
