@@ -180,7 +180,11 @@ class UI extends Base{
 					'time' => new MongoDate()
 				)
 			), array("upsert" => true));
-			print "true";
+			$otherLock = $this->DB->locks->findOne(array(
+				"page" => new MongoId((string) $this->phraw->request['page']),
+				"user" => array('$ne' => $this->user['_id'])
+			));
+			print json_encode($otherLock);
 		}else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
 			$this->DB->locks->remove(array(
 				"page" => new MongoId((string) $this->phraw->request['page']),

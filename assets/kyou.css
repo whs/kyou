@@ -13,6 +13,14 @@ html,body{
 	box-shadow: rgba(0,0,0,0.5) 0px 0px 50px;
 	background: white;
 }
+#simullock{
+	background: #882222;
+	color: white;
+	margin: -10px -10px 5px -10px;
+	padding: 5px;
+	text-align: center;
+	display: none;
+}
 #wl_resize{
 	height: 150px;
 }

@@ -34,6 +34,7 @@
 		</div>
 		<br style="clear: both;">
 	</div>
+	<div id="simullock">Page is also under edit by <strong></strong>. Your changes could be lost.</div>
 	<p>
 		<strong>Project:</strong> {$project.name|escape}<br>
 		<strong>Page:</strong> <a href="#" id="pagename"></a><br>
@@ -268,7 +269,14 @@ function save(){
 	}, 1500);
 }
 function reqlock(){
-	$.post("/page/{$page.id}/@lock");
+	$.post("/page/{$page.id}/@lock", function(out){
+		if(_.isObject(out)){
+			$("#simullock strong").text(out.user);
+			$("#simullock").slideDown()
+		}else{
+			$("#simullock").slideUp()
+		}
+	}, "json");
 }
 
 window.onunload = function(){
