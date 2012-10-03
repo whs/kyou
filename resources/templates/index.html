@@ -4,154 +4,157 @@
 <link rel="stylesheet" href="/assets/css/token-input.css">
 <link rel="stylesheet" href="/assets/css/token-input-mac.css">
 <style>
-body{
-	background: #eee;
+html,body{
+	height: 100%;
 }
-h1{
-	background: #888;
+header{
+	background: #222;
 	color: white;
-	margin-top: -20px;
-	margin-left: -20px;
-	width: 690px;
-	height: 95px;
-	padding-top: 50px;
-	text-align: left;
+	padding: 4px 20px 4px 20px;
+	font-weight: bold;
+	{if $nonfree}
+	background: #5e387b url(/nonfree/kyou.gif) top right no-repeat;
+	padding-right: 50px;
+	background-size: contain;
+	height: 50px;
+	padding-top: 25px;
+	text-shadow: black 0px 0px 10px;
 	box-sizing: border-box;
-	margin-bottom: 20px;
-	padding-left: 20px;
-	text-shadow: black 0px 2px 1px, black 0px -1px 1px;
-	{if $nonfree}background-image: url(/nonfree/kyou.jpg);{/if}
+	font-size: 14pt;
+	{/if}
 }
-#lp-in{
-	background: white;
-	padding: 20px;
-	padding-bottom: 1px;
-	width: 650px;
-	margin: auto;
-	border-right: #eee solid 2px;
-	border-left: #eee solid 2px;
+header a{
+	float: right;
+	color: #ffff00;
 }
-#lp-in form{
-	width: 600px;
-	margin: auto;
+.nav > li > a:hover{
+	background: none;
 }
-#applist{
-	text-align: center;
+header a:hover{
+	text-decoration: none;
+	color: #aaaa00;
 }
-.icon{
-	display: block;
-	width: 200px;
-	margin: auto;
-	text-align: center;
+header small{
+	font-size: 80%;
+	vertical-align: top;
+	color: #888;
+	font-weight: normal;
 }
-#applist .row{
-	margin-bottom: 50px;
-}
-#applist .logo{
-	display: block;
-	width: 200px;
-	height: 200px;
-	margin: auto;
+#projectpane{
 	background: #eee;
-	margin-bottom: 10px;
-}
-.popover-inner{
-	width: auto;
-}
-.popover-content{
-	height: 160px;
+	width: 200px;
+	float: left;
+	height: 100%;
 	overflow: auto;
-	padding: 0;
+	box-shadow: inset #888 0px -10px 10px;
+	padding-top: 10px;
+	box-sizing: border-box;
 }
-.popover-content ul{
+#container{
+	height: 100%;
+	overflow: hidden;
+}
+#pagelist{
+	margin: 10px;
+	margin-left: 0;
+	font-size: 11pt;
+	width: 400px;
+	height: 90%;
+	overflow: auto;
+}
+#pagelist li{
+	border-radius: 2px;
+	background: #eee;
+	margin: 5px 0 0 0;
+	padding: 5px;
+}
+#pagelist li .label{
+	float: right;
+}
+#rightpane{
+	margin-top: 10px;
+	margin-left: 210px;
+}
+.grip{
+	float: right;
+	margin-left: 10px;
+}
+#loading{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	text-align: center;
+	padding-top: 25%;
+	display: none;
+}
+#loading progress{
+	z-index: 2000;
+	width: 200px;
+	position: relative;
+}
+.actbar{
+	margin-top: 5px;
+	display: none;
+}
+#pagelist{
 	list-style: none;
-	margin: 0;
-	padding: 0;
-	text-align: left;
+	height: 600px;
+	overflow: auto;
+	float: left;
 }
-.popover-content a{
-	border-bottom: #f0f0f0 solid 1px;
+#pagelist li:hover .actbar{
 	display: block;
-	padding: 5px 10px 5px 10px;
-	color: inherit;
 }
-.popover-content a:hover{
-	background: #f5f5f5;
+#pagelist .addlink{
+	padding: 0;
+	margin-bottom: 20px;
+}
+.addlink a{
+	padding: 5px;
+	display: block;
+	border-radius: 2px;
+}
+.addlink a:hover{
+	background: #dfdfdf;
 	text-decoration: none;
 }
-.popover-content .btn{
-	float: right;
-	padding: 2px 10px 2px 10px;
-	margin-top: -3px;
-	margin-right: 2px;
+#apps{
+	float: left;
+	margin-left: 20px;
 }
-.popover-content .label{
-	vertical-align: baseline;
-}
-ul.token-input-list{
-	width: 250px;
+#apps h2{
+	font-size: 12pt;
 }
 </style>
 {/block}
 {block body}
-<div id="lp-in">
-	<h1>{$strings.app}</h1>
-	<form action="#" class="form-horizontal">
-		<div class="control-group">
-			<label class="control-label" for="project">Project</label>
-			<div class="controls">
-				<select id="project">
-					<option>Loading...</option>
-				</select>
-				<button id="proj_share" class="btn">Inspect</button>
-				<a href="#" class="btn btn-danger" id="proj_delete">Delete</a>
-				<div class="help-block">
-					Logged in as <strong>{$user._id|escape}</strong> <a href="/auth" class="btn">Relogin</a>
-				</div>
-			</div>
-		</div>
-	</form>
-	<div id="applist">
-		<div class="row">
-			<div class="span4">
-				<div class="popover-inner">
-					<h3 class="popover-title">Page creation</h3>
-					<div class="popover-content">
-						<ul id="pagelist">
-							<li><a href="#">Loading...</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-			<div class="span3 offset1">
-				<a href="#" data-link="/project/%s/files/" class="icon">
-					{if $nonfree}<img src="/nonfree/yukine.png" style="border-radius: 15px; margin-bottom: 10px;">
-					{else}<span class="logo"></span>{/if}
-					<strong>{$strings.resman}:</strong> Resources manager
-				</a>
-			</div>
-		</div>
-		<div class="row">
-			<div class="span4">
-				<div class="popover-inner">
-					<h3 class="popover-title">Applications</h3>
-					<div class="popover-content">
-						<ul>
-							<li><a href="#" data-link="/project/%s/iimg/"><strong>{$strings.iimg}:</strong> Interactive Image creator</a></li>
-							<li><a href="#" data-link="/project/%s/lyric/"><strong>{$strings.kara}:</strong> Lyrics timer</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-			<div class="span3 offset1">
-				<a href="#" class="icon" data-link="/project/%s/dist/">
-					{if $nonfree}<img src="/nonfree/fuko.png" style="border-radius: 15px; margin-bottom: 10px;">
-					{else}<span class="logo"></span>{/if}
-					<strong>{$strings.dist}:</strong> Export book
-				</a>
-			</div>
-		</div>
-	</div>
+<div id="container">
+<header>
+	<a href="/auth" id="user">{$user._id|escape} <small>(click to logout)</small></a>
+	<div id="appname">{$strings.app}</div>
+</header>
+<div id="projectpane">
+	<ul class="nav nav-list" id="project">
+	</ul>
+</div>
+<div id="rightpane">
+<p><button class="btn" id="projset"><i class="icon-wrench"></i> Project settings</button> <span id="share"><strong>Sharing:</strong> <span id="share-status"></span></span></p>
+<ul id="pagelist">
+</ul>
+<div id="apps">
+	<h2>Applications</h2>
+	<ul>
+		<li><a href="#" data-link="/project/%s/iimg/"><strong>{$strings.iimg}:</strong> Interactive Image creator</a></li>
+		<li><a href="#" data-link="/project/%s/lyric/"><strong>{$strings.kara}:</strong> Lyrics timer</a></li>
+		<li><a href="#" data-link="/project/%s/dist/"><strong>{$strings.dist}:</strong> Export book</a></li>
+	</ul>
+</div>
+</div>
+</div>
+<div id="loading">
+	<div class="modal-backdrop"></div>
+	<progress></progress>
 </div>
 <form class="modal fade form-horizontal" id="newproj" action="#">
 	<div class="modal-header">
@@ -213,6 +216,7 @@ ul.token-input-list{
 	</div>
 	</div>
 	<div class="modal-footer">
+		<input type="button" value="Delete" class="btn btn-danger">
 		<input type="submit" value="Save" class="btn btn-primary">
 	</div>
 </form>
@@ -234,84 +238,124 @@ ul.token-input-list{
 <script>
 var projects = new ProjectList;
 var curProj;
+function load_project(){
+	if(curProj){
+		curProj.off("reset add destroy");
+	}
+	$("#rightpane").show();
+	curProj = projects.get(localStorage.project);
+	document.title = curProj.get("name") + " | {$strings.app}";
+	var shareText = "";
+	var sharer = curProj.get("user");
+	if(sharer.length == 1){
+		shareText = "Not shared";
+	}else{
+		shareText = "Owned by <strong>" +_.escape(sharer[0])+"</strong> and shared with <strong>";
+		shareText += _.escape(sharer.slice(1, 5).join(", "));
+		shareText += "</strong>";
+		if(sharer.length > 5){
+			shareText += " and <strong>" + (sharer.length - 5) + "</strong> others";
+		}
+	}
+	$("#share-status").html(shareText);
+	var owner = curProj.get("user")[0];
+	$("#projowner").val(owner);
+	var userlist = curProj.get("user").slice(1);
+	_.each(userlist, function(x,ind){
+		userlist[ind] = { id: x, name: x };
+	});
+	$("#projmember").prev(".token-input-list-mac").remove();
+	$("#projmember").tokenInput("/_users?owner="+owner, {
+		prePopulate: userlist,
+		preventDuplicates: true,
+		zindex: 20000,
+		theme: "mac"
+	});
+	$("#sharing input[name=name]").val(curProj.get("name"));
+	$("a[data-link]").attr("href", function(){
+		return $(this).data("link").replace("%s", curProj.id);
+	});
+	curProj.pages.on("reset add destroy", function(){
+		$("#loading").stop(true).hide();
+		$("#pagelist").empty();
+		var addLink = $("<li class='addlink'><a href='#'><i class='icon-plus'></i> New Page</a></li>").appendTo("#pagelist");
+		$("a", addLink).click(function(){
+			$("#newpage").modal();
+			$("#newpage input[name=pname]").get(0).focus();
+			return false;
+		})
+		curProj.pages.forEach(function(model){
+			//<li>Cover <span class="ui-icon ui-icon-grip-solid-horizontal grip"></span> <span class="label">OK</span></li>
+			var ele = $('<li><a href="#" class="pagelink">Cover</a> <span class="ui-icon ui-icon-grip-solid-horizontal grip"></span> <span class="label">OK</span><div class="actbar"><button class="btn btn-danger btn-mini"><i class="icon-trash icon-white"></i> Delete</button> <a class="btn btn-mini"><i class="icon-eye-open"></i> View read-only</a></div></li>').data("id", model.id);
+			$('.pagelink', ele).attr("href", "/page/" + model.id).data("id", model.id).text(model.get("name"));
+			$('.label', ele).text(model.stage());
+			if(model.has("viewtoken")){
+				$("a.btn", ele).attr("href", "/p/" + model.get("viewtoken"));
+			}else{
+				$("a.btn", ele).remove();
+			}
+			ele.appendTo("#pagelist");
+		});
+		$("#pagelist").sortable({
+			placeholder: "ui-state-highlight",
+			items: "li:not(.addlink)",
+			handle: ".grip",
+			start: function(){
+				$("#share").data("text", $("#share").html()).text("Make sure all pages are not under editing when sorting");
+			},
+			stop: function(){
+				$("#share").html($("#share").data("text"));
+			},
+			update: function(){
+				$("#share").html("Saving...");
+				$("#pagelist li:not(.addlink)").each(function(ind){
+					var item = curProj.pages.get($(this).data("id"));
+					item.set("weight", ind + 1);
+				});
+				var uploadData = curProj.pages.toJSON();
+				uploadData = uploadData.map(function(e){
+					return {
+						id: e.id,
+						weight: e.weight
+					}
+				});
+				// Don't save the page directly or ALL widget will be lost
+				$.post("/project/" + curProj.id + "/sort/", { data: uploadData }, function(d){
+					if(d){
+						alert(d);
+					}
+					$("#share").html($("#share").data("text"));
+				});
+			}
+		}).disableSelection();
+	});
+	curProj.pages.fetch();
+}
 $(function(){
+	$("#rightpane").hide();
 	projects.on("reset add destroy", function(){
 		$("#project").empty();
+		$('<li class="nav-header">Projects</li>').appendTo("#project");
 		this.each(function(v){
-			$("<option>").attr("value", v.id).text(v.get("name")).appendTo("#project");
+			$("<li><a></a></li>").data("id", v.id).attr("id", "proj-"+v.id).find("a").text(v.get("name")).attr("href", "/project/"+v.id).parent().appendTo("#project");
 		});
-		$("<option value=''>-----------</option>").appendTo("#project");
-		$("<option value='@new'>New project</option>").appendTo("#project");
+		$('<li class="divider"></li>').appendTo("#project");
+		$('<li><a href="@new"><i class="icon-plus-sign"></i> Create project</a></li>').appendTo("#project");
 		if(localStorage.project){
-			$("#project").val(localStorage.project);
-		}else{
-			$("#project").val("");
+			$("#proj-"+localStorage.project).addClass("active");
+			$("#rightpane").show();
 		}
-		$("#project").change();
 	});
-	$("#project").change(function(){
-		if($(this).val() == "@new"){
-			$("#newproj").modal();
-			$("#newproj input[name=pname]").get(0).focus();
-			$(this).val("")
-			$("#applist,#proj_delete,#proj_share").hide();
-		}else if($(this).val() != ""){
-			$("#applist,#proj_delete,#proj_share").show();
-			if(!curProj || $(this).val() != curProj.id){
-				$("#pagelist").html('<li><a href="#">Loading...</a></li>');
-				localStorage.project = $(this).val();
-				if(curProj){
-					curProj.off("reset add destroy");
-				}
-				curProj = projects.get($(this).val());
-				document.title = curProj.get("name") + " | {$strings.app}";
-				var owner = curProj.get("user")[0];
-				$("#projowner").val(owner);
-				var userlist = curProj.get("user").slice(1);
-				_.each(userlist, function(x,ind){
-					userlist[ind] = { id: x, name: x };
-				});
-				$("#projmember").prev(".token-input-list-mac").remove();
-				$("#projmember").tokenInput("/_users?owner="+owner, {
-					prePopulate: userlist,
-					preventDuplicates: true,
-					zindex: 20000,
-					theme: "mac"
-				});
-				$("#sharing input[name=name]").val(curProj.get("name"));
-				$("a[data-link]").attr("href", function(){
-					return $(this).data("link").replace("%s", curProj.id);
-				});
-				curProj.pages.on("reset add destroy", function(){
-					$("#pagelist").empty();
-					var addLink = $("<li><a href='#'><i class='icon-plus'></i> New Page</a></li>").appendTo("#pagelist");
-					$("a", addLink).click(function(){
-						$("#newpage").modal();
-						$("#newpage input[name=pname]").get(0).focus();
-						return false;
-					})
-					curProj.pages.forEach(function(model){
-						var ele = $("<li><a href='#'></a></li>");
-						$('a', ele).attr("href", "/page/" + model.id).data("id", model.id).html("<button class='btn btn-danger btn-small'><i class='icon-trash icon-white'></i></button><a class='btn btn-small'><i class='icon-eye-open'></i></a> " + _.escape(model.get("name"))+" <span class='label'>"+model.stage()+"</span>");
-						if(model.has("viewtoken")){
-							$("a.btn", ele).attr("href", "/p/" + model.get("viewtoken"));
-						}else{
-							$("a.btn", ele).remove();
-						}
-						ele.appendTo("#pagelist");
-					});
-				});
-				curProj.pages.fetch();
-			}
-		}else{
-			$("#applist,#proj_delete,#proj_share").hide();
-		}
-	})
-	$("#proj_delete").click(function(){
-		if(!confirm("Delete current project?")){
-			return false;
-		}
-		curProj.destroy();
+	$("#project").on("click", "a[href^=/project/]", function(){
+		$("#loading").fadeIn(250);
+		$("#project li.active").removeClass("active");
+		localStorage.project = $(this).parent().addClass("active").data("id");
+		load_project();
+		return false;
+	});
+	$("#project").on("click", "a[href=@new]", function(){
+		$("#newproj").modal();
+		$("#newproj input[name=pname]").get(0).focus();
 		return false;
 	});
 	$("#newproj").submit(function(){
@@ -321,7 +365,10 @@ $(function(){
 		}, {
 			wait: true,
 			success: function(obj){
-				$("#project").val(obj.id).change();
+				localStorage.project = obj.id;
+				$("#project li.active").removeClass("active");
+				$("#proj-"+localStorage.project).addClass("active");
+				load_project();
 				$("#newproj").modal("hide");
 				$("#newproj input[name=pname]").val("").attr("disabled", false);
 			}
@@ -329,42 +376,42 @@ $(function(){
 		$("input[name=pname]", this).attr("disabled", true);
 		return false;
 	});
-	$("#proj_share").click(function(){
+	$("#projset").click(function(){
 		$("#sharing").modal();
 		return false;
-	});
+	})
 	$("#sharing").submit(function(){
 		var users = $("#projmember").val().split(",");
 		if(users.length == 1 && users[0] === ""){
 			users = [];
 		}
-		users = _.union([{$user._id|json_encode}], users);
+		users = _.union($("#projowner").val(), users.sort(), [{$user._id|json_encode}]);
 		curProj.set("user", users);
 		var name = $("input[name=name]", this).val();
-		if(name != curProj.get("name")){
-			curProj.set("name", name);
-			projects.trigger("reset");
-			document.title = name + " | {$strings.app}";
-		}
 		curProj.save();
+		load_project();
 		$("#sharing").modal("hide");
 		return false;
 	});
-	$("#pagelist").delegate("button", "click", function(){
-		if(!confirm("Delete page \""+$(this).parent().text()+"\"?")){
-			return false;
+	$("#sharing .btn-danger").click(function(){
+		if(confirm("Delete project \""+curProj.get("name")+"\"?\nThis cannot be undone")){
+			$("#sharing").modal("hide");
+			delete localStorage.project;
+			document.title = "{$strings.app}";
+			$("#rightpane").hide();
+			curProj.destroy();
 		}
-		$(this).hide();
-		curProj.pages.get($(this).parent().data("id")).destroy();
 		return false;
 	});
-	$("#pagelist").delegate('a.btn', "click", function(e){
-		e.preventPropagation();
-	});
-	$("#pagelist").delegate('a', "click", function(e){
-		$(".label", this).data("orig", $(".label", this).text()).text("Loading...");
+	$("#pagelist").on("click", ".addlink a", function(){
+		$("#newpage").modal();
+		return false;
+	})
+	$("#pagelist").on("click", ".pagelink", function(){
+		$("#loading").fadeIn(250);
 		$.getJSON(this.href+"/@lock", _.bind(function(x){
 			if(x){
+				$("#loading").stop(true).hide();
 				$("#lockwarn").modal();
 				var d = new Date(x.time.sec*1000);
 				var page = curProj.pages.get($(this).data("id"));
@@ -383,8 +430,12 @@ $(function(){
 		}, this));
 		return false;
 	});
-	$("#lockwarn .btn-danger").click(function(){
-		$("#lockwarn").modal("hide");
+	$("#pagelist").on("click", ".btn-danger", function(){
+		if(!confirm("Delete page \""+$(this).closest("li").find(".pagelink").text()+"\"?")){
+			return false;
+		}
+		$(this).hide();
+		curProj.pages.get($(this).closest("li").data("id")).destroy();
 		return false;
 	});
 	$("#newpage").submit(function(){
@@ -403,11 +454,10 @@ $(function(){
 		$("input[name=pname]", this).attr("disabled", true);
 		return false;
 	});
-	$("#applist").hide();
 	projects.reset({$projects|json_encode});
 	if(localStorage.project){
-		$("#project").val(localStorage.project).change();
+		load_project();
 	}
-})
+});
 </script>
 {/block}

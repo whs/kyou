@@ -18,6 +18,7 @@ class menome_auth extends Base{
 	}
 	public function auth(){
 		if(!$_GET['code']){
+			$this->set_user("");
 			header("Location: ".$this->endpoint."auth/authorize?response_type=code&client_id=".$this->id);
 		}else{
 			$out = $this->http($this->endpoint."auth/token", "POST", array(

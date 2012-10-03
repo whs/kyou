@@ -2,9 +2,13 @@
 require_once "ui.class.php";
 
 class Fuko extends UI{
+	/**
+	 * A bit of history: This was a seperate module called Nagisa the page sorter
+	 * Later, it merged into Fuko and the name Nagisa is used in sharing system.
+	 * and this code is called fuko_1 (but still use the method name nagisa)
+	 * When the front page was redesigned, Fuko-1 was merged into the front page
+	 */
 	public function nagisa(){
-		$pages = $this->loader->pages();
-		$this->smarty->assign("pages", $pages);
 		$project = $this->loader->project_by_id();
 		if(isset($_POST['data'])){
 			foreach($_POST['data'] as $item){
@@ -18,10 +22,9 @@ class Fuko extends UI{
 				));
 			}
 			die();
+		}else{
+			die();
 		}
-		$this->smarty->assign("project", $project);
-		$this->smarty->assign("size", $this->estimated_size());
-		$this->smarty->display("fuko_1.html");
 	}
 	public function fuko_config(){
 		$project = $this->loader->project_by_id();
@@ -107,7 +110,7 @@ class Fuko extends UI{
 			die();
 		}
 		$this->smarty->assign("project", $project);
-		$this->smarty->display("fuko_2.html");
+		$this->smarty->display("fuko.html");
 	}
 
 	public function estimated_size(){
