@@ -182,7 +182,8 @@ class UI extends Base{
 			), array("upsert" => true));
 			$otherLock = $this->DB->locks->findOne(array(
 				"page" => new MongoId((string) $this->phraw->request['page']),
-				"user" => array('$ne' => $this->user['_id'])
+				"user" => array('$ne' => $this->user['_id']),
+				"time" => array('$gte' => new MongoDate(time() - $this::LOCK_PERIOD))
 			));
 			print json_encode($otherLock);
 		}else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
