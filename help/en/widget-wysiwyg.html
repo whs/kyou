@@ -1,0 +1,105 @@
+<style scoped>
+strong{
+	font-weight: bold !important;
+}
+em{
+	font-style: italic !important;
+}
+u{
+	text-decoration: underline !important;
+}
+del{
+	text-decoration: line-through !important;
+}
+</style>
+<h2>WYSIWYG widget</h2>
+<p>WYSIWYG (What You See Is What You Get) is the easiest way to format your contents.</p>
+<p>The easiest way to use it is to copy your contents from Microsoft&reg; Word&trade; or other word processors and paste it directly. The widget will format it automatically</p>
+<p>Always click <span style="width:16px;height:16px;background:url(/assets/ckeditor/skins/kama/icons.png) no-repeat 0px -32px;display:inline-block;vertical-align:middle;"></span> to save your work after editing</p>
+
+<h3>Toolbar</h3>
+<img src="/help/img/wysiwyg.png" class="thumbnail" style="display: block; margin: auto;">
+<ul class="cke_skin_kama unstyled">
+	<li class="cke_button cke_button_bold"><span class="cke_icon"></span> <strong>Bold:</strong> Toggle <strong>bold</strong> font to the selected text.</li>
+	<li class="cke_button cke_button_italic"><span class="cke_icon"></span> <strong>Italic:</strong> Toggle <em>italic</em> font to the selected text.</li>
+	<li class="cke_button cke_button_underline"><span class="cke_icon"></span> <strong>Underline:</strong> Toggle text <u>underlining</u> to the selected text.</li>
+	<li class="cke_button cke_button_strike"><span class="cke_icon"></span> <strong>Strike:</strong> Toggle text <del>strike through</del> to the selected text.</li>
+	<li class="cke_button cke_button_subscript"><span class="cke_icon"></span> <strong>Subscript:</strong> Toggle text <sub>subscript</sub> to the selected text.</li>
+	<li class="cke_button cke_button_superscript"><span class="cke_icon"></span> <strong>Superscript:</strong> Toggle text <sup>superscript</sup> to the selected text.</li>
+	<li class="cke_button cke_button_removeFormat"><span class="cke_icon"></span> <strong>Remove formatting:</strong> Cancels all text formatting to the selected text.</li>
+	<li class="cke_button cke_button_numberedlist"><span class="cke_icon"></span> <strong>Numbered list:</strong> Add a numbered list. Press enter to add next point, double enter to end listing.</li>
+	<li class="cke_button cke_button_bulletedlist"><span class="cke_icon"></span> <strong>Bulleted List:</strong> Add a bulleted list. Press enter to add next bullet, double enter to end listing.</li>
+	<li class="cke_button cke_button_link"><span class="cke_icon"></span> <strong>Link:</strong> Make selected text a link.</li>
+	<li class="cke_button cke_button_unlink"><span class="cke_icon"></span> <strong>Unlink:</strong> Unlink selected text. Only usable when selecting linked text.</li>
+	<li class="cke_button cke_button_textcolor"><span class="cke_icon"></span> <strong>Text color:</strong> Change selected text's font color.</li>
+	<li class="cke_button cke_button_bgcolor"><span class="cke_icon"></span> <strong>Background color:</strong> Change selected text's background color. <em>not recommended</em></li>
+</ul>
+<hr>
+<ul class="cke_skin_kama unstyled">
+	<li class="cke_button cke_button_justifyleft"><span class="cke_icon"></span> <strong>Justify left:</strong> Make selected text left-aligned.</li>
+	<li class="cke_button cke_button_justifycenter"><span class="cke_icon"></span> <strong>Justify center:</strong> Make selected text center-aligned.</li>
+	<li class="cke_button cke_button_justifyright"><span class="cke_icon"></span> <strong>Justify right:</strong> Make selected text right-aligned.</li>
+</ul>
+<dl>
+	<dt>Normal</dt>
+	<dd>Set paragraph's type such as heading level</dd>
+	<dt>Font</dt>
+	<dd>Set selected text's <span style="font-family:'Comic Sans MS';">font face</span>. <em>not recommended</em></dd>
+	<dt>Size</dt>
+	<dd>Set selected text's <span style="font-size: 120%;">font size</span>. If this text is a header, paragraph type should be set instead of enlarging font size</dd>
+</dl>
+<hr>
+<ul class="cke_skin_kama unstyled">
+	<li class="cke_button cke_button_image"><span class="cke_icon"></span> <strong>Image:</strong> Add an image</li>
+	<li class="cke_button cke_button_table"><span class="cke_icon"></span> <strong>Table:</strong> Add a table</li>
+	<li class="cke_button cke_button_specialchar"><span class="cke_icon"></span> <strong>Special Character:</strong> Add a special character such as &copy; &reg; &bullet;.</li>
+	<li class="cke_button cke_button_horizontalrule"><span class="cke_icon"></span> <strong>Horizontal Rule:</strong> Add a horizontal divider.</li>
+	<li class="cke_button cke_button_find"><span class="cke_icon"></span> <strong>Find:</strong> Find text.</li>
+	<li class="cke_button cke_button_replace"><span class="cke_icon"></span> <strong>Replace:</strong> Find and replace text.</li>
+	<li class="cke_button cke_button_maximize"><span class="cke_icon"></span> <strong>Maximize:</strong> Enlarges the editor to full screen.</li>
+	<li class="cke_button cke_button_source"><span class="cke_icon"></span> <strong>Source:</strong> View and edit HTML source directly.</li>
+	<li class="cke_button cke_button_about"><span class="cke_icon"></span> <strong>Help:</strong> Open this page.</li>
+	<li class="cke_button cke_button_save"><span class="cke_icon"></span> <strong>Save:</strong> Commit changes to the page.</li>
+	<li><a class="cke_toolbox_collapser" style="float: none;display: inline-block;margin:0;"></a> <strong>Collapse:</strong> Hide the toolbar</li>
+</ul>
+
+<h3>Add Link</h3>
+<img src="/help/img/wysiwyg_link.png" class="thumbnail" style="display: block; margin: auto;">
+<dl>
+	<dt>Link Type</dt>
+	<dd>URL links to other pages on the internet or in the same book. Other type of links are not supported.</dd>
+	<dt>Protocol</dt>
+	<dd>URL prefix such as http://, https://</dd>
+	<dt>URL</dt>
+	<dd>Link target without the protocol prefix such as <code>sunburn.in.th</code>.</dd>
+	<dt>Browse Server</dt>
+	<dd>Click this button to browse uploaded files and add link to it.</dd>
+	<dt>Pages</dt>
+	<dd>Select page name in the dropdown to link to that page.</dd>
+	<dt>Target (tab)</dt>
+	<dd>
+		Where to open the link
+		<ul>
+			<li><strong>&lt;not set&gt;:</strong> Open link in same page</li>
+			<li><strong>&lt;popup window&gt;:</strong> Open link in new popup window</li>
+			<li><strong>New Window (_blank):</strong> Open link in new tab</li>
+		</ul>
+	</dd>
+</dl>
+
+<h3>Add Image</h3>
+<img src="/help/img/wysiwyg_img.png" class="thumbnail" style="display: block; margin: auto;">
+<dl>
+	<dt>URL</dt>
+	<dd>Full URL of the image including protocol prefix.</dd>
+	<dt>Browse Server</dt>
+	<dd>Click this button to add image from uploaded file.</dd>
+	<dt>Width</dt>
+	<dd>Image's width</dd>
+	<dt>Height</dt>
+	<dd>Image's height. Click the padlock button to unlock dimension ratio.</dd>
+	<dt>Alignment</dt>
+	<dd>Where to place the image. &lt;not set&gt; places the image inline.</dd>
+	<dt>Link (tab)</dt>
+	<dd>Add clickable link to image. The settings are similar to the add link window.</dd>
+</dl>

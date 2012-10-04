@@ -21,12 +21,28 @@ widgets["wysiwyg"] = Widget.extend({
 						editor.ui.addButton('Save', {label: 'Save', command : 'save'});
 					}, this)
 				}
+				CKEDITOR.plugins.registered['help'] = {
+					init: _.bind(function(editor){
+						var command = editor.addCommand('help', {
+							modes: {wysiwyg:1},
+							exec: _.bind(function(editor){
+								$("#helpscreen").modal().data("help", "widget-wysiwyg");
+								$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/widget-wysiwyg.html");
+		return false;
+							}, this)
+						});
+						editor.ui.addButton('Help', {label: 'Help', command : 'help', className: 'cke_button_source cke_button_about'});
+					}, this)
+				}
 				this.editor = CKEDITOR.replace(this.$("textarea").get(0), {
 					toolbar: [
 						['Bold','Italic','Underline','Strike','Subscript','Superscript','-', 'RemoveFormat', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink', '-', 'TextColor','BGColor'],
-						['Styles','Format','Font','FontSize'],
-						['Image', 'Table', 'SpecialChar', 'HorizontalRule', '-', 'Find','Replace', '-', 'Maximize', 'Source', 'Save']
-					]
+						['JustifyLeft','JustifyCenter','JustifyRight','Format','Font','FontSize'],
+						['Image', 'Table', 'SpecialChar', 'HorizontalRule', '-', 'Find','Replace', '-', 'Maximize', 'Source', 'Help', 'Save']
+					],
+					extraPlugins: "filebrowser,help",
+					filebrowserBrowseUrl: "/project/"+page.project.id+"/files/@pick",
+					baseHref: "/bookfiles/" + page.project.id + "/"
 				});
 			}, this);
 			var setupAndRender = _.bind(function(){
@@ -53,38 +69,11 @@ widgets["wysiwyg"] = Widget.extend({
 											return;
 										}
 										var diag = CKEDITOR.dialog.getCurrent();
-										var url = diag.getContentElement('info','url');
-										url.setValue(ev.data.value+".html");
+										diag.getContentElement('info','url').setValue(ev.data.value+".html");
+										diag.getContentElement('info','protocol').setValue("");
 									}
 								},
-								{
-									"type": "button",
-									"label": "Resource",
-									"id": "resfile",
-									"onClick": function(){
-										var diag = CKEDITOR.dialog.getCurrent();
-										var url = diag.getContentElement('info','url');
-										pick_file(function(d){
-											url.setValue(d);
-										});
-									}
-								}
 							]
-						});
-					}else if(ev.data.name == "image"){
-						var dialogDefinition = ev.data.definition;
-						var infoTab = dialogDefinition.getContents('info');
-						infoTab.elements[0].children.push({
-							"type": "button",
-							"label": "Resource",
-							"id": "resfile",
-							"onClick": function(){
-								var diag = CKEDITOR.dialog.getCurrent();
-								var url = diag.getContentElement('info','txtUrl');
-								pick_file(function(d){
-									url.setValue(d);
-								});
-							}
 						});
 					}
 				});

@@ -40,9 +40,30 @@
 }
 	</style>
 	<script>
+function getUrlParam(paramName){
+	var reParam = new RegExp('(?:[\?&]|&amp;)' + paramName + '=([^&]+)', 'i');
+	var match = window.location.search.match(reParam);
+ 
+	return (match && match.length > 1) ? match[1] : '';
+}
 $(function(){
 	$("a[href=#]").click(function(){
-		parent.window.yukine_select($(this).data("file"));
+		if(getUrlParam('CKEditorFuncNum')){
+			window.opener.CKEDITOR.tools.callFunction(getUrlParam('CKEditorFuncNum'), $(this).data("file"), function(){
+				try{
+					this.getDialog().getContentElement('info','protocol').setValue("");
+				}catch(e){}
+			});
+		}
+		if(parent.window != window){
+			parent.window.yukine_select($(this).data("file"));
+		}
+		return false;
+	});
+	$("a[href=#]").dblclick(function(){
+		if(getUrlParam('CKEditorFuncNum')){
+			window.close();
+		}
 		return false;
 	});
 })
