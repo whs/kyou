@@ -1,0 +1,53 @@
+<h2>วิดเจดท์ CSS</h2>
+<p>วิดเจดท์ CSS ใช้ในการแต่งหน้า โครงสร้างหน้าบางตัวอาจไม่รองรับตัวเลือกบางตัว</p>
+
+<dl>
+	<dt>Name</dt>
+	<dd>ชื่อของวิดเจดท์ในโปรแกรมแก้ไข (ไม่ใช้ในผลลัพท์)</dd>
+	<dt>Text color</dt>
+	<dd>สีข้อความ เลือกจากจานสี หรือพิมพ์สี CSS เอง (เช่นชื่อสี <span style="color:cornflowerblue;">cornflowerblue</span> หรือสีระบบ rgb())</dd>
+	<dt>Background color</dt>
+	<dd>สีพื้นหลัง ป้อนสี CSS เองได้เช่นกัน</dd>
+	<dt>Background fix</dt>
+	<dd><ul>
+		<li><strong>Fixed</strong> ทำให้ภาพพื้นหลังติดอยู่ที่เดิมขณะเลื่อนเนื้อหา</li>
+		<li><strong>Move with scrolling</strong> เลื่อนภาพพื้นหลังไปขณะเลื่อนเนื้อหา</li>
+	</ul></dd>
+	<dt>Background tiling</dt>
+	<dd>หากขนาดภาพพื้นหลังเล็กกว่าขนาดของหน้า ใช้ตัวเลือกนี้เพื่อเรียงภาพต่อกันแทนที่จะเติมพื้นที่เหลือด้วยสีพื้นหลัง</dd>
+	<dt>Background image</dt>
+	<dd>URL ภาพพื้นหลัง</dd>
+	<dt>Background resize</dt>
+	<dd>
+		<ul>
+			<li><strong>No</strong> ใช้ตามตัวเลือก Background fix</li>
+			<li><strong>Cover</strong> ปรับขนาดภาพพื้นหลังถ้าเล็กกว่าหน้าให้พอดีหน้า โดยรักษาอัตราส่วนไว้ (ภาพที่ปรับขนาดแล้วอาจมีขนาดใหญ่กว่าหน้า)</li>
+			<li><strong>Contain</strong> ปรับขนาดภาพพื้นหลังให้ขนาดเท่าหน้าโดยไม่สนอัตราส่วน</li>
+		</ul>
+	</dd>
+	<dt>Background position</dt>
+	<dd>
+		วางจุดกำเนิดภาพพื้นหลังไว้ที่จุดนี้
+		<table class="table table-bordered">
+			<tr>
+				<td>บนเยื้องซ้าย</td>
+				<td>บนจัดกลาง</td>
+				<td>บนเยื้องขวา</td>
+			</tr>
+			<tr>
+				<td>กึ่งกลางซ้าย</td>
+				<td>กึ่งกลางจัดกลาง</td>
+				<td>กึ่งกลางเยื้องขวา</td>
+			</tr>
+			<tr>
+				<td>ล่างเยื้องซ้าย</td>
+				<td>ล่างจัดกลาง</td>
+				<td>ล่างเยื้องขวา</td>
+			</tr>
+		</table>
+	</dd>
+	<dt>Font size</dt>
+	<dd>ขนาดแบบอักษร หน่วยเป็นพอยต์ (pt)</dd>
+	<dt>Custom CSS</dt>
+	<dd>ใส่ CSS เองเหมือนที่ใช้ในแท็ก &lt;style&gt; เว้นว่างไว้หากไม่ทราบว่าใช้อย่างไร</dd>
+</dl>
