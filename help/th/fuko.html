@@ -1,0 +1,33 @@
+<h2>แจกจ่าย</h2>
+<p>หลังจากสร้างหน้าเสร็จครบทุกหน้าแล้ว ใช้โปรแกรมแจกจ่ายในการส่งออกในรูปแบบที่ใช้งานง่าย</p>
+
+<dl>
+	<dt>Output format</dt>
+	<dd>ในปัจจุบันระบบรองรับการส่งออกเพียงรูปแบบเดียว คือไฟล์ ZIP ที่มีไฟล์ที่อัพโหลดทั้งหมด และหน้าเอกสารทั้งหมดในรูปแบบ HTML โดยสามารถใช้บราว์เซอร์ที่ใช้ WebKit อ่านได้ (เช่น Google Chrome, Safari, Android Browser, Safari บน iOS)</dd>
+	<dt>App Icon</dt>
+	<dd>โลโก้หนังสือ
+		<ul>
+			<li>16x16 ใช้ใน Chrome Web Store สำหรับ favicon (ไอคอนที่แท็บของ Chrome)</li>
+			<li>48x48 ใช้ใน PhoneGap:Build โดยไม่เป็นการบังคับให้ใส่</li>
+			<li>128x128 เป็นขนาดบังคับ โดยใช้ในไอคอนหน้าแท็บใหม่ของ Chrome และไอคอนโปรแกรมของ PhoneGap:Build</li>
+		</ul>
+	</dd>
+	<dt>Application ID.</dt>
+	<dd>รหัสประจำโปรแกรม โดยมักใช้เป็นชื่อหนังสือในตัวอักษรอังกฤษและโดเมนเว็บไซต์จากหลังไปหน้า เช่นหากเว็บไซต์คือ <code>sunburn.in.th</code> และหนังสือชื่อ <code>coreanime3</code> ให้กรอกว่า <code>th.in.sunburn.coreanime3</code> โดยรหัสนี้จะต้องไม่ซ้ำกับใครทั่วโลก ค่าที่กรอกให้ตอนเริ่มต้น<strong>ไม่ควร</strong>ใช้
+		<p>หากไม่มีโดเมนของตัวเอง ให้ใส่อะไรก็ได้ที่คล้ายโดเมน เช่น yourname.coreanime3</p></dd>
+	<dt>Application version</dt>
+	<dd>เลขรุ่นการส่งออกครั้งนี้ โดย Chrome Web Store จะไม่รับการอัพเดตที่มีเลขรุ่นเท่ากับ หรือน้อยกว่ารุ่นปัจจุบันที่อัพโหลดไว้เดิม ตัวอย่างการกรอก เช่น 1, 1.0 หรือ 1.0.0</dd>
+	<dt>Description</dt>
+	<dd>อธิบายหนังสือ โดยจะใช้ในข้อมูลประกอบ PhoneGap:Build data และในหน้าจัดการส่วนขยายของ Chrome</dd>
+	<dt>Google Analytics ID</dt>
+	<dd>กรอกเพื่อติดตามการเปิดทุกหน้าโดยใช้ Google Analytics ID ที่ระบุไว้ เช่น UA-27038379-9 (ไม่บังคับกรอก)</dd>
+</dl>
+
+<h3>การใช้ไฟล์ส่งออก</h3>
+หลังจากส่งออกแล้ว จะได้ไฟล์ ZIP ที่มีไฟล์ HTML พร้อมไฟล์ทรัพยากรที่อัพโหลดไว้
+
+<ul>
+	<li>แตกไฟล์แล้วอัพโหลดเนื้อหาไปยังเว็บโฮสต์ติ้งทั่วไป แล้วแจกจ่ายลิงก์</li>
+	<li>อัพโหลดไฟล์ ZIP ไปที่ <a href="https://chrome.google.com/webstore/developer/dashboard" target="_blank">Chrome Web Store</a> โดยในครั้งแรกจะต้องจ่ายค่าแรกเข้า $5 ก่อน ผู้ใช้ที่ใช้ Google Chrome สามารถดาวน์โหลดหนังสือไปอ่านออฟไลน์ได้จาก Chrome Web Store</li>
+	<li>อัพโหลดไฟล์ ZIP ไปที่บริการ <a href="https://build.phonegap.com" target="_blank">PhoneGap:Build</a> (ใช้ตัวเลือกแบบ private) จะได้ไฟล์โปรแกรมสำหรับ Android, Windows Phone, BlackBerry, webOS และ Symbian. (iOS จะต้อง<a href="https://build.phonegap.com/docs/ios-builds" target="_blank">ตั้งค่าเพิ่มเติม</a>) โดยบัญชีแบบฟรีสามารถใช้โปรแกรมแบบ private ได้เพียงโปรแกรมเดียวเท่านั้น</li>
+</ul>

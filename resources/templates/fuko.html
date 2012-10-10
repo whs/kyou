@@ -131,6 +131,7 @@ h2{
 			</div>
 		</div>
 		<div class="form-actions">
+			<a href="#" class="btn btn-warning" data-help="fuko"><i class="icon-question-sign"></i> Help</a>
 			<input type="submit" value="Next &gt;" class="btn btn-primary">
 		</div>
 	</form>
@@ -164,6 +165,22 @@ h2{
 		<input type="submit" value="Select" class="btn btn-primary">
 	</div>
 </form>
+<div class="modal fade" id="helpscreen">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<div class="btn-group pull-right" id="helplang" style="margin-right: 10px;" data-toggle="buttons-radio">
+			<button type="button" class="btn" data-lang="th">ไทย</button>
+			<button type="button" class="btn" data-lang="en">EN</button>
+		</div>
+		<h3>Help</h3>
+	</div>
+	<div class="modal-body">
+		Loading...
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn btn-primary" data-dismiss="modal">Hide</a>
+	</div>
+</div>
 <script>
 function pick_file(cb){
 	$("#selectitem iframe").attr("src", "/project/{$project.id}/files/@pick");
@@ -174,7 +191,7 @@ function pick_file(cb){
 	}).modal();
 	return true;
 }
-var yukine_lastClick;
+var yukine_lastClick, helpLang=localStorage.helpLang || "en";
 function yukine_select(f){
 	var oV = $("#selectitem input[name=file]").val();
 	if(oV == f && new Date().getTime() - yukine_lastClick < 250){
@@ -330,6 +347,17 @@ $(function(){
 		});
 		return false;
 	});
+	$("body").delegate("[data-help]", "click", function(){
+		$("#helpscreen").modal().data("help", $(this).data("help"));
+		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $(this).data("help") + ".html");
+		return false;
+	});
+	$("#helplang").delegate("button", "click", function(e){
+		localStorage.helpLang = helpLang = $(this).data("lang");
+		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $("#helpscreen").data("help") + ".html");
+		e.preventDefault();
+	});
+	$("#helplang [data-lang="+helpLang+"]").addClass("active");
 	function startRender(){
 		if(!renderTicket){
 			setTimeout(startRender, 10);
