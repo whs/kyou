@@ -169,6 +169,7 @@ iframe{
 			</ul>
 		</div>
 		{/if}
+		<a href="#" class="btn btn-warning" data-help="kotomi"><i class="icon-question-sign"></i> Help</a>
 		<input type="text" name="file" style="width: 500px; margin-bottom: 10px; border:none; background:transparent; box-shadow: none;" required readonly>
 		<iframe src="/project/{$project.id}/files/@pick"></iframe>
 	</div>
@@ -179,7 +180,8 @@ iframe{
 	</div>
 	<div class="menu">
 		<div class="toolbar" style="margin: -10px; margin-bottom: 10px; width: auto; margin-right:-5px;">
-			<a href="#" class="btn btn-danger" id="delbtn" title="Delete" style="margin-top: 5px; margin-left: 5px;"><i class="icon-trash icon-white"></i></a>
+			<a href="#" class="btn btn-warning" data-help="kotomi" style="margin-top: 5px; margin-left: 5px;"><i class="icon-question-sign"></i> Help</a>
+			<a href="#" class="btn btn-danger" id="delbtn" title="Delete" style="margin-top: 5px; "><i class="icon-trash icon-white"></i></a>
 			<a href="/" class="btn pull-right" title="Project home" style="margin-top: 5px;"><i class="icon-home"></i></a>
 			<br style="clear: both;">
 		</div>
@@ -205,14 +207,14 @@ iframe{
 				Hit icon
 				<div class="input-append">
 					<input type="text" name="icon" class="span2">
-					<button type="button" class="btn pickbtn" style="margin-top: -9px; margin-left: -6px;">Pick</button>
+					<button type="button" class="btn pickbtn" style="margin-left: -6px;">Pick</button>
 				</div>
 			</label>
 			<label class="setup setup_bg">
 				New image
 				<div class="input-append">
 					<input type="text" name="bgimg" class="span2">
-					<button type="button" class="btn pickbtn" style="margin-top: -9px; margin-left: -6px;">Pick</button>
+					<button type="button" class="btn pickbtn" style="margin-left: -6px;">Pick</button>
 				</div>
 				<div class="alert alert-info">Must be the same size</div>
 			</label>
@@ -220,7 +222,7 @@ iframe{
 				Image
 				<div class="input-append">
 					<input type="text" name="image" class="span2">
-					<button type="button" class="btn pickbtn" style="margin-top: -9px; margin-left: -6px;">Pick</button>
+					<button type="button" class="btn pickbtn" style="margin-left: -6px;">Pick</button>
 				</div>
 			</label>
 			<label class="setup setup_txt">
@@ -231,7 +233,7 @@ iframe{
 				Link
 				<div class="input-append">
 					<input type="text" name="link" class="span2">
-					<button type="button" class="btn pickpagebtn" style="margin-top: -9px; margin-left: -6px;">Pick</button>
+					<button type="button" class="btn pickpagebtn" style="margin-left: -6px;">Pick</button>
 				</div>
 			</label>
 			<div class="form-actions">
@@ -271,9 +273,25 @@ iframe{
 		<input type="submit" value="Select" class="btn btn-primary">
 	</div>
 </form>
+<div class="modal fade" id="helpscreen">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<div class="btn-group pull-right" id="helplang" style="margin-right: 10px;" data-toggle="buttons-radio">
+			<button type="button" class="btn" data-lang="th">ไทย</button>
+			<button type="button" class="btn" data-lang="en">EN</button>
+		</div>
+		<h3>Help</h3>
+	</div>
+	<div class="modal-body">
+		Loading...
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn btn-primary" data-dismiss="modal">Hide</a>
+	</div>
+</div>
 <script src="/assets/jquery.ui.js"></script>
 <script>
-var yukine_lastClick;
+var yukine_lastClick, helpLang=localStorage.helpLang || "en";
 function yukine_select(f){
 	var oV = $("#scene-picker input[name=file]").val();
 	if(oV == f && new Date().getTime() - yukine_lastClick < 250){
@@ -642,6 +660,17 @@ $(function(){
 		}
 		return false;
 	});
+	$("body").delegate("[data-help]", "click", function(){
+		$("#helpscreen").modal().data("help", $(this).data("help"));
+		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $(this).data("help") + ".html");
+		return false;
+	});
+	$("#helplang").delegate("button", "click", function(e){
+		localStorage.helpLang = helpLang = $(this).data("lang");
+		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $("#helpscreen").data("help") + ".html");
+		e.preventDefault();
+	});
+	$("#helplang [data-lang="+helpLang+"]").addClass("active");
 	if(window.location.hash.substr(1).length > 0){
 		$("#scene-picker input[name=file]").val(window.location.hash.substr(1));
 		$("#scene-picker").submit();
