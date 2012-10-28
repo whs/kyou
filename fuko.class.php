@@ -240,7 +240,12 @@ class Fuko extends UI{
 		foreach($pages as $page){
 			$out['sandbox']['pages'][] = $page['id'] . ".html";
 		}
-		return json_encode($out, JSON_PRETTY_PRINT);
+		// JSON_PRETTY_PRINT is not available < PHP 5.4
+		if(PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 4){
+			return json_encode($out, JSON_PRETTY_PRINT);
+		}else{
+			return json_encode($out);
+		}
 	}
 	public function get_phonegap_xml($project){
 		$xml = new XMLWriter();
