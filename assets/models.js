@@ -253,7 +253,7 @@ var Page = Backbone.Model.extend({
 				var renderer = new widget.renderer({
 					model: widget
 				});
-				out = _.union(out, (_.isFunction(renderer[out]) ? renderer[out](opt) : renderer[out]) || []);
+				out = _.union(out, (_.isFunction(renderer[name]) ? renderer[name](opt) : renderer[name]) || []);
 			}, this);
 			return out;
 		},
