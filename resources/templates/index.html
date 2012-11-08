@@ -67,6 +67,7 @@ header small{
 	background: #eee;
 	margin: 5px 0 0 0;
 	padding: 5px;
+	cursor: pointer;
 }
 #pagelist li .label{
 	float: right;
@@ -103,7 +104,7 @@ header small{
 	overflow: auto;
 	float: left;
 }
-#pagelist li:hover .actbar{
+#pagelist li.active .actbar{
 	display: block;
 }
 #pagelist .addlink{
@@ -287,7 +288,7 @@ function load_project(){
 		})
 		curProj.pages.forEach(function(model){
 			//<li>Cover <span class="ui-icon ui-icon-grip-solid-horizontal grip"></span> <span class="label">OK</span></li>
-			var ele = $('<li><a href="#" class="pagelink">Cover</a> <span class="ui-icon ui-icon-grip-solid-horizontal grip"></span> <span class="label">OK</span><div class="actbar"><button class="btn btn-danger btn-mini"><i class="icon-trash icon-white"></i> Delete</button> <a class="btn btn-mini"><i class="icon-eye-open"></i> View read-only</a></div></li>').data("id", model.id);
+			var ele = $('<li><a href="#" class="pagelink">Cover</a> <span class="ui-icon ui-icon-grip-solid-horizontal grip"></span> <span class="label">OK</span><div class="actbar"><a class="btn btn-mini"><i class="icon-eye-open"></i> View read-only</a> <button class="btn btn-danger btn-mini"><i class="icon-trash icon-white"></i> Delete</button></div></li>').data("id", model.id);
 			$('.pagelink', ele).attr("href", "/page/" + model.id).data("id", model.id).text(model.get("name"));
 			$('.label', ele).text(model.stage());
 			if(model.has("viewtoken")){
@@ -403,6 +404,10 @@ $(function(){
 			curProj.destroy();
 		}
 		return false;
+	});
+	$("#pagelist").on("click", "li", function(){
+		$("#pagelist li.active").removeClass("active");
+		$(this).addClass("active");
 	});
 	$("#pagelist").on("click", ".addlink a", function(){
 		$("#newpage").modal();
