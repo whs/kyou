@@ -87,6 +87,7 @@ class Fuko extends UI{
 			}
 			die();
 		}else if($_POST['act'] == "pack" && preg_match('~^[0-9a-f]+$~', $_POST['ticket'])){
+			$dirname = $project['appid'];
 			if($_POST['output'] == "zip"){
 				$pages = $this->loader->pages();
 				// Write Chrome JSON
@@ -98,15 +99,28 @@ class Fuko extends UI{
 					copy("output/tmp/".$_POST['ticket']."/".$project['icon128'], "output/tmp/".$_POST['ticket']."/icon.png");
 				}
 				// Copy navigator
-				copy("assets/nav.css", "output/tmp/".$_POST['ticket']."/nav.css");
-				file_put_contents("output/tmp/".$_POST['ticket']."/nav.js", $this->gen_navigator($project));
-				// Zip
-				@unlink("output/".$project['id'].".zip");
-				$this->zip("output/tmp/".$_POST['ticket']."/", "output/".$project['id'].".zip");
-				$this->rrmdir("output/tmp/".$_POST['ticket']."/");
+				if($_POST['incnav'] === "true"){
+					copy("assets/nav.css", "output/tmp/".$_POST['ticket']."/nav.css");
+					file_put_contents("output/tmp/".$_POST['ticket']."/nav.js", $this->gen_navigator($project));
+				}
+			}else if($_POST['output'] == "hpub"){
+				$dirname = "book";
+				$pages = $this->loader->pages();
+				file_put_contents("output/tmp/".$_POST['ticket']."/book.json", $this->get_hpub_json($project, $pages));
 			}else{
 				$this->fatal_error("Invalid output format");
 			}
+			// Zip
+			foreach(glob("output/".$project['id']."*.zip") as $file){
+				@unlink($file);
+			}
+			$output = "output/".$project['id']."_".uniqid().".zip";
+			$this->zip("output/tmp/".$_POST['ticket']."/", $output, $dirname);
+			$this->rrmdir("output/tmp/".$_POST['ticket']."/");
+			header("Content-Type: application/json");
+			print json_encode(array(
+				"output" => $output
+			));
 			die();
 		}
 		$this->smarty->assign("project", $project);
@@ -180,7 +194,7 @@ class Fuko extends UI{
 			rmdir($dir);
 		}
 	}
-	function zip($source, $destination){
+	function zip($source, $destination, $dirname=""){
 		if (!extension_loaded('zip') || !file_exists($source)) {
 			header("HTTP/1.0 500 Internal Server Error");
 			print "ZIP extension is required";
@@ -199,9 +213,9 @@ class Fuko extends UI{
 				}
 				$file = str_replace('\\', '/', realpath($file));
 				if (is_dir($file) === true && $source != $file){
-					$zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
+					$zip->addEmptyDir($dirname."/".str_replace($source . '/', '', $file . '/'));
 				}else if (is_file($file) === true){
-					$zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+					$zip->addFromString($dirname."/".str_replace($source . '/', '', $file), file_get_contents($file));
 				}
 			}
 		}else if (is_file($source) === true){
@@ -221,7 +235,7 @@ class Fuko extends UI{
 				"128" => $project['icon128'],
 			),
 			"sandbox" => array(
-				"pages" => array()
+				"pages" => array("index.html")
 			),
 			"minimum_chrome_version" => "22",
 			"offline_enabled" => true,
@@ -239,6 +253,43 @@ class Fuko extends UI{
 		}
 		foreach($pages as $page){
 			$out['sandbox']['pages'][] = $page['id'] . ".html";
+		}
+		// JSON_PRETTY_PRINT is not available < PHP 5.4
+		if(PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 4){
+			return json_encode($out, JSON_PRETTY_PRINT);
+		}else{
+			return json_encode($out);
+		}
+	}
+	public function get_hpub_json($project, $pages){
+		$out = array(
+			"hpub" => 1,
+			"title" => $project['name'],
+			"author" => $project['author'],
+			"url" => $project['bakerurl'],
+			"publisher" => "Kyou HPub 1.0",
+			"creator" => (string) $this->user,
+			"date" => date("Y-m-d"),
+			"orientation" => "landscape",
+			"zoomable" => $project['bakerzoom'],
+			"-baker-rendering" => "screenshots",
+			"-baker-media-autoplay" => true,
+			"contents" => array()
+		);
+		if(!empty($project['cover'])){
+			$out['cover'] = $project['cover'];
+		}
+		if(!empty($project['bakerlandscapebg'])){
+			$out['-baker-background-image-landscape'] = $project['bakerlandscapebg'];
+		}
+		if(!empty($project['bakerportraitbg'])){
+			$out['-baker-background-image-portrait'] = $project['bakerportraitbg'];
+		}
+		foreach($pages as $page){
+			$out['contents'][] = array(
+				"url" => $page['id'] . ".html",
+				"title" => $page['name']
+			);
 		}
 		// JSON_PRETTY_PRINT is not available < PHP 5.4
 		if(PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 4){
@@ -274,7 +325,7 @@ class Fuko extends UI{
 				$xml->startElement("description");
 					$xml->text($project['description']);
 				$xml->endElement();
-				$this->phonegap_pref($xml, "orientation", "portrait");
+				$this->phonegap_pref($xml, "orientation", "landscape");
 				$this->phonegap_pref($xml, "target-device", "tablet");
 				$this->phonegap_pref($xml, "android-minSdkVersion", "8");
 				$this->phonegap_pref($xml, "android-installLocation", "preferExternal");
