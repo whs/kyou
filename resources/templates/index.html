@@ -1,4 +1,4 @@
-{extends "base.html"}
+﻿{extends "base.html"}
 {block head}
 <script src="/assets/jquery.tokeninput.js"></script>
 <link rel="stylesheet" href="/assets/css/token-input.css">
@@ -49,6 +49,11 @@ header small{
 	box-shadow: inset #888 0px -10px 10px;
 	padding-top: 10px;
 	box-sizing: border-box;
+}
+#project .progress{
+	float: right;
+	width: 50px;
+	height: 1.3em;
 }
 #container{
 	height: 100%;
@@ -287,8 +292,7 @@ function load_project(){
 			return false;
 		})
 		curProj.pages.forEach(function(model){
-			//<li>Cover <span class="ui-icon ui-icon-grip-solid-horizontal grip"></span> <span class="label">OK</span></li>
-			var ele = $('<li><a href="#" class="pagelink">Cover</a> <span class="ui-icon ui-icon-grip-solid-horizontal grip"></span> <span class="label">OK</span><div class="actbar"><a class="btn btn-mini"><i class="icon-eye-open"></i> View read-only</a> <button class="btn btn-danger btn-mini"><i class="icon-trash icon-white"></i> Delete</button></div></li>').data("id", model.id);
+			var ele = $('<li><a href="#" class="pagelink"></a> <span class="ui-icon ui-icon-grip-solid-horizontal grip"></span> <span class="label">OK</span><div class="actbar"><a class="btn btn-mini"><i class="icon-eye-open"></i> View read-only</a> <button class="btn btn-danger btn-mini"><i class="icon-trash icon-white"></i> Delete</button></div></li>').data("id", model.id);
 			$('.pagelink', ele).attr("href", "/page/" + model.id).data("id", model.id).text(model.get("name"));
 			$('.label', ele).text(model.stage());
 			if(model.has("viewtoken")){
@@ -335,11 +339,12 @@ function load_project(){
 }
 $(function(){
 	$("#rightpane").hide();
-	projects.on("reset add destroy", function(){
+	projects.on("reset add destroy change", function(){
 		$("#project").empty();
 		$('<li class="nav-header">Projects</li>').appendTo("#project");
 		this.each(function(v){
-			$("<li><a></a></li>").data("id", v.id).attr("id", "proj-"+v.id).find("a").text(v.get("name")).attr("href", "/project/"+v.id).parent().appendTo("#project");
+			var el = $("<li><a></a></li>").data("id", v.id).attr("id", "proj-"+v.id).find("a").text(v.get("name")).attr("href", "/project/"+v.id).parent().appendTo("#project");
+			$("<div class='progress progress-success'><div class='bar'></div></div>").prependTo(el.find("a")).find(".bar").css("width", v.get("progress") + "%");
 		});
 		$('<li class="divider"></li>').appendTo("#project");
 		$('<li><a href="@new"><i class="icon-plus-sign"></i> Create project</a></li>').appendTo("#project");
@@ -436,6 +441,7 @@ $(function(){
 		}, this));
 		return false;
 	});
+	$("#lockwarn button").on("click", function(){ return false; });
 	$("#pagelist").on("click", ".btn-danger", function(){
 		if(!confirm("Delete page \""+$(this).closest("li").find(".pagelink").text()+"\"?")){
 			return false;

@@ -73,6 +73,10 @@ var Project = Backbone.Model.extend({
 	initialize: function(){
 		this.pages = new PageList;
 		this.pages.project = this;
+		var self = this;
+		this.pages.on("add change delete", function(){
+			self.fetch();
+		});
 	},
 	stage: function(){
 		var stage = this.get("stage");

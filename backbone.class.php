@@ -12,6 +12,11 @@ class Loader extends Base{
 			"user" => $this->user['_id']
 		));
 		$out->sort(array("stage" => 0));
+		// get project progresses as requested by @ncpeak
+		$out = iterator_to_array($out, false);
+		foreach($out as &$item){
+			$item['progress'] = $this->project_progress($item);
+		}
 		return $this->output($out);
 	}
 
@@ -20,7 +25,32 @@ class Loader extends Base{
 			"_id" => new MongoId($this->phraw->request['pid']),
 			"user" => $this->user['_id']
 		));
+		if(is_array($out)){
+			$out['progress'] = $this->project_progress($out);
+		}
 		return $this->output($out);
+	}
+
+	/**
+	 * Calculate project progress
+	 * Not available via AJAX, internal API only.
+	 * @param Object Project data
+	 */
+	public function project_progress($item){
+		$pages = $this->DB->pages->find(array(
+			"project" => $item['_id']
+		), array("stage" => true));
+		$totalPages = $pages->count();
+		$progress = 0;
+		$totalStages = 4;
+		foreach($pages as $page){
+			$progress += $page['stage'];
+		}
+		if($totalPages > 0){
+			return ($progress/($totalPages * $totalStages)) * 100;
+		}else{
+			return 0;
+		}
 	}
 
 	public function pages($pid=null){
@@ -192,6 +222,7 @@ class Saver extends Loader{
 		$data = $this->get_data();
 		$data['user'] = array((string) $this->user['_id']);
 		$this->DB->projects->insert($data);
+		$data['progress'] = 0; // Used in UI
 		if($_GET['return']){
 			header("Location: ".$_GET['return']);
 		}else{
