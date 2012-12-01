@@ -25,6 +25,7 @@ $router = new URLRouter(array(
 
 	"_users"									=> array("ui.class.php", array("UI", "ac_users")),
 	"auth"										=> array("auth.class.php", array("AuthUI", "auth")),
+	"auth\/menome"							=> array("menomeauth.class.php", array("MenomeAuth", "auth")),
 
 	"project\/(?P<id>[a-f0-9]+)\/files\/"		=> array("yukine.class.php", array("Yukine", "fm")),
 	"project\/(?P<id>[a-f0-9]+)\/(?P<file>.+?)\/editor"		=> array("yukine.class.php", array("Yukine", "imageedit")),

@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>{block title}Login | {$strings.app}{/block}</title>
+	<link rel="icon" href="/assets/logo.png">
+	<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+	<style>
+body{
+	text-align: center;
+	margin: auto;
+	margin-top: 50px;
+	width: 800px;
+}
+h1{
+	font-weight: 100;
+	font-size: 30pt;
+	margin-top: 30px;
+}
+h2{
+	font-weight: normal;
+	font-size: 16pt;
+	padding-bottom: 20px;
+	border-bottom: #bbb solid 1px;
+	width: 600px;
+	margin: auto;
+	margin-bottom: 10px;
+}
+.authenticators{
+	margin: auto;
+}
+.auth{
+	display: block; float: left;
+	width: 128px; height: 128px;
+	margin-right: 30px;
+	line-height: 128px; text-align: center;
+}
+.auth img{
+	display: block;
+	max-width: 100%;
+	max-height: 100%;
+}
+small{
+	display: block;
+	margin-top: 50px;
+	color: #aaa;
+	font-size: 8pt;
+}
+form{
+	width: 500px;
+	margin: auto;
+	text-align: left;
+}
+	</style>
+	{block head}{/block}
+	{if in_array("dev", $loaded)}
+	<script src="/assets/jquery.js"></script>
+	<script>
+	$(function(){
+		$("a[data-auth=devauth]").on("click", function(){
+			$(".authenticators").slideUp();
+			$("#devlogin").slideDown();
+			return false;
+		});
+		$("#devlogin .btn-warning").on("click", function(){
+			$(".authenticators").slideDown();
+			$("#devlogin").slideUp();
+			return false;
+		});
+	});
+	</script>
+	{/if}
+</head>
+<body>
+{block body}
+	<img src="/assets/logo.png">
+	<h1>Welcome to {$strings.app}</h1>
+	<h2>Choose your login method</h2>
+<div class="authenticators" style="width: {(($loaded|count|default:1) +1) * (128+30)}px;">
+{if in_array("menome", $loaded)}
+<a href="auth/menome" class="auth"><img src="http://menome.in.th/static/largelogo.png"></a>
+{/if}
+{if in_array("dev", $loaded)}
+<a href="#" class="auth" data-auth="devauth">Test authenticator</a>
+{/if}
+<a href="kyouinfo.html" class="auth">About Kyou</a>
+</div>
+{if in_array("dev", $loaded)}
+<form id="devlogin" action="auth?devauth=login" method="POST" class="form-horizontal well" style="padding-bottom: 0; display:none;">
+	<div class="control-group">
+		<label class="control-label">Username</label>
+		<div class="controls">
+			<input type="text" name="username" pattern="{literal}[a-zA-Z]{1,15}{/literal}" required>
+		</div>
+	</div>
+	<div class="alert alert-info">
+		Test authenticator is used for development purposes only. You can login as any username without registration. Only English letters are supported from 1-15 letter count.
+	</div>
+	<div class="alert alert-warning">
+		<p>Disable the test authenticator in <code>auth.class.php</code> line 5, set <code>const USE_DEV_AUTH=true;</code> to <code>const USE_DEV_AUTH=false;</code>. Make sure you have other authentication method.</p>
+	</div>
+	<div class="form-actions">
+		<input type="submit" value="Login" class="btn btn-primary">
+		<input type="button" value="Cancel" class="btn btn-warning">
+	</div>
+</form>
+{/if}
+<br style="clear: both;">
+<small>{$strings.app} is (C) 2012 Manatsawin Hanmongkolchai. Portions developed by Sunburn Group contributors.
+<br>{$strings.app}'s development is sponsored by NECTEC under National Software Competition 2013 program. NECTEC does not offer support for this application.</small>
+{/block}
+</body>
+</html>
