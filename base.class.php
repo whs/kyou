@@ -33,13 +33,13 @@ class Base{
 			return false;
 		}
 		if(!$_COOKIE['secure']){
-			setcookie("id", "", 1);
+			setcookie("id", "", 1, "/");
 			return false;
 		}
 		// check the cookie integrity
 		if($_COOKIE['secure'] != hash_hmac("sha256", $_COOKIE['id'], SITE_KEY)){
-			setcookie("id", "", 1);
-			setcookie("secure", "", 1);
+			setcookie("id", "", 1, "/");
+			setcookie("secure", "", 1, "/");
 			return false;
 		}
 		$this->user = array("_id" => $_COOKIE['id']);
@@ -47,8 +47,8 @@ class Base{
 		$this->reload_user();
 	}
 	public function set_user($uid){
-		setcookie("id", $uid, time()+60*60*24*30);
-		setcookie("secure", hash_hmac("sha256", $uid, SITE_KEY), time()+60*60*24*30);
+		setcookie("id", $uid, time()+60*60*24*30, "/");
+		setcookie("secure", hash_hmac("sha256", $uid, SITE_KEY), time()+60*60*24*30, "/");
 	}
 	/**
 	 * Load or reload the user data. Called automatically by `init()`.
