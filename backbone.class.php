@@ -114,10 +114,25 @@ class Loader extends Base{
 
 	public function iimg_by_id(){
 		// Check ACL
-		$project = $this->DB->projects->findOne(array(
-			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
-		));
+		$allowAdd = true;
+		if(isset($_GET['token'])){
+			// XXX: This allow viewing of all images, even ones that is not used in this page
+			$allowAdd = false;
+			$page = $this->DB->pages->findOne(array(
+				"viewtoken" => (string) $_GET['token']
+			), array("project"));
+			if(!$page){
+				$this->fatal_error("View token not found");
+			}
+			$project = $this->DB->projects->findOne(array(
+				"_id" => $page['project'],
+			));
+		}else{
+			$project = $this->DB->projects->findOne(array(
+				"_id" => new MongoId($this->phraw->request['pid']),
+				"user" => $this->user['_id']
+			));
+		}
 		if(!$project){
 			$this->fatal_error("Project not found");
 		}
@@ -133,12 +148,14 @@ class Loader extends Base{
 		if(strpos($filePathAbs, realpath("bookfiles/".(string) $project['_id'])) !== 0){
 			$this->fatal_error("File not found"); // Don't tell them the file exists
 		}
-		if(!$iimg){
+		if(!$iimg && $allowAdd){
 			$iimg = array(
 				"project" => $project['_id'],
 				"file" => $this->phraw->request['id']
 			);
 			$this->DB->iimg->insert($iimg);
+		}else if(!$iimg){
+			$this->fatal_error("Image data not found");
 		}
 		return $this->output($iimg);
 	}
@@ -160,10 +177,23 @@ class Loader extends Base{
 
 	public function ryou_by_id(){
 		// Check ACL
-		$project = $this->DB->projects->findOne(array(
-			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
-		));
+		if(isset($_GET['token'])){
+			// XXX: This allow viewing of all files, even ones that is not used in this page
+			$page = $this->DB->pages->findOne(array(
+				"viewtoken" => (string) $_GET['token']
+			), array("project"));
+			if(!$page){
+				$this->fatal_error("View token not found");
+			}
+			$project = $this->DB->projects->findOne(array(
+				"_id" => $page['project'],
+			));
+		}else{
+			$project = $this->DB->projects->findOne(array(
+				"_id" => new MongoId($this->phraw->request['pid']),
+				"user" => $this->user['_id']
+			));
+		}
 		if(!$project){
 			$this->fatal_error("Project not found");
 		}

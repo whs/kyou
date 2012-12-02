@@ -42,23 +42,27 @@ widgets["lyric"] = Widget.extend({
 			}, this);
 			this.loadModel();
 		},
-		loadModel: function(){
+		loadModel: function(opt){
 			if(!this.model.has("file")){
 				return false;
 			}
+			var viewToken = "";
+			if(opt && opt['preview']){
+				viewToken = "?token="+page.get("viewtoken");
+			}
 			var data = JSON.parse($.ajax({
 				async: false, // as the export page can't wait.
-				url: "/projects/" + page.project.id + "/lyric/" + this.model.get("file"),
+				url: "/projects/" + page.project.id + "/lyric/" + this.model.get("file") + viewToken,
 			}).responseText);
 			this.config = new RyouItem(data);
 			return this.config;
 		},
-		render: function(){
+		render: function(opt){
 			if(!this.model.has("file")){
 				this.el.innerHTML = "Lyric widget is not configured";
 				return;
 			}
-			this.loadModel();
+			this.loadModel(opt);
 			this.$el.empty();
 			this.$el.attr("data-source", this.config.get("source"));
 			this.$el.attr("data-theme", this.model.get("template"));

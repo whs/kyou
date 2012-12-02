@@ -36,9 +36,13 @@ widgets["iimg"] = Widget.extend({
 			}, this);
 		},
 		render: function(opt){
+			var viewToken = "";
+			if(opt && opt['preview']){
+				viewToken = "?token="+page.get("viewtoken");
+			}
 			this.config = JSON.parse($.ajax({
 				async: false, // as the export page can't wait.
-				url: "/projects/" + page.project.id + "/iimg/" + this.model.get("image"),
+				url: "/projects/" + page.project.id + "/iimg/" + this.model.get("image") + viewToken,
 			}).responseText);
 			this.$el.empty();
 			_.each(this.config.items || [], function(v){
