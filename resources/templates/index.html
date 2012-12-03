@@ -364,7 +364,7 @@ $(function(){
 		load_project();
 		return false;
 	});
-	$("#project").on("click", "a[href=@new]", function(){
+	$("#project").on("click", "a[href=\\@new]", function(){
 		$("#newproj").modal();
 		$("#newproj input[name=pname]").get(0).focus();
 		return false;
