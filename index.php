@@ -27,10 +27,9 @@ $router = new URLRouter(array(
 	"auth"										=> array("auth.class.php", array("AuthUI", "auth")),
 	"auth\/menome"							=> array("menomeauth.class.php", array("MenomeAuth", "auth")),
 
-	"project\/(?P<id>[a-f0-9]+)\/files\/"		=> array("yukine.class.php", array("Yukine", "fm")),
-	"project\/(?P<id>[a-f0-9]+)\/(?P<file>.+?)\/editor"		=> array("yukine.class.php", array("Yukine", "imageedit")),
+	"project\/(?P<pid>[a-f0-9]+)\/files\/"			=> array("ui.class.php", array("UI", "fm")),
+	"project\/(?P<pid>[a-f0-9]+)\/files\/@endpoint"		=> array("ui.class.php", array("UI", "fm_endpoint")),
 	"project\/(?P<id>[a-f0-9]+)\/files\/@pick"	=> array("yukine.class.php", array("Yukine", "picker")),
-	"POST project\/(?P<id>[a-f0-9]+)\/files\/@upload"		=> array("yukine.class.php", array("Yukine", "upload")),
 
 	"POST project\/(?P<pid>[a-f0-9]+)\/sort\/"		=> array("fuko.class.php", array("Fuko", "nagisa")),
 	"project\/(?P<pid>[a-f0-9]+)\/dist\/"	=> array("fuko.class.php", array("Fuko", "fuko_config")),

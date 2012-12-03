@@ -141,6 +141,32 @@ class UI extends Base{
 		));
 		$this->smarty->display("ryou.html");
 	}
+	public function fm(){
+		$this->check_login();
+		$project = $this->loader->project_by_id(false);
+		$this->smarty->assign("project", $project);
+		$this->smarty->display("fm.html");
+	}
+	public function fm_endpoint(){
+		$this->check_login();
+		$project = $this->loader->project_by_id(false);
+		require_once 'elfinder/php/elFinderConnector.class.php';
+		require_once 'elfinder/php/elFinder.class.php';
+		require_once 'elfinder/php/elFinderVolumeDriver.class.php';
+		require_once 'elfinder/php/elFinderVolumeLocalFileSystem.class.php';
+		$opts = array(
+			'roots' => array(
+				array(
+					'driver' => 'LocalFileSystem',
+					'path' => 'bookfiles/'.$project['id'].'/',
+					'URL' => '/bookfiles/'.$project['id'].'/',
+					'alias' => $project['name']
+				)
+			)
+		);
+		$connector = new elFinderConnector(new elFinder($opts));
+		$connector->run();
+	}
 
 	public function ac_users(){
 		$this->check_login();
