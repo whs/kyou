@@ -357,7 +357,7 @@ $(function(){
 			$("#rightpane").show();
 		}
 	});
-	$("#project").on("click", "a[href^=/project/]", function(){
+	$("#project").on("click", "a[href^=\\/project\\/]", function(){
 		$("#loading").fadeIn(250);
 		$("#project li.active").removeClass("active");
 		localStorage.project = $(this).parent().addClass("active").data("id");
