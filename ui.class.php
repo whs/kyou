@@ -160,9 +160,12 @@ class UI extends Base{
 					'driver' => 'LocalFileSystem',
 					'path' => 'bookfiles/'.$project['id'].'/',
 					'URL' => '/bookfiles/'.$project['id'].'/',
-					'alias' => $project['name']
+					'alias' => $project['name'],
+					'tmbPath' => dirname(__FILE__)."/bookfiles/thumbnails/",
+					'tmbURL' => '/bookfiles/thumbnails/'
 				)
-			)
+			),
+			'debug' => true
 		);
 		$connector = new elFinderConnector(new elFinder($opts));
 		$connector->run();
