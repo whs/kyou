@@ -152,22 +152,8 @@ class UI extends Base{
 		$project = $this->loader->project_by_id(false);
 		require_once 'elfinder/php/elFinderConnector.class.php';
 		require_once 'elfinder/php/elFinder.class.php';
-		require_once 'elfinder/php/elFinderVolumeDriver.class.php';
-		require_once 'elfinder/php/elFinderVolumeLocalFileSystem.class.php';
-		$opts = array(
-			'roots' => array(
-				array(
-					'driver' => 'LocalFileSystem',
-					'path' => 'bookfiles/'.$project['id'].'/',
-					'URL' => '/bookfiles/'.$project['id'].'/',
-					'alias' => $project['name'],
-					'tmbPath' => dirname(__FILE__)."/bookfiles/thumbnails/",
-					'tmbURL' => '/bookfiles/thumbnails/'
-				)
-			),
-			'debug' => true
-		);
-		$connector = new elFinderConnector(new elFinder($opts));
+		$elfinder = $this->load_fs_driver($project);
+		$connector = new elFinderConnector($elfinder);
 		$connector->run();
 	}
 

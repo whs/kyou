@@ -116,4 +116,23 @@ class Base{
 		));
 		die();
 	}
+	public function load_fs_driver($project){
+		global $STORAGE;
+		require_once 'elfinder/php/elFinderVolumeDriver.class.php';
+		require_once 'elfinder/php/elFinderVolume'.$STORAGE['driver'].'.class.php';
+		if($STORAGE['driver'] == "LocalFileSystem"){
+			@mkdir('bookfiles/'.$project['id'].'/');
+		}
+		$storageConfig = array_merge($STORAGE, array(
+			'path' => 'bookfiles/'.$project['id'].'/',
+			'URL' => '/bookfiles/'.$project['id'].'/',
+			'alias' => $project['name'],
+		));
+		$opts = array(
+			'roots' => array(
+				$storageConfig
+			),
+		);
+		return new elFinder($opts);
+	}
 }
