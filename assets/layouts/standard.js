@@ -8,15 +8,18 @@ layouts["standard"] = Layout.extend({
 		stylesheets: function(){
 			var out = ["files/standard.css", "http://fonts.googleapis.com/css?family=Antic"];
 			var config = this.get_data();
-			var extraCSS = "";
-			if(config.fgcolor){
-				extraCSS += "#container,.dark #container{background: "+config.fgcolor+";}\n";
-			}
-			if(config.transparentbg){
-				extraCSS += "#container,.dark #container{background: transparent;}\n";
-			}
-			if(extraCSS.length > 0){
-				out.push(extraCSS);
+			if(config['config_standard']){
+				config = config.config_standard;
+				var extraCSS = "";
+				if(config.fgcolor){
+					extraCSS += "#container,.dark #container{background: "+config.fgcolor+";}\n";
+				}
+				if(config.transparentbg){
+					extraCSS += "#container,.dark #container{background: transparent;}\n";
+				}
+				if(extraCSS.length > 0){
+					out.push(extraCSS);
+				}
 			}
 			return out;
 		},
