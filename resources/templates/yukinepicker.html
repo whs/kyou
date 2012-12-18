@@ -66,6 +66,11 @@ $(function(){
 		}
 		return false;
 	});
+	if(getUrlParam('CKEditorFuncNum')){
+		$("a:not([href=#])").attr("href", function(obj,o){
+			return o + "&CKEditorFuncNum=" + getUrlParam("CKEditorFuncNum");
+		})
+	}
 })
 	</script>
 </head>
