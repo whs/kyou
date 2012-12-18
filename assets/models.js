@@ -453,7 +453,7 @@ var TemplConfigView = Backbone.View.extend({
 				input.attr("checked", v);
 			}else if(input.attr("type") == "radio"){
 				input.attr("checked", false);
-				this.$("[name="+k+"][value="+v+"]").attr("checked", true);
+				this.$("[name=\""+k+"\"][value=\""+v+"\"]").attr("checked", true);
 			}else{
 				input.val(v);
 			}
