@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>{{project.name}}</title>
+	<link rel="apple-touch-icon" href="icon.png">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=1024,user-scalable=no">
+	<style>
+.left .box:hover{
+{{#if config_cover.zoom}}
+	-webkit-transform: scale(1.1);
+	position: relative;
+	z-index: 5000;
+	-webkit-box-shadow: black 0px 2px 20px;
+{{else}}
+	opacity: 0.8;
+{{/if}}
+}
+.left .box.hasVideo:hover{
+	-webkit-transform: none;
+	opacity: 1;
+}
+{{#if config_cover.zoom}}
+.box.featured:hover{
+	-webkit-transform: scale(1.1);
+}
+{{/if}}
+	</style>
+	<script>
+window.coverImg = {{#if config_cover.bg}}{{{config_cover.bg}}}{{else}}[]{{/if}};
+	</script>
+</head>
+<body>
+<div id="covercontain">
+</div>
+<div id="container">
+	<div class="left col widgetsInject"></div>
+	<div class="right col">
+		{{#if config_cover.featured_img}}
+		<div class="box featured" style="display: table;">
+			<a href="{{config_cover.featured_link}}" style="display: table-cell; vertical-align: middle;"><img src="{{config_cover.featured_img}}"></a>
+		</div>
+		{{/if}}
+		<div class="logobox" style="background: transparent; border: none; text-align: center;">
+			<h1>
+				<img src="{{config_cover.img}}" style="display: block; margin: 0 auto 10px auto; height: 20%;">
+				{{{config_cover.issue}}} {{#if config_cover.name}}<span style="color:#ff9600">{{{config_cover.name}}}</span>{{/if}}
+				{{#if config_cover.facebook}}<br><iframe src="https://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2F{{config_cover.facebook}}&amp;width=292&amp;height=62&amp;colorscheme=light&amp;show_faces=false&amp;border_color&amp;stream=false&amp;header=false&amp;appId=210446685685430" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:292px; height:62px;" allowTransparency="true" class="likebox"></iframe>{{/if}}
+			</h1>
+		</div>
+	</div>
+	<br style="clear: both;">
+</div>
+</body>
+</html>

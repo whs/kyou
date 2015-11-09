@@ -1,0 +1,3 @@
+[submodule "elfinder-driver"]
+	path = elfinder-driver
+	url = git://github.com/whs/elFinder-driver.git

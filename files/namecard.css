@@ -1,0 +1,25 @@
+@charset "UTF-8";
+@font-face{
+	font-family: "Sarabun";
+	font-weight: normal;
+	src: local("TH SarabunPSK"), url(THSarabun.woff) format(woff), url(THSarabun.ttf) format(truetype);
+}
+@font-face{
+	font-family: "Sarabun";
+	font-weight: bold;
+	src: local("TH SarabunPSK Bold"), url(THSarabunBold.woff) format(woff), url(THSarabunBold.ttf) format(truetype);
+}
+body{
+	font-family: Sarabun, sans-serif;
+	font-size: 16pt;
+	-webkit-font-smoothing: subpixel-antialiased;
+}
+.widgetsInject{
+	float: left;
+	border: black solid 1px;
+	box-sizing: border-box;
+	width: 85.60mm;
+	height: 53.98mm;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}

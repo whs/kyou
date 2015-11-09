@@ -1,0 +1,115 @@
+<p><a href="#" class="btn btn-warning" data-help="widget-gallery"><i class="icon-question-sign"></i> Help</a></p>
+<form action="" id="form_galleryimg">
+	<ul class="widgetlist">
+		<li>Loading...</li>
+	</ul>
+	<div class="toolbar" style="width: auto;">
+		<input type="text" name="imgname" placeholder="Image description">
+		<button class="btn btn-primary" id="pick_img"><i class="icon-white icon-plus"></i> Add</button>
+	</div>
+</form>
+<form action="" class="form-horizontal">
+	<div class="control-group">
+		<label class="control-label">Widget type</label>
+		<div class="controls">
+			<select name="display">
+				<option value="slider">Slider</option>
+				<option value="touch">Touch Slider</option>
+				<option value="images">Images</option>
+			</select>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Image size</label>
+		<div class="controls">
+			<input type="number" name="width" class="input-mini"> x <input type="number" name="height" class="input-mini">
+			<div class="widgetconfig widget_slider help-block">Includes the space occupied by the thumbnails</div>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_images">
+		<label class="control-label">Margin between images</label>
+		<div class="controls">
+			<input type="number" name="margin" class="input-mini" value="10">
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_images">
+		<label class="control-label">Hover to zoom</label>
+		<div class="controls">
+			<input type="checkbox" name="hoverZoom" value="true">
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_slider">
+		<label class="control-label">Transition</label>
+		<div class="controls">
+			<select name="effect">
+				<option value="random">Random</option>
+				<option value="cubeH">Cube (Horizontal)</option>
+				<option value="cubeV">Cube (Vertical)</option>
+				<option value="fade">Fade</option>
+				<option value="sliceH">Slice (Horizontal)</option>
+				<option value="sliceV">Slice (Vertical)</option>
+				<option value="slideH">Slide (Horizontal)</option>
+				<option value="slideV">Slide (Vertical)</option>
+				<option value="scale">Scale</option>
+				<option value="blockScale">Block Scale</option>
+				<option value="kaleidoscope">Kaleidoscope</option>
+				<option value="fan">Fan</option>
+				<option value="blindH">Blind (Horizontal)</option>
+				<option value="blindV">Blind (Vertical)</option>
+			</select>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_touch">
+		<label class="control-label">Animation</label>
+		<div class="controls">
+			<select name="touchanim">
+				<option value="slide">Slide</option>
+				<option value="fade">Fade</option>
+			</select>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_touch">
+		<label class="control-label">Direction</label>
+		<div class="controls">
+			<select name="touchdir">
+				<option value="horizontal">Horizontal</option>
+				<option value="vertical">Vertical</option>
+			</select>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_touch">
+		<label class="control-label">Wrap around</label>
+		<div class="controls">
+			<input type="checkbox" name="loop" value="true" checked>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_slider widget_touch">
+		<label class="control-label">Effect duration</label>
+		<div class="controls">
+			<input type="number" min="0" name="animSpeed" value="500" class="input-mini">
+			<span class="help-inline">ms</span>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_slider widget_touch">
+		<label class="control-label">Slide duration</label>
+		<div class="controls">
+			<input type="number" min="-1" name="pauseTime" value="3000" class="input-mini">
+			<span class="help-inline">ms</span>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_slider">
+		<label class="control-label">Thumbnails</label>
+		<div class="controls">
+			<input type="checkbox" name="controls" value="true" checked>
+		</div>
+	</div>
+	<div class="control-group widgetconfig widget_touch">
+		<label class="control-label">Controls</label>
+		<div class="controls">
+			<input type="checkbox" name="controls" value="true" checked>
+		</div>
+	</div>
+	<div class="form-actions">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>

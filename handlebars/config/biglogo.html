@@ -1,0 +1,54 @@
+<form action="" class="form-horizontal">
+	<div class="control-group">
+		<label class="control-label">Image</label>
+		<div class="controls">
+			<div class="input-append">
+				<input type="text" name="img" style="width: 200px;" required>
+				<button class="btn pickbtn" type="button" style="margin-left: -5px;">Pick</button>
+			</div>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Video</label>
+		<div class="controls">
+			<div class="input-append">
+				<input type="text" name="video" style="width: 200px;">
+				<button class="btn pickbtn" type="button" style="margin-left: -5px;">Pick</button>
+			</div>
+			<div class="help-block">
+				If video is enabled, the image will be used in case the video cannot be loaded.
+			</div>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Transparent BG</label>
+		<div class="controls">
+			<input type="checkbox" name="transparent" value="true">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Position</label>
+		<div class="controls">
+			<table>
+				<tr>
+					<td><input type="radio" name="position" value="tl"></td>
+					<td><input type="radio" name="position" value="tc"></td>
+					<td><input type="radio" name="position" value="tr"></td>
+				</tr>
+				<tr>
+					<td><input type="radio" name="position" value="ml"></td>
+					<td><input type="radio" name="position" value="mc" checked></td>
+					<td><input type="radio" name="position" value="mr"></td>
+				</tr>
+				<tr>
+					<td><input type="radio" name="position" value="bl"></td>
+					<td><input type="radio" name="position" value="bc"></td>
+					<td><input type="radio" name="position" value="br"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="form-actions">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>

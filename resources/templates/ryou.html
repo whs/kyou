@@ -1,0 +1,393 @@
+{extends "base.html"}
+{block title}{$strings.kara}{/block}
+{block head}
+<link rel="stylesheet" href="/elfinder/css/smoothness.css">
+<link rel="stylesheet" href="/elfinder/css/elfinder.min.css">
+<link rel="stylesheet" href="/elfinder/css/theme.css">
+<script src="/assets/jquery.scrollto.js"></script>
+<style type="text/css">
+#selectitem iframe{
+	border: none;
+	width: 100%;
+	height: 500px;
+	border-radius: 5px;
+}
+#songlist{
+	width: 400px;
+	margin: auto;
+	margin-top: 60px;
+	padding: 10px 0px 20px 0px;
+}
+#songlist h1{
+	padding: 10px;
+}
+#songlist .nav-list li{
+	line-height: 25px;
+}
+.modal-backdrop{
+	z-index: 20000;
+}
+.modal.fade{
+	z-index: 20050;
+	top: -100%;
+}
+#workspace{
+	margin-top: 60px;
+	display: none;
+}
+#timemark{
+	font-size: 24pt;
+	font-family: monospace;
+	color: #555;
+	margin: 20px;
+}
+#lyriclist{
+	border: #ccc solid 1px;
+	background: #eee;
+	padding: 5px;
+	height: 300px;
+	overflow-y: scroll;
+	margin-top: 10px;
+}
+.lyric{
+	padding: 5px;
+	margin: 10px;
+	border: #face00 solid 1px;
+	background: #face11;
+	cursor: pointer;
+	box-sizing: border-box;
+}
+.lyric.active{
+	border: none;
+	border-left: #333 solid 6px;
+}
+.lyric.playing{
+	background: #ffffcc;
+}
+.lyric .close{
+	line-height: 12px;
+}
+#lyricinfo{
+	margin-top: 10px;
+}
+#lyricinfo textarea{
+	width: 99%;
+	height: 50px;
+}
+</style>
+{/block}
+{block body}
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+			<a class="brand" href="/">{$strings.kara}</a>
+			<ul class="nav">
+				<li><a href="/">Project Home</a></li>
+				<li><a href="/">Current Project: <strong>{$project.name|escape}</strong></a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+<div id="songlist" class="well">
+	<button id="newbtn" class="btn pull-right" style="margin: 10px;"><i class="icon-plus"></i> New</button>
+	<h1>List of songs</h1>
+	<ul class="nav nav-list">
+		{foreach $files as $item}
+		<li data-id="{$item.id}"><button class="pull-right btn btn-danger"><i class="icon-trash icon-white"></i></button> <a href="#">{$item.name|escape} <span class="label">{$stage[$item.stage]}</span></a></li>
+		{/foreach}
+	</ul>
+</div>
+<div id="workspace" class="container-fluid">
+	<h1 style="margin-bottom: 10px;"></h1>
+	<div class="row-fluid">
+		<div class="span5" style="text-align: center;">
+			<div id="providertarget"></div>
+			<div id="timemark">00:00.00000</div>
+			<div class="well" style="text-align: left; cursor: pointer" id="infobox">
+				<button class="btn pull-right" id="editbtn"><i class="icon-pencil"></i> Edit</button>
+				<dl>
+					<dt>Source</dt>
+					<dd></dd>
+					<dt>Stage</dt>
+					<dd></dd>
+				</dl>
+			</div>
+		</div>
+		<div class="span7">
+			<button class="btn" id="addlyricbtn"><i class="icon-plus"></i> Add</button>
+			<div id="lyriclist">
+				<div id="lyriclist-in"></div>
+			</div>
+			<form id="lyricinfo">
+				<label><strong>Time:</strong> <input type="text" pattern="[0-9\.]+" name="time" style="display: inline;"></label>
+				<textarea name="text"></textarea>
+				<div class="form-actions">
+					<input type="submit" value="Save" class="btn btn-primary">
+					<div class="help-inline">HTML OK</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<form class="modal fade form-horizontal" id="newpage" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>New</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="name" required>
+			</div>
+    	</div>
+    	<div class="control-group">
+			<label class="control-label">Stage</label>
+			<div class="controls">
+				<select name="stage">
+					{foreach $stage as $k=>$v}
+					<option value="{$k}">{$v}</option>
+					{/foreach}
+				</select>
+			</div>
+    	</div>
+    	<div class="control-group">
+			<label class="control-label">Source</label>
+			<div class="controls">
+				<select name="source">
+					<option value="file">Music File</option>
+					<option value="video">HTML5 Video</option>
+					<option value="youtube">YouTube</option>
+				</select>
+			</div>
+    	</div>
+    	<div class="control-group" data-source="file">
+			<label class="control-label">File</label>
+			<div class="controls">
+				<div class="input-append">
+					<input type="text" name="file" style="width: 200px;" required>
+					<button class="btn pickbtn" type="button" style="margin-left: -5px;">Pick</button>
+				</div>
+			</div>
+    	</div>
+    	<div class="control-group" data-source="video">
+			<label class="control-label">File</label>
+			<div class="controls">
+				<div class="input-append">
+					<input type="text" name="video" style="width: 200px;" required>
+					<button class="btn pickbtn" type="button" style="margin-left: -5px;">Pick</button>
+				</div>
+			</div>
+    	</div>
+    	<div class="control-group" data-source="youtube">
+			<label class="control-label">YouTube ID</label>
+			<div class="controls">
+				<input type="text" name="youtubeid" pattern="[a-zA-Z0-9-_]+">
+				<div class="help-block">If the video URL is <code>http://www.youtube.com/watch?v=<strong>YHjgjF5FE-g</strong></code>, enter <code>YHjgjF5FE-g</code></div>
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
+{include "elfinder.html"}
+<script>
+var project = new Project({$project|json_encode});
+var currentSong = null, currentTime = 0;
+window.inRyou = true;
+function formatTime(time){
+	var min = Math.floor(time / 60);
+	if(min.toString().length < 2) min = "0" + min;
+	var sec = Math.floor(time - (min * 60));
+	if(sec.toString().length < 2) sec = "0" + sec;
+	var msec = (time - Math.floor(time)).toFixed(3);
+	return min+":"+sec+"."+msec.substr(2);
+}
+var ryoup_lastele;
+function ryoup_update(time, playing, noScroll){
+	$("#timemark").text(formatTime(time));
+	var currentEle = null;
+	$(".lyric").each(function(){
+		if($(this).data("time") <= time){
+			currentEle = this;
+		}else{
+			return false;
+		}
+	});
+	$(".lyric.playing").removeClass("playing");
+	if(currentEle){
+		$(currentEle).addClass("playing");
+		if(currentEle != ryoup_lastele && noScroll !== true){
+			$("#lyriclist").stop(true).scrollTo(currentEle, 250, { offset: -30 });
+		}
+		ryoup_lastele = currentEle;
+	}
+	currentTime = time;
+}
+function loadItem(id){
+	var callback = function(model){
+		window.location.hash = model.id;
+		document.title = model.get("name")+ " | "+document.title;
+		currentSong = model;
+		$("#songlist").hide();
+		var navItem = $("<li><a href='#'></a></li>");
+		navItem.find("a").html("Current File: <strong></strong>");
+		navItem.find("strong").text(model.get("name"));
+		$(".navbar .nav").append(navItem);
+		$("#workspace").show();
+		$("#workspace h1").text(model.get("name"));
+		$("#infobox dd:eq(0)").text(model.get("source"));
+		$("#infobox dd:eq(1)").text(model.stage());
+		var provider = model.provider();
+		provider.$el.appendTo($("#providertarget"));
+		provider.render();
+		window['ryoup_'+model.get("source")+'_init'].apply(provider.el);
+		model.on("reset change:lyrics", function(){
+			model.lyrics.on("add change remove reset change", function(){
+				$("#lyriclist-in").empty();
+				model.lyrics.each(function(item){
+					var line = $("<div class='lyric'><a class='close'>×</a><span class='label'>00:00.00</span> <span class='text'></span></div>").appendTo("#lyriclist-in").data("item", item).data("time", item.get("time"));
+					if(item.id == $("#lyricinfo").data("item")){
+						line.addClass("active");
+					}
+					line.find(".text").html(item.get("text"));
+					line.find(".label").text(formatTime(item.get("time")));
+				});
+				ryoup_update(currentTime, false, true);
+			}).trigger("reset");
+		}).trigger("reset");
+	};
+	if(_.isObject(id)){
+		callback(id);
+	}else{
+		new RyouItem({
+			project: project.id,
+			id: id
+		}).fetch({ success: function(model){
+			callback(model);
+		}});
+	}
+}
+$(function(){
+	$("#newbtn").click(function(){
+		$("#newpage").modal().data("item", null);
+	});
+	$("#newpage select[name=source]").change(function(){
+		$("#newpage div[data-source]").hide();
+		$("#newpage div[data-source] input").attr("required", false);
+		$("#newpage div[data-source="+$(this).val()+"]").show();
+		$("#newpage div[data-source="+$(this).val()+"] input").attr("required", true);
+	}).change();
+	$("body").delegate(".pickbtn", "click", function(){
+		pick_file(_.bind(function(f){
+			$("input", $(this).parent()).val(f);
+		}, this));
+	}).keyup(function(e){
+		if(e.which == 32 && !$(e.target).is("input,textarea") && currentSong){
+			currentSong.provider().stop();
+			e.preventDefault();
+			return false;
+		}
+	});
+	$("#songlist .nav-list").delegate("a", "click", function(){
+		loadItem($(this).parent().data("id"));
+		return false;
+	});
+	$("#songlist .nav-list").delegate(".btn-danger", "click", function(){
+		if(confirm("Delete"+$(this).parent().text()+"?")){
+			new RyouItem({
+				project: project.id,
+				id: $(this).parent().data("id")
+			}).destroy({ success: _.bind(function(){
+				$(this).parent().remove();
+			}, this) });
+		}
+		return false;
+	});
+	$("#addlyricbtn").click(function(){
+		var lyric = new RyouLyric({
+			id: new Date().getTime().toString(36),
+			time: currentTime,
+			text: ""
+		});
+		currentSong.lyrics.add(lyric);
+		currentSong.save();
+	});
+	$("#lyriclist").delegate(".close", "click", function(e){
+		var item = $(this).parents(".lyric").data("item");
+		currentSong.lyrics.remove(item);
+		currentSong.save();
+		e.stopPropagation();
+		return false;
+	});
+	$("#lyriclist").delegate(".lyric", "click", function(){
+		$(".lyric.active").removeClass("active");
+		$(this).addClass("active");
+		$("#lyricinfo").data("item", $(this).data("item").id);
+		var item = $(this).data("item");
+		_.each(item.toJSON(), function(v,k){
+			$("#lyricinfo [name="+k+"]").val(v);
+		}, this);
+		var provider = currentSong.provider();
+		//provider.stop();
+		provider.seek(parseFloat($(this).data("time")) + 0.00001);
+		return false;
+	});
+	$("#editbtn").click(function(){
+		$("#newpage").data("item", currentSong).modal();
+		$("#newpage h3").text("Edit");
+		_.each(currentSong.toJSON(), function(v,k){
+			$("#newpage [name="+k+"]").val(v).change();
+		}, this);
+		return false;
+	});
+	$("#lyricinfo").submit(function(){
+		if(!$(this).data("item")){
+			return false;
+		}
+		var item = currentSong.lyrics.get($(this).data("item"));
+		if(!item){
+			return false;
+		}
+		var data = $(this).serializeJSON();
+		data.time = parseFloat(data.time);
+		item.set(data);
+		currentSong.save();
+		return false;
+	});
+	$("#newpage").submit(function(){
+		var data = $(this).serializeJSON();
+		var item = $(this).data("item");
+		if(item){
+			$("#newpage input[type=submit]").attr("disabled", false);
+			_.each(data, function(v,k){
+				item.set(k,v);
+			});
+			item.save({}, {
+				success: function(){
+					window.location.reload();
+				}
+			});
+		}else{
+			$("input[type=submit]", this).attr("disabled", true);
+			data['project'] = project.id;
+			data['stage'] = 0;
+			var item = new RyouItem(data);
+			item.save({}, {
+				success: function(item){
+					$("#newpage").modal("hide");
+					$("#newpage input[type=submit]").attr("disabled", false);
+					loadItem(item);
+				}
+			});
+		}
+		return false;
+	});
+	if(window.location.hash.length > 1){
+		loadItem(window.location.hash.substr(1));
+	}
+});
+</script>
+<script src="/ryou_provider.js"></script>
+{/block}

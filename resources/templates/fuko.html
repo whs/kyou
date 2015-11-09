@@ -1,0 +1,431 @@
+{extends "base.html"}
+{block title}{$project.name|escape} | {$strings.dist}{/block}
+{block head}
+<link rel="stylesheet" href="/elfinder/css/smoothness.css">
+<link rel="stylesheet" href="/elfinder/css/elfinder.min.css">
+<link rel="stylesheet" href="/elfinder/css/theme.css">
+<style type="text/css">
+body{
+	background: #eee;
+}
+#box{
+	margin: auto;
+	margin-top: 100px;
+	width: 500px;
+	border-radius: 10px;
+	background: rgba(255,255,255,0.9);
+	padding: 10px;
+	box-shadow: #555 0px 0px 5px;
+}
+h2{
+	text-shadow: white 0px -1px 0px;
+}
+.input-prepend.input-append .add-on:last-child, .input-prepend.input-append .btn:last-child{
+	margin-left: -5px;
+}
+#selectitem iframe{
+	width: 100%;
+	height: 350px;
+	border: none;
+}
+.modal-backdrop{
+	z-index: 20000;
+}
+.modal.fade{
+	z-index: 20050;
+	top: -100%;
+}
+#renderer{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 99.5%;
+	height: 99.5%;
+	border: none;
+	z-index: -1000000;
+}
+#rendering{
+	text-align: center;
+	font-size: 16pt;
+	display: none;
+}
+#rendering progress{
+	display: block;
+	margin: 40px auto 40px auto;
+}
+#rendering em{
+	display: block;
+	font-size: 10pt;
+	margin-top: 10px;
+}
+#renderdone{
+	display: none;
+}
+</style>
+{/block}
+{block body}
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+			<a class="brand" href="/">{$strings.dist}</a>
+			<ul class="nav">
+				<li><a href="/">Project Home</a></li>
+				<li><a href="/">Current Project: <strong>{$project.name|escape}</strong></a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+<iframe id="renderer" sandbox="allow-same-origin"></iframe>
+<div id="box" style="margin-top: 50px;">
+	<h2>{$strings.dist}</h2>
+	<form action="#" class="form-horizontal" id="configform">
+		<div class="control-group">
+			<label class="control-label">Output format</label>
+			<div class="controls">
+				<select name="output" class="input-xlarge" required>
+					<option value="zip"{if $project.output == "zip" || !$project.output} selected{/if}>ZIP for Chrome Web Store/PhoneGap/Web</option>
+					<option value="hpub"{if $project.output == "hpub"} selected{/if}>HPub ZIP for Baker framework/Friar (Android/iOS)</option>
+				</select>
+			</div>
+		</div>
+		<div class="control-group fmtdep fmt-zip">
+			<label class="control-label">App Icon</label>
+			<div class="controls">
+				<div class="input-prepend input-append">
+					<span class="add-on">16x16</span><input name="icon16" type="text" value="{$project.icon16|escape:html}">
+					<button class="btn pickbtn" type="button">Pick</button>
+				</div>
+				<div class="input-prepend input-append">
+					<span class="add-on">48x48</span><input name="icon48" type="text" value="{$project.icon48|escape:html}">
+					<button class="btn pickbtn" type="button">Pick</button>
+				</div>
+				<div class="input-prepend input-append">
+					<span class="add-on">128x128</span><input name="icon128" type="text" value="{$project.icon128|escape:html}" required>
+					<button class="btn pickbtn" type="button">Pick</button>
+				</div>
+				<div class="help-block">128x128 icon is required. Only png is supported. Chrome Web Store also requires 16x16 icon. Read <a href="https://developers.google.com/chrome/web-store/docs/images" target="_blank">the icon guideline</a>.</div>
+			</div>
+		</div>
+		<div class="control-group fmtdep fmt-zip">
+			<label class="control-label">Application ID</label>
+			<div class="controls">
+				<input type="text" name="appid" value="{if $project.appid}{$project.appid|escape}{else}th.in.sunburn.kyou.{$project.name|replace:' ':''|lower|escape:html}{/if}" required>
+				<div class="help-block">Reverse domain of your website appended by application name. The default is <em>probably</em> <strong>incorrect</strong>. For example, th.in.sunburn.coreanime.issue1</div>
+			</div>
+		</div>
+		<div class="control-group fmtdep fmt-zip">
+			<label class="control-label">Application version</label>
+			<div class="controls">
+				<input type="text" name="appver" value="{$project.appver|default:1.0|escape:html}" pattern="[0-9\.]*[0-9]" required>
+				<div class="help-block">Always increase this number on each build. Testing builds do not count, however.</div>
+			</div>
+		</div>
+		<div class="control-group fmtdep fmt-zip">
+			<label class="control-label">Description</label>
+			<div class="controls">
+				<textarea name="description" maxlength="132" class="input-xlarge">{$project.description|escape}</textarea>
+				<div class="help-block">Describe your book. Maximum 132 characters. No HTML.</div>
+			</div>
+		</div>
+		<div class="control-group fmtdep fmt-zip">
+			<label class="control-label">Google Analytics ID</label>
+			<div class="controls">
+				<input type="text" name="gaid" pattern="{literal}UA-[0-9]{8}-[0-9]+{/literal}" title="Google Analytics asset ID, such as UA-27038390-4" value="{$project.gaid|escape:html}">
+			</div>
+		</div>
+		<div class="control-group fmtdep fmt-zip">
+			<label class="control-label">Includes navigation</label>
+			<div class="controls">
+				<input type="checkbox" name="incnav" {if $project.incnav|default:true}checked{/if}>
+			</div>
+		</div>
+
+		<div class="control-group fmtdep fmt-hpub">
+			<label class="control-label">Author</label>
+			<div class="controls">
+				<input type="text" name="author" value="{$project.author|default:'Kyou'|escape:html}" required>
+			</div>
+		</div>
+		<div class="control-group fmtdep fmt-hpub">
+			<label class="control-label">URL</label>
+			<div class="controls">
+				<input type="text" name="bakerurl" value="{$project.bakerurl|escape:html}" required>
+				<div class="help-block">Use book:// instead of http://. For example, book://sunburn.in.th/coreanime/1/</div>
+			</div>
+		</div>
+		<div class="control-group fmtdep fmt-hpub">
+			<label class="control-label">Zoomable</label>
+			<div class="controls">
+				<input type="checkbox" name="bakerzoom" {if $project.bakerzoom}checked{/if}>
+			</div>
+		</div>
+		<div class="control-group fmtdep fmt-hpub">
+			<label class="control-label">Cover</label>
+			<div class="controls">
+				<div class="input-append">
+					<input name="cover" type="text" value="{$project.cover|escape:html}">
+					<button class="btn pickbtn" type="button">Pick</button>
+				</div>
+				<div class="help-block">PNG only.</div>
+			</div>
+		</div>
+		<div class="control-group fmtdep fmt-hpub">
+			<label class="control-label">Portrait BG</label>
+			<div class="controls">
+				<div class="input-append">
+					<input name="bakerportraitbg" type="text" value="{$project.bakerportraitbg|escape:html}">
+					<button class="btn pickbtn" type="button">Pick</button>
+				</div>
+				<div class="help-block">Will show while a page is loading. 768x1024 PNG only.</div>
+			</div>
+		</div>
+		<div class="control-group fmtdep fmt-hpub">
+			<label class="control-label">Landscape BG</label>
+			<div class="controls">
+				<div class="input-append">
+					<input name="bakerlandscapebg" type="text" value="{$project.bakerlandscapebg|escape:html}">
+					<button class="btn pickbtn" type="button">Pick</button>
+				</div>
+				<div class="help-block">Will show while a page is loading. 1024x768 PNG only.</div>
+			</div>
+		</div>
+
+		<div class="form-actions">
+			<a href="#" class="btn btn-warning" data-help="fuko"><i class="icon-question-sign"></i> Help</a>
+			<input type="submit" value="Next &gt;" class="btn btn-primary">
+		</div>
+	</form>
+	<div id="rendering">
+		<progress></progress>
+		<div id="action">Copying uploaded files</div>
+		<em>Note that the page preview may be different from the output...</em>
+	</div>
+	<div id="renderdone">
+		<h2>Done!</h2>
+		<p>You're finished!</p>
+		<p><a href="#" class="btn btn-large btn-primary" id="dllink" style="display: block">Download</a></p>
+		<h4>What's next?</h4>
+		<ul class="fmtdep fmt-zip">
+			<li>Unzip this file and upload to your website. Share the link with the world!</li>
+			<li>Upload this ZIP to the <a href="https://chrome.google.com/webstore/developer/dashboard" target="_blank">Chrome Web Store</a></li>
+			<li>Upload this ZIP to <a href="https://build.phonegap.com/apps" target="_blank">PhoneGap:Build</a> service. (Note that ZIP file larger than 10MB is not allowed)</li>
+		</ul>
+		<ul class="fmtdep fmt-hpub">
+			<li>Unzip the ZIP as <a href="http://bakerframework.com/">Baker framework</a>'s book directory to build iOS application.</li>
+			<li>Or use it with <a href="http://www.friarframework.com/">Friar framework</a> to build Android application.</li>
+		</ul>
+	</div>
+</div>
+<div class="modal fade" id="helpscreen">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<div class="btn-group pull-right" id="helplang" style="margin-right: 10px;" data-toggle="buttons-radio">
+			<button type="button" class="btn" data-lang="th">ไทย</button>
+			<button type="button" class="btn" data-lang="en">EN</button>
+		</div>
+		<h3>Help</h3>
+	</div>
+	<div class="modal-body">
+		Loading...
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn btn-primary" data-dismiss="modal">Hide</a>
+	</div>
+</div>
+{include "elfinder.html"}
+<script>
+var helpLang=localStorage.helpLang || "en";
+var uploaded = 0;
+var javascripts = [];
+var stylesheets = [];
+var resources = [];
+var page;
+function render(ind){
+	$("#action").text("Rendering "+(ind+1)+"/"+project.pages.length);
+	page = project.pages.at(ind);
+	var noNLfilter = function(x){
+		return x.indexOf("\n") == -1;
+	}
+	var output = project.get("output");
+	page.fetch({
+		success: function(){
+			page.loadWidgets();
+			page.renderer.setElement($("#renderer").get(0).contentDocument.documentElement);
+			page.renderer.render({ dist: output });
+			javascripts = _.union(javascripts, _.filter(page.renderer.javascripts({ dist: output }), noNLfilter));
+			stylesheets = _.union(stylesheets, _.filter(page.renderer.stylesheets({ dist: output }), noNLfilter));
+			resources = _.union(resources, page.renderer.resources({ dist: output }));
+			setTimeout(function(){
+				if(output == "zip"){
+					$("<link rel='icon'>").attr("href", project.get("icon16") || project.get("icon128")).appendTo(page.renderer.$("head"));
+					if(project.get("incnav")){
+						var firstCSS = page.renderer.$("link[rel=stylesheet]:first");
+						if(firstCSS.length == 0){
+							$("<link rel='stylesheet' href='nav.css'>").appendTo(page.renderer.$("head"));
+						}else{
+							$("<link rel='stylesheet' href='nav.css'>").insertBefore(firstCSS);
+						}
+						var ele = document.createElement("script");
+						ele.type = "text/javascript";
+						ele.src = "nav.js";
+						page.renderer.$("body").get(0).appendChild(ele);
+					}
+					if(project.get("gaid")){
+						var ele = document.createElement("script");
+						ele.type = "text/javascript";
+						ele.textContent = "var _gaq = _gaq || [];\n";
+						ele.textContent += "_gaq.push(['_setAccount', '"+project.get("gaid")+"']);\n";
+						ele.textContent += "_gaq.push(['_setCustomVar', 1, 'Page', "+JSON.stringify(page.get("name"))+", 3]);\n";
+						ele.textContent += "_gaq.push(['_trackPageview']);\n";
+						ele.textContent += "(function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })();";
+						page.renderer.$("body").get(0).appendChild(ele);
+					}
+				}
+				
+				_.each(["href", "src"], function(attr){
+					/*page.renderer.$("["+attr+"^=\"/bookfiles/\"]").attr(attr, function(){
+						return $(this).attr(attr).replace(/^\/bookfiles\/[^\/]+\//, "");
+					});*/
+					page.renderer.$("["+attr+"^=\"/\"]").attr(attr, function(){
+						return $(this).attr(attr).replace(/^\//, "");
+					});
+					if(output == "zip"){
+						page.renderer.$("["+attr+"=\""+project.pages.at(0).id+".html\"]").attr(attr, function(){
+							return "index.html";
+						});
+					}
+				});
+				var nextPage = project.pages.at(ind+1);
+				if(nextPage){
+					$("<link>").attr({
+						rel: "prerender",
+						href: nextPage.id + ".html"
+					}).appendTo(page.renderer.$("head"));
+				}
+				var html = page.renderer.el.outerHTML;
+				var filename = page.id;
+				if(output == "zip" && ind == 0){
+					filename = "index";
+				}
+				$.ajax({
+					url: "?" + $.param({ "act": "save", "file": filename, "ticket": renderTicket }),
+					contentType: "text/html",
+					processData: "false",
+					data: html,
+					type: "PUT"
+				}).success(function(){
+					uploaded++;
+					$("#rendering progress").val(parseInt($("#rendering progress").val()) + 1);
+					Piecon.setProgress($("#rendering progress").val() * 100 / $("#rendering progress").attr("max"));
+				});
+				$("#rendering progress").val(parseInt($("#rendering progress").val()) + 1);
+				Piecon.setProgress($("#rendering progress").val() * 100 / $("#rendering progress").attr("max"));
+				if(ind < project.pages.length - 1){
+					render(ind+1);
+				}else{
+					$("#action").text("Finishing up...");
+					$.post("", {
+						"act": "resfile",
+						"ticket": renderTicket,
+						"javascripts": javascripts,
+						"stylesheets": stylesheets,
+						"resources": resources
+					}, function(d){
+						if(d) alert(d);
+						uploaded++;
+						$("#rendering progress").val(parseInt($("#rendering progress").val()) + 1);	
+					});
+					var poller = setInterval(function(){
+						if(uploaded == project.pages.length + 1){
+							clearInterval(poller);
+							$("#renderer").fadeOut(function(){ $(this).remove(); });
+							$("#rendering progress").removeAttr("value");
+							$("#action").text("A bit of magic...");
+							$.post("", { "act": "pack", "output": output, "ticket": renderTicket, "incnav": project.get("incnav") }, function(d){
+								if(d['error']){
+									alert(d['error']);
+								}
+								$("#dllink").attr("href", "/"+d.output);
+								$("#rendering,#box h2:first").hide();
+								$("#renderdone").show();
+								Piecon.reset();
+								$("body").css("background", "#eee url(/assets/img/cake.png) bottom right no-repeat");
+							});
+						}else{
+							$("#action").text("Waiting for uploads to finish...");
+						}
+					}, 5);
+				}
+			}, 60);
+		}
+	});
+}
+var project = new Project({$project|json_encode});
+var output;
+var renderTicket;
+window.inKyou = true;
+$(function(){
+	$(".pickbtn").click(function(){
+		pick_file(_.bind(function(f){
+			$("input", $(this).parent()).val(f.replace(/^\/bookfiles\/[^\/]+\//, ""));
+		}, this));
+	});
+	$("form").submit(function(){
+		$("input[type=submit]", this).attr("disabled", true);
+		var setData = $(this).serializeJSON();
+		setData.incnav = $("input[name=incnav]:checked").length > 0;
+		setData.bakerzoom = $("input[name=bakerzoom]:checked").length > 0;
+		project.set(setData);
+		project.save();
+		project.pages.fetch();
+		$("#configform").hide();
+		$("#rendering").show();
+		Piecon.setOptions({
+			color: '#af88d9',
+			background: '#bbb',
+			shadow: '#fff',
+			fallback: 'true'
+		});
+		$.post("", { act: "ticket", output: setData['output'] }, function(id){
+			renderTicket = id.id;
+		}, "json").error(function(d){
+			alert("Cannot request render ticket: " + d.responseText);
+			window.location.reload();
+		});
+		return false;
+	});
+	$("select[name=output]").change(function(){
+		$(".fmtdep").hide();
+		$(".fmtdep").find("input,select").attr("disabled", true);
+		$(".fmt-"+$(this).val()).show().find("input,select").attr("disabled", false);
+	}).change();
+	$("body").delegate("[data-help]", "click", function(){
+		$("#helpscreen").modal().data("help", $(this).data("help"));
+		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $(this).data("help") + ".html");
+		return false;
+	});
+	$("#helplang").delegate("button", "click", function(e){
+		localStorage.helpLang = helpLang = $(this).data("lang");
+		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $("#helpscreen").data("help") + ".html");
+		e.preventDefault();
+	});
+	$("#helplang [data-lang="+helpLang+"]").addClass("active");
+	function startRender(){
+		if(!renderTicket){
+			setTimeout(startRender, 10);
+			return;
+		}
+		$("#action").text("Rendering...");
+		$("#rendering progress").attr("max", (project.pages.length * 2) + 1);
+		render(0);
+	}
+	project.pages.on("reset", startRender);
+});
+</script>
+<script src="/assets/handlebars.js"></script>
+{if $use_template_pack}<script src="/templates.js"></script>{/if}
+<script src="/layouts.js" async></script>
+<script src="/widgets.js" async></script>
+<script src="/ryou_provider.js" async></script>
+<script src="/assets/piecon.min.js" async></script>
+{/block}

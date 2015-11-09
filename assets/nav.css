@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css?family=Antic');
+body{
+	margin-bottom: 80px;
+}
+#navbar{
+	background: rgba(0,0,0,0.7);
+	opacity: 1;
+	width: 100%;
+	box-sizing: border-box;
+	position: fixed;
+	left: 0px;
+	height: 77px;
+	color: white;
+	border-top: #888 solid 2px;
+	z-index: 998;
+	font-family: Antic, helvetica, Thonburi, tahoma, sans-serif;
+	bottom: -25px;
+	-webkit-transition: background linear 250ms, bottom ease-out 250ms, opacity linear 250ms;
+	-webkit-user-select: none;
+	-webkit-touch-callout: none;
+}
+#navbar.mobile{
+	bottom: 0;
+}
+#navbar:hover{
+	bottom: 0px;
+}
+#navbar-in{
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+#pagename{
+	position: absolute;
+	top:0; left:0;
+	text-align: center;
+	width: 100%;
+	height: 100%;
+	line-height: 50px;
+	font-size: 18pt;
+	font-family: Antic, sans-serif;
+}
+#prevpage{
+	position: absolute;
+	display: block;
+	top:0;left:0px;
+	line-height: 50px;
+	font-size: 14pt;
+	color: #aaa;
+	padding-left: 10px;
+	text-decoration: none;
+}
+#nextpage{
+	position: absolute;
+	display: block;
+	top:0;right:0px;
+	line-height: 50px;
+	font-size: 14pt;
+	color: #aaa;
+	padding-right: 10px;
+	text-decoration: none;
+}
+#navpage{
+	position: absolute;
+	bottom: 0; left: 0;
+	height: 24px; width: 100%;
+	text-align: center;
+	line-height: 24px;
+	border-top: #222 solid 1px;
+	font-family: Antic, sans-serif;
+	font-size: 14pt;
+}
+.navpage{
+	display: inline-block;
+	width: 20px; height: 20px;
+	padding: 2px;
+	line-height: 20px;
+	color: #aaa !important;
+	text-decoration: none;
+}
+.navpage:hover{
+	background: #333;
+	color: white !important;
+	padding: 1px;
+	border: #222 solid 1px;
+}
+.navcurrentpage{
+	color: white !important;
+	font-weight: bold;
+}
+
+/* mobile */
+#navbar.mobile{
+	height: 100px;
+}
+#navbar.mobile #pagename{
+	font-weight: bold;
+}
+#navbar.mobile #navpage{
+	height: 42px;
+	line-height: 42px;
+}
+#navbar.mobile .navpage{
+	font-size: 16pt;
+	padding: 10px;
+}

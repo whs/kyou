@@ -1,0 +1,616 @@
+{extends "base.html"}
+{block head}
+<script src="/assets/jquery.tokeninput.js"></script>
+<link rel="stylesheet" href="/assets/css/token-input.css">
+<link rel="stylesheet" href="/assets/css/token-input-mac.css">
+<style>
+html,body{
+	height: 100%;
+}
+header{
+	background: #222;
+	color: white;
+	padding: 4px 20px 4px 20px;
+	font-weight: bold;
+	{if $nonfree}
+	background: #5e387b url(/nonfree/kyou.gif) top right no-repeat;
+	padding-right: 50px;
+	background-size: contain;
+	height: 50px;
+	padding-top: 25px;
+	text-shadow: black 0px 0px 10px;
+	box-sizing: border-box;
+	font-size: 14pt;
+	{/if}
+}
+header a{
+	float: right;
+	color: #ffff00;
+}
+.nav > li > a:hover{
+	background: none;
+}
+header a:hover{
+	text-decoration: none;
+	color: #aaaa00;
+}
+header small{
+	font-size: 80%;
+	vertical-align: top;
+	color: #888;
+	font-weight: normal;
+}
+#projectpane{
+	background: #eee;
+	width: 200px;
+	float: left;
+	height: 100%;
+	overflow: auto;
+	box-shadow: inset #888 0px -10px 10px;
+	padding-top: 10px;
+	box-sizing: border-box;
+}
+#project li{
+	clear: both;
+}
+#project .progress{
+	float: right;
+	width: 50px;
+	height: 1.3em;
+	margin-bottom: 0;
+}
+#container{
+	height: 100%;
+	overflow: hidden;
+}
+#pagelist{
+	margin: 10px;
+	margin-left: 0;
+	font-size: 11pt;
+	width: 400px;
+	height: 90%;
+	overflow: auto;
+}
+#pagelist li{
+	border-radius: 2px;
+	background: #eee;
+	margin: 5px 0 0 0;
+	padding: 5px;
+	cursor: pointer;
+}
+#pagelist li .stage{
+	float: right;
+}
+#pagelist li .label{
+	display: inline;
+	margin-left: 5px;
+}
+#rightpane{
+	margin-top: 10px;
+	margin-left: 210px;
+}
+.grip{
+	float: left;
+	margin-right: 5px;
+}
+#loading{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	text-align: center;
+	padding-top: 25%;
+	display: none;
+}
+#loading progress{
+	z-index: 2000;
+	width: 200px;
+	position: relative;
+}
+.actbar{
+	margin-top: 5px;
+	display: none;
+}
+#pagelist{
+	list-style: none;
+	height: 600px;
+	overflow: auto;
+	float: left;
+}
+#pagelist li.active .actbar{
+	display: block;
+}
+#pagelist .addlink{
+	padding: 0;
+	margin-bottom: 20px;
+}
+.addlink a{
+	padding: 5px;
+	display: block;
+	border-radius: 2px;
+}
+.addlink a:hover{
+	background: #dfdfdf;
+	text-decoration: none;
+}
+#apps{
+	float: left;
+	margin-left: 20px;
+}
+#apps h2{
+	font-size: 12pt;
+}
+.notehelp{
+	display: none;
+}
+.unreadnote:hover .notehelp{
+	display: inline;
+}
+</style>
+{/block}
+{block body}
+<div id="container">
+<header>
+	<a href="/auth" id="user">{$user._id|escape} <small>(click to logout)</small></a>
+	<div id="appname">{$strings.app}</div>
+</header>
+<div id="projectpane">
+	<ul class="nav nav-list" id="project">
+	</ul>
+</div>
+<div id="rightpane">
+<p><button class="btn" id="projset"><i class="icon-wrench"></i> Project settings</button> <span id="share"><strong>Sharing:</strong> <span id="share-status"></span></span></p>
+<ul id="pagelist">
+</ul>
+<div id="apps">
+	<h2>Applications</h2>
+	<ul>
+		<li><a href="#" data-link="/project/%s/files/"><strong>{$strings.resman}:</strong> Resource manager</a> <span id="resmanquota"></span></li>
+		<li><a href="#" data-link="/project/%s/iimg/"><strong>{$strings.iimg}:</strong> Interactive Image creator</a></li>
+		<li><a href="#" data-link="/project/%s/lyric/"><strong>{$strings.kara}:</strong> Lyrics timer</a></li>
+		<li><a href="#" data-link="/project/%s/dist/"><strong>{$strings.dist}:</strong> Export book</a></li>
+	</ul>
+</div>
+</div>
+</div>
+<div id="loading">
+	<div class="modal-backdrop"></div>
+	<progress></progress>
+</div>
+<form class="modal fade form-horizontal" id="newproj" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Create new project</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="pname" required>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
+<form class="modal fade form-horizontal" id="newpage" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Create new page</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="pname" required>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
+<form class="modal fade form-horizontal" id="sharing" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>{$strings.sharing}</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="name">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Owner</label>
+			<div class="controls">
+				<input type="text" id="projowner" disabled>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Limits</label>
+			<div class="controls">
+				<strong>Pages:</strong> <span id='sharing_pagelimit'></span><br>
+				<strong>Collaborators:</strong> <span id='sharing_collablimit'></span><br>
+				<strong>Storage:</strong> <span id='sharing_storagelimit'></span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Members</label>
+			<div class="controls">
+				<input type="text" name="member" class="token-input-mac" id="projmember">
+				<div id="leaveprojecthelp" class="help-block">Click 'Leave project' to leave project</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<input type="button" value="Delete" class="btn btn-danger">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
+<form class="modal fade" id="lockwarn">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Page under editing</h3>
+	</div>
+	<div class="modal-body">
+		<p>Page is locked by <strong id="lockuser"></strong> at <strong id="locktime"></strong>.</p>
+		<p>If you continue, your changes may overwrite that user's changes.</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger">Cancel</button>
+		<a class="btn" id="readonlybtn">View as read only</a>
+		<a class="btn btn-primary">Continue</a>
+	</div>
+</form>
+<script>
+var projects = new ProjectList;
+var curProj;
+function xhr_error(xhr){
+	try{
+		var err = JSON.parse(xhr.responseText);
+		alert(err.error);
+	}catch(e){
+		alert('Server error');
+	}
+}
+function format_disk_quota(amt){
+	if(amt == "-1"){
+		return "Unlimited";
+	}
+	amt = (amt/(1024*1024)).toFixed(2);
+	if(isNaN(amt)){
+		return "Unknown";
+	}else{
+		return amt + "MB";
+	}
+}
+function load_project(){
+	if(curProj){
+		curProj.off("reset add destroy");
+	}
+	$("#rightpane").show();
+	curProj = projects.get(localStorage.project);
+	curProj.fetch({
+		success: function(){
+			$("#sharing_pagelimit").text(curProj.limits.page == -1 ? "Unlimited" : curProj.limits.page);
+			$("#sharing_collablimit").text(curProj.limits.collab == -1 ? "Unlimited" : curProj.limits.collab);
+			$("#sharing_storagelimit").text(curProj.limits.storage == -1 ? "Unlimited" : curProj.limits.storage/1024 + "MB");
+
+			var owner = curProj.get("user")[0];
+			$("#projowner").val(owner);
+			if(owner == username){
+				$("#leaveprojecthelp").hide();
+				$("#sharing .btn-danger").val("Delete");
+			}else{
+				$("#leaveprojecthelp").show();
+				$("#sharing .btn-danger").val("Leave project");
+			}
+			var userlist = curProj.get("user").slice(1);
+			_.each(userlist, function(x,ind){
+				userlist[ind] = { id: x, name: x };
+			});
+			$("#projmember").prev(".token-input-list-mac").remove();
+			$("#projmember").tokenInput("/_users?owner="+owner, {
+				prePopulate: userlist,
+				preventDuplicates: true,
+				zindex: 20000,
+				theme: "mac",
+				tokenLimit: curProj.limits.collab == -1 ? null : curProj.limits.collab-1
+			});
+			if(curProj.get('disk') > curProj.limits.storage && curProj.limits.storage != -1){
+				$("#resmanquota").css("color", "red");
+			}else{
+				$("#resmanquota").css("color", "black");
+			}
+			$("#resmanquota").text(format_disk_quota(curProj.get("disk")) + " / " +format_disk_quota(curProj.limits.storage));
+
+			var shareText = "";
+			var sharer = curProj.get("user");
+			if(sharer.length == 1){
+				shareText = "Not shared";
+			}else{
+				shareText = "Owned by <strong>" +_.escape(sharer[0])+"</strong> and shared with <strong>";
+				shareText += _.escape(sharer.slice(1, 5).join(", "));
+				shareText += "</strong>";
+				if(sharer.length > 5){
+					shareText += " and <strong>" + (sharer.length - 5) + "</strong> others";
+				}
+			}
+			$("#share-status").html(shareText);
+			$("#sharing input[name=name]").val(curProj.get("name"));
+
+			curProj.pages.trigger('reset');
+		}
+	});
+	document.title = curProj.get("name") + " | {$strings.app}";
+
+	$("a[data-link]").attr("href", function(){
+		return $(this).data("link").replace("%s", curProj.id);
+	});
+	curProj.pages.on("reset add destroy", function(){
+		$("#loading").stop(true).hide();
+		$("#pagelist").empty();
+		if(curProj.limits.page == -1 || curProj.pages.length < curProj.limits.page){
+			var addLink = $("<li class='addlink'><a href='#'><i class='icon-plus'></i> New Page</a></li>").appendTo("#pagelist");
+			$("a", addLink).click(function(){
+				$("#newpage").modal();
+				$("#newpage input[name=pname]").get(0).focus();
+				return false;
+			});
+		}
+		curProj.pages.forEach(function(model){
+			var ele = $('<li><span class="ui-icon ui-icon-grip-solid-horizontal grip"></span> <a href="#" class="pagelink"></a> <span class="label stage">OK</span><div class="actbar"><a class="btn btn-mini"><i class="icon-eye-open"></i> View read-only</a> <button class="btn btn-danger btn-mini"><i class="icon-trash icon-white"></i> Delete</button></div></li>').data("id", model.id);
+			$('.pagelink', ele).attr("href", "/page/" + model.id).data("id", model.id).text(model.get("name"));
+			if(localStorage[model.id+"_noteread"] || model.has("note_modified")){
+				var noteread = parseInt(localStorage[model.id+"_noteread"]);
+				if(isNaN(noteread)){
+					noteread = 0;
+				}
+				if(noteread < model.get("note_modified")){
+					$('<div class="label label-info unreadnote">*<span class="notehelp"> unread note</span></div>').attr('title', model.get('note')).insertAfter(ele.find('.pagelink'));
+				}
+			}
+			$('.stage', ele).text(model.stage());
+			if(model.has("viewtoken")){
+				$("a.btn", ele).attr("href", "/p/" + model.get("viewtoken"));
+			}else{
+				$("a.btn", ele).remove();
+			}
+			ele.appendTo("#pagelist");
+		});
+		$("#pagelist").sortable({
+			placeholder: "ui-state-highlight",
+			items: "li:not(.addlink)",
+			handle: ".grip",
+			start: function(){
+				$("#share").data("text", $("#share").html()).text("Make sure all pages are not under editing when sorting");
+			},
+			stop: function(){
+				if(!$("#share").data("save")){
+					$("#share").html($("#share").data("text"));
+				}
+			},
+			update: function(){
+				$("#share").data("save", true).html("Saving...");
+				$("#pagelist li:not(.addlink)").each(function(ind){
+					var item = curProj.pages.get($(this).data("id"));
+					item.set("weight", ind + 1);
+				});
+				var uploadData = curProj.pages.toJSON();
+				uploadData = uploadData.map(function(e){
+					return {
+						id: e.id,
+						weight: e.weight
+					}
+				});
+				// Don't save the page directly or ALL widget will be lost
+				$.post("/project/" + curProj.id + "/sort/", { data: uploadData }, function(d){
+					if(d){
+						alert(d);
+					}
+					$("#share").data("save", false).html($("#share").data("text"));
+				});
+			}
+		}).disableSelection();
+	});
+	curProj.pages.fetch();
+}
+$(function(){
+	$("#rightpane").hide();
+	projects.on("reset add destroy change", function(){
+		$("#project").empty();
+		$('<li class="nav-header">Projects</li>').appendTo("#project");
+		var projectCnt=0;
+		var sharedUsed=0;
+		this.each(function(v){
+			var el = $("<li><a></a></li>").data("id", v.id).attr("id", "proj-"+v.id).find("a").text(v.get("name")).attr("href", "/project/"+v.id).parent().appendTo("#project");
+			$("<div class='progress progress-success'><div class='bar'></div></div>").prependTo(el.find("a")).find(".bar").css("width", v.get("progress") + "%");
+			if(v.get("user")[0] == window.username){
+				projectCnt++;
+			}else if(v.get("user").indexOf(window.username) !== -1){
+				if(sharedUsed>0){
+					if(sharedUsed == 1){
+						projectCnt++;
+					}
+					projectCnt++;
+					sharedUsed++;
+				}else{
+					sharedUsed++;
+				}
+			}
+		});
+		$('<li class="divider"></li>').appendTo("#project");
+		if(user_limits.project == -1 || projectCnt < user_limits.project){
+			$('<li><a href="@new"><i class="icon-plus-sign"></i> Create project</a></li>').appendTo("#project");
+		}else{
+			$('<li>Project limit exceeded.</li>').appendTo("#project");
+		}
+		$('<li><strong>Available:</strong> '+(user_limits.project==-1?'Unlimited':user_limits.project)+'<br><strong>Used:</strong> '+projects.length+'</li>').appendTo("#project");
+		$('<li><strong>Disk:</strong> '+format_disk_quota({$disk})+' / '+(user_limits.storage==-1?'Unlimited':format_disk_quota(user_limits.storage))+'</li>').appendTo("#project");
+		$('<li><a href="/_payments/sso" target="_blank"><i class="icon-shopping-cart"></i> Upgrade</a></li>').appendTo("#project");		
+		if(localStorage.project){
+			$("#proj-"+localStorage.project).addClass("active");
+			$("#rightpane").show();
+		}
+	});
+	$("#project").on("click", "a[href^=\\/project\\/]", function(){
+		$("#loading").fadeIn(250);
+		$("#project li.active").removeClass("active");
+		localStorage.project = $(this).parent().addClass("active").data("id");
+		load_project();
+		return false;
+	});
+	$("#project").on("click", "a[href=\\@new]", function(){
+		$("#newproj").modal();
+		$("#newproj input[name=pname]").get(0).focus();
+		return false;
+	});
+	$("#newproj").submit(function(){
+		projects.create({
+			name: $("input[name=pname]", this).val(),
+			stage: 0
+		}, {
+			wait: true,
+			success: function(obj, xhr){
+				localStorage.project = obj.id;
+				$("#project li.active").removeClass("active");
+				$("#proj-"+localStorage.project).addClass("active");
+				load_project();
+				$("#newproj").modal("hide");
+				$("#newproj input[name=pname]").val("").attr("disabled", false);
+			},
+			error: function(obj, xhr){
+				xhr_error(xhr);
+				$("#newproj").modal("hide");
+				$("#newproj input[name=pname]").val("").attr("disabled", false);
+			}
+		});
+		$("input[name=pname]", this).attr("disabled", true);
+		return false;
+	});
+	$("#projset").click(function(){
+		$("#sharing").modal();
+		return false;
+	})
+	$("#sharing").submit(function(){
+		var users = $("#projmember").val().split(",");
+		if(users.length == 1 && users[0] === ""){
+			users = [];
+		}
+		users = _.union($("#projowner").val(), users.sort(), [{$user._id|json_encode}]);
+		curProj.set("user", users);
+		var name = $("input[name=name]", this).val();
+		curProj.set("name", name);
+		curProj.save();
+		load_project();
+		$("#sharing").modal("hide");
+		return false;
+	});
+	$("#sharing .btn-danger").click(function(){
+		var question;
+		if(this.value == "Leave project"){
+			question = "Leave project \""+curProj.get("name")+"\"?\nTo rejoin this project, contact the project creator";
+		}else{
+			question = "Delete project \""+curProj.get("name")+"\"?\nThis cannot be undone";
+		}
+		if(confirm(question)){
+			$("#sharing").modal("hide");
+			$("#loading").fadeIn(250);
+			curProj.destroy({
+				success: function(){
+					$("#loading").stop(true).hide();
+					delete localStorage.project;
+					document.title = "{$strings.app}";
+					$("#rightpane").hide();
+				},
+				error: function(obj, xhr){
+					$("#loading").stop(true).hide();
+					xhr_error(xhr);
+				},
+				 wait: true
+			});
+		}
+		return false;
+	});
+	$("#pagelist").on("click", "li", function(){
+		$("#pagelist li.active").removeClass("active");
+		$(this).addClass("active");
+	});
+	$("#pagelist").on("click", ".addlink a", function(){
+		$("#newpage").modal();
+		return false;
+	})
+	$("#pagelist").on("click", ".pagelink", function(){
+		$("#loading").fadeIn(250);
+		$.getJSON(this.href+"/@lock", _.bind(function(x){
+			if(x){
+				$("#loading").stop(true).hide();
+				$("#lockwarn").modal();
+				var d = new Date(x.time.sec*1000);
+				var page = curProj.pages.get($(this).data("id"));
+				if(page.has("viewtoken")){
+					$("#readonlybtn").show().attr("href", "/p/" + page.get("viewtoken"));
+				}else{
+					$("#readonlybtn").hide();
+				}
+				$("#lockuser").text(x.user);
+				$("#locktime").text(d.toLocaleDateString()+" "+d.toLocaleTimeString());
+				$(".label", this).text($(".label", this).data("orig"));
+				$("#lockwarn a.btn-primary").attr("href", this.href);
+			}else{
+				window.location = this.href;
+			}
+		}, this));
+		return false;
+	}).on("click", ".unreadnote", function(e){
+		var id = $(this).closest("li").data("id");
+		localStorage[id+"_noteread"] = curProj.pages.get(id).get("note_modified");
+		$(this).remove();
+		e.stopPropagation();
+		return false;
+	});
+	$("#lockwarn button").on("click", function(){
+		$("#lockwarn").modal("hide");
+		return false;
+	});
+	$("#pagelist").on("click", ".btn-danger", function(){
+		if(!confirm("Delete page \""+$(this).closest("li").find(".pagelink").text()+"\"?")){
+			return false;
+		}
+		$(this).hide();
+		curProj.pages.get($(this).closest("li").data("id")).destroy();
+		return false;
+	});
+	$("#newpage").submit(function(){
+		curProj.pages.create({
+			name: $("input[name=pname]", this).val(),
+			layout: "standard",
+			stage: 0,
+			project: curProj
+		}, {
+			wait: true,
+			success: function(obj){
+				$("#newpage").modal("hide");
+				$("#newpage input[name=pname]").val("").attr("disabled", false);
+			},
+			error: function(obj, xhr){
+				$("#newpage").modal("hide");
+				$("#newpage input[name=pname]").val("").attr("disabled", false);
+				xhr_error(xhr);
+			}
+		});
+		$("input[name=pname]", this).attr("disabled", true);
+		return false;
+	});
+	window.username = {{$user._id|json_encode}};
+	window.user_limits = {{$user.limits|json_encode}};
+	projects.reset({$projects|json_encode});
+	if(localStorage.project){
+		load_project();
+	}
+});
+</script>
+{/block}

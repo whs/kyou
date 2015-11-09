@@ -1,0 +1,9 @@
+resources/compiled/*
+resources/cached/*
+bookfiles/*
+output/*.zip
+output/tmp/*
+.DS_Store
+engine/config.php
+node_modules
+compiled

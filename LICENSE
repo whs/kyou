@@ -1,0 +1,58 @@
+Kyou is (C) Copyright 2012-2013 Manatsawin Hanmongkolchai.
+
+The source code is licensed under StealItPL and AGPLv3
+as listed in https://github.com/whs/whs.github.com/blob/master/LICENSE
+
+Exception is granted to files which the application generate or copy to
+output, which can be used freely without restrictions.
+
+Note that older versions of nav.js from CoreAnime issue 0 and 1 is
+copyrighted. The version which is shipped with Kyou can be used freely
+as it is considered part of the generated output.
+
+Kyou's source code is composed from many open source projects:
+The license text is included in the source file from that project.
+
+PHP Core:
+- Phraw (BSD)
+- Smarty (LGPL)
+  Note that Smarty used in Kyou is derived from menome,
+  and does have minor modifications.
+
+Clientside Core:
+- Backbone and Underscore (MIT)
+- Handlebars (MIT)
+- Bootstrap (Apache v2.0)
+- jQuery UI Bootstrap (MIT/GPL)
+
+Yukine:
+- elFinder (BSD)
+
+Ushio3d (version control):
+- Three.js (MIT)
+- ThreeX (MIT)
+- Sparks.js (MIT)
+- Tween.js (MIT)
+
+jQuery Plugins:
+- jQuery (MIT/GPL)
+- jQuery UI (MIT/GPL)
+- jQuery TokenInput (MIT/GPL)
+- Color Picker (MIT/GPL)
+- jQuery Idle Timer (MIT)
+- jQuery ScrollTo (MIT/GPL)
+
+Widgets:
+- CKEditor (used only when wysiwyg is used.
+  Not used in output. -- GPL/LGPL/MPL)
+- Flex slider (MIT)
+- Refine slider & jQuery imagesloaded (MIT)
+- jQuery Background position (GPL/MIT)
+
+Other resource files
+- Layiji Mahaniyom Bao (Freely usable, restrictive license --
+  http://www.f0nt.com/release/layiji-mahaniyom-bao/)
+- Supermarket (Freely usable, unknown license --
+  http://www.f0nt.com/release/supermarket/)
+- TH Sarabun New (GPL with font exception --
+  https://groups.google.com/d/topic/thai-l10n/Y_lqZXmiWF0/discussion)

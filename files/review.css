@@ -1,0 +1,115 @@
+@import url('http://fonts.googleapis.com/css?family=Antic');
+.widget_review{
+	margin: 20px;
+	background: #555;
+	color: white;
+	font-family: "thaisans", helvetica, Thonburi, tahoma, sans-serif;
+	font-size: 10pt;
+	padding: 10px;
+	-webkit-border-radius: 10px;
+	clear: both;
+	font-weight: 500;
+}
+.widget_review h1{
+	margin:0;
+	clear: none;
+	font-size: 32pt;
+	font-weight: 100;
+}
+.widget_review .scorebox{
+	float: right;
+	font-size: 48pt;
+	font-family: Antic;
+	background: #a9e505;
+	text-align: center;
+	width: 100px;
+	height: 100px;
+	line-height: 100px;
+	color: black;
+	margin: 20px;
+	margin-bottom: 0;
+}
+.widget_review .progress{
+	height: 20px;
+}
+.widget_review .progress-out{
+	background: #444;
+	width: 745px;
+	height: 20px;
+	margin-bottom: 10px;
+	border-bottom: black solid 2px;
+}
+.widget_review .reviewdetail{
+	padding: 0 40px 10px 40px;
+}
+.widget_review h1, .widget_review h3{
+	border:none;
+	padding:0;
+	font-family: "thaisans";
+	line-height: normal;
+}
+.widget_review h2 img{
+	max-height: 64px;
+	vertical-align: middle;
+	margin-right: 20px;
+}
+.widget_review h3{
+	font-size: 18pt;
+	font-weight: normal;
+	margin: 0;
+	font-family: "thaisans";
+	margin-top: 13px;
+	margin-bottom: 10px;
+}
+.widget_review .miniscore{
+	float: right;
+	font-size: 14pt;
+	vertical-align: middle;
+}
+.widget_review .tabbar{
+	float: left;
+	margin-top: 20px;
+}
+.widget_review .tabbar a{
+	display: block;
+	text-align: center;
+	position: relative;
+	width: 52px;
+	margin: auto;
+	margin-top: 15px;
+}
+.widget_review .tabbar a span{
+	position: absolute;
+	right: -5px;
+	top: -5px;
+	background: #aa0022;
+	width: 25px;
+	height: 25px;
+	text-align: center;
+	-webkit-border-radius: 15px;
+	opacity: 0.8;
+	line-height: 25px;
+	color: white;
+	border: white solid 2px;
+	font-family: "thaisans";
+	font-size: 10pt;
+}
+.widget_review .tabbar div{
+	background: black;
+	color: white;
+	border-bottom: #555 solid 2px;
+	margin-bottom: 5px;
+	width: 100px;
+	padding: 5px;
+	text-align: center;
+	font-family: helvetica, sans-serif;
+}
+.widget_review .tabbar a img{
+	width: 52px;
+	height: 52px;
+}
+.widget_review .tab{
+	padding-left: 15px;
+	margin-left: 125px;
+	border-left: #777 solid 1px;
+}

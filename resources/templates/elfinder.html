@@ -1,0 +1,56 @@
+{*
+Load the CSS!
+<link rel="stylesheet" href="/elfinder/css/smoothness.css">
+<link rel="stylesheet" href="/elfinder/css/elfinder.min.css">
+<link rel="stylesheet" href="/elfinder/css/theme.css">
+*}
+<form class="modal fade form-horizontal" id="selectitem" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Select resource file</h3>
+	</div>
+	<div class="modal-body"></div>
+</form>
+<script src="/elfinder/js/elfinder.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+$.fn.picker = function(height, cb, mime){
+	return this.elfinder({
+		url: '/project/{$project.id}/files/@endpoint',
+		resizable: false,
+		height: height,
+		uiOptions : {
+			toolbar : [
+				["back","forward"],
+				["upload"],
+				["info"],
+				["quicklook"],
+				["view","sort"],
+				["help"]
+			],
+		},
+		commandsOptions: {
+			getfile: {
+				onlyURL: false,
+				multiple: false,
+				folders: false,
+				oncomplete: "destroy"
+			}
+		},
+		getFileCallback: cb,
+		onlyMimes: mime || []
+	});
+}
+function pick_file(cb){
+	$("#selectitem .modal-body").data("elf", true).picker(520, function(f){
+		cb(f.url.replace(f.baseUrl, ""));
+		$("#selectitem").modal("hide");
+		return false;
+	});
+	$("#selectitem").modal().on("hide", function(){
+		if($("#selectitem .modal-body").data("elf") === true){
+			$("#selectitem .modal-body").elfinder("destroy").data("elf", false);
+		}
+	});
+	return true;
+}
+</script>

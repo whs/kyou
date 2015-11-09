@@ -1,0 +1,74 @@
+<form action="" class="form-horizontal">
+	<div class="control-group">
+		<label class="control-label">Type</label>
+		<div class="controls">
+			<select name="t_type" required>
+				<option value="profile">User</option>
+				<option value="search">Search</option>
+				<option value="faves">Favourites</option>
+				<option value="list">List</option>
+			</select>
+		</div>
+	</div>
+	<fieldset>
+		<legend>Configuration</legend>
+		<div class="control-group twconfig twconfig_profile twconfig_faves twconfig_list">
+			<label class="control-label">Username</label>
+			<div class="controls">
+				<div class="input-prepend">
+					<span class="add-on">@</span>
+					<input type="text" name="username">
+				</div>
+			</div>
+		</div>
+		<div class="control-group twconfig twconfig_search">
+			<label class="control-label">Search Query</label>
+			<div class="controls">
+				<input type="text" name="search">
+			</div>
+		</div>
+		<div class="control-group twconfig twconfig_list">
+			<label class="control-label">List name</label>
+			<div class="controls">
+				<input type="text" name="list">
+			</div>
+		</div>
+		<div class="control-group twconfig twconfig_search twconfig_faves twconfig_list">
+			<label class="control-label">Title</label>
+			<div class="controls">
+				<input type="text" name="title">
+			</div>
+		</div>
+		<div class="control-group twconfig twconfig_search twconfig_faves twconfig_list">
+			<label class="control-label">Caption</label>
+			<div class="controls">
+				<input type="text" name="caption">
+			</div>
+		</div>
+	</fieldset>
+	<fieldset>
+		<legend>Theming</legend>
+		<div class="control-group">
+			<label class="control-label">Size</label>
+			<div class="controls">
+				<input type="number" name="width" class="input-mini" placeholder="Width"> x <input type="number" name="height" min="188" class="input-mini" placeholder="Height" required>
+				<p class="help-block">Leave the width blank to use auto width.</p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Number of tweets</label>
+			<div class="controls">
+				<input type="number" name="rpp" value="30" min="1" class="input-mini" required>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Scrollbar</label>
+			<div class="controls">
+				<input type="checkbox" name="scrollbar" value="true">
+			</div>
+		</div>
+	</fieldset>
+	<div class="form-actions">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>

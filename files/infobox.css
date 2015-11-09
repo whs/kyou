@@ -1,0 +1,37 @@
+.widget_infobox{
+	background: rgba(230,230,230, 0.6);
+	padding: 10px;
+	-webkit-border-radius: 5px;
+	border: #ccc solid 1px;
+	font-size: 12pt;
+	font-family: Antic;
+	width: 250px;
+	margin: 10px 10px 30px 30px;
+	z-index: 500;
+	position: relative;
+}
+.widget_infobox table{
+	width: 100%;
+}
+.widget_infobox th{
+	width: 50%;
+	text-align: right;
+}
+.widget_infobox td[colspan="2"]{
+	text-align: center;
+}
+.widget_infobox th[colspan="2"]{
+	text-align: center;
+	font-size: 18pt;
+	font-weight: bold;
+	font-family: Antic;
+}
+.widget_infobox img{
+	max-width: 200px;
+	display: block;
+	margin: auto;
+	padding: 15px;
+	-webkit-user-select: none;
+	-webkit-touch-callout: none;
+	-webkit-transition: -webkit-transform ease-out 250ms;
+}

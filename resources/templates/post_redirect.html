@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Redirecting...</title>
+</head>
+<body>
+<form action="{$target}" method="post">
+	{foreach $data as $k=>$v}
+	<input type="hidden" name="{$k}" value="{$v}">
+	{/foreach}
+	<input type="submit" value="Redirecting...">
+</form>
+<script>
+document.forms[0].submit();
+</script>
+</body>
+</html>

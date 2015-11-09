@@ -1,0 +1,33 @@
+<h2>Distribution</h2>
+<p>After finishing all pages, use the Distribution application to export into easy-to-use formats.</p>
+
+<dl>
+	<dt>Output format</dt>
+	<dd>Only one format is supported at this moment which is a ZIP file that contains all uploaded files and all pages in HTML format. It can be read by WebKit-based browsers (such as Google Chrome, Safari, Android Browser, iOS's Safari)</dd>
+	<dt>App Icon</dt>
+	<dd>Logo of the book.
+		<ul>
+			<li>16x16 is used in Chrome Web Store for favicon (Chrome's tab icon)</li>
+			<li>48x48 is used in PhoneGap:Build. This is not required</li>
+			<li>128x128 is the required size. It is used in Chrome's new tab page icon and PhoneGap:Build app icon.</li>
+		</ul>
+	</dd>
+	<dt>Application ID.</dt>
+	<dd>ID of the application. Usually this is your book name in alphanumeric and your website in reverse order, for example if your website is <code>sunburn.in.th</code> and your book is called <code>coreanime3</code> enter <code>th.in.sunburn.coreanime3</code>. This ID must be globally unique. The default value should <strong>not</strong> be used.
+		<p>If you don't have your own domain, enter something that sounds like domain name like yourname.coreanime3 is okay.</p></dd>
+	<dt>Application version</dt>
+	<dd>Version of this build. Chrome Web Store will not accept new updates that have the same or lower version number as the current uploaded build. Examples of valid value are: 1, 1.0 or 1.0.0</dd>
+	<dt>Description</dt>
+	<dd>Describe your book. This is used in PhoneGap:Build data and Chrome's extension management page.</dd>
+	<dt>Google Analytics ID</dt>
+	<dd>Optional, if filled it will track every page views with specified Google Analytics ID. Example of valid value is: UA-27038379-9</dd>
+</dl>
+
+<h3>Using the exported file</h3>
+After exporting, you will get a ZIP file that contains HTML files and your uploaded resources.
+
+<ul>
+	<li>Extract the ZIP and upload its content to any web hosting and share the link.</li>
+	<li>Upload the ZIP to <a href="https://chrome.google.com/webstore/developer/dashboard" target="_blank">Chrome Web Store</a>. Note that CWS requires $5 one time payment for app submission. Users using Google Chrome then can download the book to read offline from the Chrome Web Store</li>
+	<li>Upload the ZIP to <a href="https://build.phonegap.com" target="_blank">PhoneGap:Build</a> service. (Use the private option) You will get standalone application files for Android, Windows Phone, BlackBerry, webOS and Symbian. (iOS build requires <a href="https://build.phonegap.com/docs/ios-builds" target="_blank">additional setup</a>) Note that free account can only build one private apps.</li>
+</ul>

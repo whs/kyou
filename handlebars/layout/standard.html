@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>{{name}} | {{project.name}}</title>
+	<link rel="apple-touch-icon" href="icon.png">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=1024{{#unless config_standard.zoom}},user-scalable=no{{/unless}}">
+</head>
+<body class="{{#if config_standard.dark}}dark{{/if}}">
+<div id="container">
+	<article>
+		<div class="pad widgetsInject"></div>
+	</article>
+	<div style="clear: both;"></div>
+</div>
+</body>
+</html>

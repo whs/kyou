@@ -1,0 +1,15 @@
+.widget_editortalk .avatar{
+	max-width: 50px;
+	max-height: 50px;
+	vertical-align: middle;
+}
+.widget_editortalk p{
+	font-size: 12pt;
+	font-family: thaisans_neueregular;
+}
+.widget_editortalk{
+	display: table-cell;
+	width: 480px;
+	margin: 10px;
+	float: left;
+}

@@ -1,0 +1,28 @@
+<div class="scorebox">{{average}}</div>
+<h1>Review</h1>
+<div style="padding: 10px;">คะแนนเป็นความคิดเห็นส่วนตัวของผู้ให้คะแนน</div>
+<div class="tabbar">
+	<div>Review By</div>
+	{{#each reviews}}
+	<a href="#review-{{id}}" title="{{reviewer}}"><span>{{average}}</span><img src="{{avatar}}" alt="{{reviewer}}"></a>
+	{{/each}}
+</div>
+{{#each reviews}}
+<div class="tab" id="review-{{id}}">
+	<h2>{{{reviewer}}}</h2>
+	<div class="reviewdetail">
+		<h3><div class="miniscore">{{graphics}}</div> {{#if graphicshead}}{{{graphicshead}}}{{else}}Graphics{{/if}}</h3>
+		<div class="progress-out"><div class="progress" style="{{review_css graphics}}"></div></div>
+		<div class="desc">{{{graphicsext}}}</div>
+
+		<h3><div class="miniscore">{{sound}}</div> {{#if soundhead}}{{{soundhead}}}{{else}}Sound{{/if}}</h3>
+		<div class="progress-out"><div class="progress" style="{{review_css sound}}"></div></div>
+		<div class="desc">{{{soundext}}}</div>
+
+		<h3><div class="miniscore">{{story}}</div> {{#if storyhead}}{{{storyhead}}}{{else}}Story{{/if}}</h3>
+		<div class="progress-out"><div class="progress" style="{{review_css story}}"></div></div>
+		<div class="desc">{{{storyext}}}</div>
+	</div>
+</div>
+{{/each}}
+<br style="clear: both;">

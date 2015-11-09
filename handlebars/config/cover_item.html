@@ -1,0 +1,50 @@
+<form action="" class="form-horizontal">
+	<div class="control-group">
+		<label class="control-label">Name</label>
+		<div class="controls">
+			<input type="text" name="name">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">URL</label>
+		<div class="controls">
+			<div class="input-append">
+				<input type="text" name="href" style="width: 200px;" required>
+				<button class="btn pickpagebtn" type="button" style="margin-left: -5px;">Pick</button>
+			</div>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Image</label>
+		<div class="controls">
+			<div class="input-append">
+				<input type="text" name="src" style="width: 200px;">
+				<button class="btn pickbtn" type="button" style="margin-left: -5px;">Pick</button>
+			</div>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Video</label>
+		<div class="controls">
+			<div class="input-append">
+				<input type="text" name="video" style="width: 200px;">
+				<button class="btn pickbtn" type="button" style="margin-left: -5px;">Pick</button>
+			</div>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Option</label>
+		<div class="controls">
+			<label class="checkbox inline">
+				<input type="checkbox" name="double" value="y"> Double width
+			</label>
+			<label class="checkbox inline">
+				<input type="checkbox" name="ads" value="y"> Ads
+			</label>
+		</div>
+	</div>
+	<div class="alert alert-info">If only video is supplied, video will loop. If both video and image is supplied, image is the poster image of the video and the video will play on hover</div>
+	<div class="form-actions">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>

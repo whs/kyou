@@ -1,0 +1,10 @@
+RewriteEngine On
+RewriteCond %{DOCUMENT_ROOT}/compiled%{REQUEST_URI} -f
+RewriteRule (.*)  compiled/$1 [L,QSA]
+RewriteRule ^$  index.php?u= [L,QSA]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$  index.php?u=$1 [L,QSA]
+Options -MultiViews
+FileETag MTime
+Header set Cache-Control "no-cache"
+Header set Pragma "no-cache"

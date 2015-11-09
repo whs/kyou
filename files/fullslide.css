@@ -1,0 +1,44 @@
+html,body,#container,#container-in{
+	height: 100%;
+	margin: 0;
+	font-family: Helvetica, verdana, sans-serif;
+	font-size: 14pt;
+}
+#navpad{
+	height: 77px;
+	background: #111;
+}
+.widget_fullslide_slide{
+	height: 100%;
+	overflow: hidden;
+	position: relative;
+	background-size: cover;
+}
+h1{
+	font-family: Capriola, sans-serif;
+	font-weight: normal;
+	font-size: 100pt;
+	top: 5%; left: 3%;
+	margin: 0;
+	padding-right: 40%;
+}
+.body{
+	right: 5%;
+	max-height: 90%;
+	background: rgba(255,255,255,0.8);
+	width: 30%;
+	padding: 10px;
+	bottom: 5%;
+	overflow: auto;
+	font-size: 11pt;
+	color: black;
+}
+h1,.body{
+	position: absolute;
+}
+#navbar{
+	position: relative !important;
+	bottom: 0px !important;
+	opacity: 1;
+	background: #111;
+}

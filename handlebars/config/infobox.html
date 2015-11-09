@@ -1,0 +1,34 @@
+<form action="" class="form-horizontal">
+	<style scoped>
+	tbody input.input-small{
+		width: 90%;
+	}
+	</style>
+	<div class="control-group">
+		<label class="control-label">Title</label>
+		<div class="controls">
+			<input type="text" name="name" required>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Image</label>
+		<div class="controls">
+			<div class="input-append">
+				<input type="text" name="img" style="width: 200px;">
+				<button class="btn pickbtn" type="button" style="margin-left: -5px;">Pick</button>
+			</div>
+		</div>
+	</div>
+	<table id="fdata" class="table-bordered table-striped" style="width: 100%;">
+		<thead>
+		<tr><th>Key</th><th>Value</th><th>Double width</th></tr>
+		</thead>
+		<tbody></tbody>
+		<tfoot>
+			<tr><th colspan="3"><button type="button" class="btn btn-primary" id="fdata_add"><i class="icon-plus icon-white"></i></button></th></tr>
+		</tfoot>
+	</table>
+	<div class="form-actions">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>

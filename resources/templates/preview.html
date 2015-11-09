@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>{block title}{$strings.app}{/block}</title>
+	<script src="/assets/jquery.js"></script>
+	<script src="/assets/underscore.js"></script>
+	<script src="/assets/backbone.js"></script>
+	<script src="/assets/jquery.ui.js"></script>
+	<script src="/assets/models.js"></script>
+</head>
+<body>
+<script src="/assets/handlebars.js"></script>
+<script src="/layouts.js"></script>
+<script src="/widgets.js"></script>
+<script src="/ryou_provider.js"></script>
+{if $use_template_pack}<script src="/templates.js"></script>{/if}
+<script>
+var page = new Page({$page|json_encode});
+page.renderer.stopClick = function(){};
+page.renderer.setElement($("html").get(0));
+page.renderer.render({ "preview": true });
+$("<img>").attr("src", "/assets/previewbadge.png").css({
+	position: "fixed",
+	top: 0,
+	right: 0,
+	pointerEvents: "none",
+	zIndex: 1E10
+}).appendTo("body");
+</script>
+</body>
+</html>

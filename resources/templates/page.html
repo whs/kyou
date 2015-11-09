@@ -1,0 +1,888 @@
+{extends "base.html"}
+{block title}{$page.name|escape} | {$strings.app}{/block}
+{block head}
+<link rel="stylesheet" href="/elfinder/css/smoothness.css">
+<link rel="stylesheet" href="/elfinder/css/elfinder.min.css">
+<link rel="stylesheet" href="/elfinder/css/theme.css">
+<link rel="stylesheet" href="/assets/kyou.css">
+<link rel="stylesheet" href="/assets/colorpicker/css/colorpicker.css">
+<script src="/assets/handlebars.js"></script>
+<script src="/assets/jquery.idletimer.js"></script>
+<script src="/assets/colorpicker/colorpicker.js"></script>
+{/block}
+{block body}
+<div id="sidebar">
+	<div class="toolbar" style="margin: -10px; margin-bottom: 10px; width: auto;">
+		<a href="#" id="popout" class="btn" title="Popout preview"><i class="icon-share-alt"></i></a>
+		<a href="#" id="viewurl" class="btn" title="View URL"><i class="icon-share"></i></a>
+		<a href="#" id="hidesidebar" class="btn" title="Hide sidebar"><i class="icon-resize-full"></i></a>
+		<div class="btn-group" style="display: inline-block; vertical-align: middle;">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#" title="{$strings.vc}">
+				<i class="icon-time"></i>
+				<span class="caret"></span>
+			</a>
+  			<ul class="dropdown-menu">
+    			<li><a href="#" id="ushio_new"><i class="icon-plus"></i> Create revision</a></li>
+    			<li><a href="#" id="runushio"><i class="icon-time"></i> Run {$strings.vc}</a></li>
+    			<li><a href="#" data-help="ushio"><i class="icon-question-sign"></i> Help</a></li>
+  			</ul>
+		</div>
+		<a href="#" id="notebtn" class="btn" title="Note"><i class="icon-comment"></i></a>
+		<a href="/" class="btn pull-right" title="Project home"><i class="icon-home"></i></a>
+		<div class="btn-group pull-right" style="display: inline-block; vertical-align: middle;">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+				<i class="icon-folder-open"></i>
+				<span class="caret"></span>
+			</a>
+  			<ul class="dropdown-menu" id="pagelist"></ul>
+		</div>
+		<br style="clear: both;">
+	</div>
+	<div id="simullock">Page is also under edit by <strong></strong>. Your changes could be lost.</div>
+	<p>
+		<strong>Project:</strong> {$project.name|escape}<br>
+		<strong>Page:</strong> <a href="#" id="pagename"></a><br>
+		<strong>Layout:</strong> <a href="#" id="layoutname"></a>
+	</p>
+	<div id="wl_resize">
+		<ul id="widgetlist" class="widgetlist">
+			<li>Loading...</li>
+		</ul>
+	</div>
+	<div class="toolbar" style="width: auto;">
+		<button id="addwidget" class="btn btn-primary" title="Add new widget"><i class='icon-plus icon-white'></i></button>
+		<div id="autosave">Autosave ON</div>
+		<button id="delwidget" class="btn btn-danger" style="float: right; margin-left: 5px;" title="Delete selected widget"><i class='icon-trash icon-white'></i></button>
+		<button id="findwidget" class="btn" style="float: right;" title="Select an element in the page to edit it"><i class='icon-search'></i></button>
+	</div>
+	<h1 id="widgetname"></h1>
+	<div id="widgetconfig">
+	</div>
+</div>
+<div id="showsidebar" title="Show sidebar"><i class="icon-resize-small icon-white"></i></div>
+<form class="modal fade form-horizontal" id="newwidget" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>New Widget</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="name" required>
+			</div>
+    	</div>
+    	<div class="control-group">
+			<label class="control-label">Widget</label>
+			<div class="controls">
+				<div class="imgpick" id="widgetpick">
+					<input type="hidden" name="widget">
+				</div>
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
+<form class="modal fade form-horizontal" id="pagesetup" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Page settings</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Name</label>
+			<div class="controls">
+				<input type="text" name="name" required>
+			</div>
+    	</div>
+    	<div class="control-group">
+			<label class="control-label">Stage</label>
+			<div class="controls">
+				<select name="stage">
+					<option value="0">Planning</option>
+					<option value="1">Waiting for content</option>
+					<option value="2">Working</option>
+					<option value="3">QA</option>
+					<option value="4">Done</option>
+				</select>
+			</div>
+    	</div>
+    	<div class="control-group">
+			<label class="control-label">Layout</label>
+			<div class="controls">
+				<div class="imgpick" id="layoutpick">
+					<input type="hidden" name="layout">
+				</div>
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn btn-warning" data-help="page-layoutsettings"><i class="icon-question-sign"></i> Help</a>
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
+<form class="modal fade form-horizontal" id="newrev" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Create revision</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Description</label>
+			<div class="controls">
+				<input type="text" name="desc" required>
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn btn-warning" data-help="ushio"><i class="icon-question-sign"></i> Help</a>
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
+<form class="modal fade form-horizontal" id="selectpage" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Select page</h3>
+	</div>
+	<div class="modal-body">
+		<div class="control-group">
+			<label class="control-label">Page</label>
+			<div class="controls">
+				<select name="page">
+				</select>
+			</div>
+    	</div>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Select" class="btn btn-primary">
+	</div>
+</form>
+<form class="modal fade form-horizontal" id="viewurlfrm" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>View URL</h3>
+	</div>
+	<div class="modal-body">
+		You can preview the page by entering this URL in any compatible browsers. No login is required. Editing cannot be done from the preview.
+		<div style="margin-top: 10px;"><input type="text" name="viewurl" readonly style="width: 99%;"></div>
+		<div style="margin-top: 10px;">
+			<input type="button" class="btn btn-danger" value="Reset (changes the URL)"> 
+			<a href="#" class="btn btn-warning" data-help="page-viewurl"><i class="icon-question-sign"></i> Help</a>
+		</div>
+	</div>
+</form>
+<form class="modal fade form-horizontal" id="notefrm" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Note</h3>
+	</div>
+	<div class="modal-body">
+		<textarea id="notebox" style="width:95%; height: 300px;"></textarea>
+	</div>
+	<div class="modal-footer">
+		<input type="submit" value="Save" class="btn btn-primary">
+	</div>
+</form>
+<div class="modal fade" id="lockwarn">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Page under editing</h3>
+	</div>
+	<div class="modal-body">
+		<p>Page is locked by <strong id="lockuser"></strong> at <strong id="locktime"></strong>.</p>
+		<p>If you continue, your changes may overwrite that user's changes.</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger">Cancel</button>
+		<a href="#" class="btn" id="readonlybtn">View as read only</a>
+		<a href="#" class="btn btn-primary">Continue</a>
+	</div>
+</div>
+<form class="modal fade form-horizontal" id="quicksilver" action="#">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>{$strings.qs}</h3>
+	</div>
+	<div class="modal-body">
+		<p>Press ctrl+e to open/close {$strings.qs}.</p>
+		<input type="text" name="qs" id="qs" autofocus>
+		<dl>
+			<dt>open <i>type</i> <i>[index]</i></dt>
+			<dd>Open the first widget (or the <i>index</i>-th widget, the first one is 1) of type <i>type</i></dd>
+		</dl>
+		<div>Type <i>n</i>*<i>widgetname</i> to create <i>n</i> widgets of type <i>widgetname</i></div>
+	</div>
+</form>
+<div class="modal fade" id="helpscreen">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<div class="btn-group pull-right" id="helplang" style="margin-right: 10px;" data-toggle="buttons-radio">
+			<button type="button" class="btn" data-lang="th">ไทย</button>
+			<button type="button" class="btn" data-lang="en">EN</button>
+		</div>
+		<h3>Help</h3>
+	</div>
+	<div class="modal-body">
+		Loading...
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn btn-primary" data-dismiss="modal">Hide</a>
+	</div>
+</div>
+{include "elfinder.html"}
+<div class="modal fade form-horizontal" id="lockexpiring">
+	<div class="modal-header">
+		<h3>Lock expiring</h3>
+	</div>
+	<div class="modal-body">
+		<p>Page lock is expiring. If you do nothing for one more minute, the page lock will be freed and other user can edit this page.</p>
+	</div>
+</div>
+<div id="lockexpire">
+	No activity has been detected for 5 minutes, the page lock is expired.<br>
+	Please <a href="#" onclick="window.location.reload(); return false;">refresh</a> this page.
+	<p>All work is automatically saved, none of your work is lost.</p>
+</div>
+{if $use_template_pack}<script src="/templates.js"></script>{/if}
+<script src="/layouts.js"></script>
+<script src="/widgets.js"></script>
+<script src="/ryou_provider.js"></script>
+<script>
+var page = new Page({$page|json_encode});
+var curWidget, widgetConfig, curLayout, inPopout=false, helpLang=localStorage.helpLang || "en";
+var ASTimer;
+
+function save(){
+	clearTimeout(ASTimer);
+	ASTimer = setTimeout(function(){
+		$("#autosave").text("Saving...");
+		page.save();
+	}, 1500);
+}
+function reqlock(){
+	$.post("/page/{$page.id}/@lock", function(out){
+		if(_.isObject(out)){
+			$("#simullock strong").text(out.user);
+			$("#simullock").slideDown()
+		}else{
+			$("#simullock").slideUp()
+		}
+	}, "json");
+}
+
+window.onunload = function(){
+	$.ajax({
+		async: false,
+		url: "/page/{$page.id}/@lock",
+		type: "DELETE"
+	});
+}
+
+window.onbeforeunload = window.onunload;
+
+function pick_page(cb){
+	$("#selectpage").unbind("submit").bind("submit", function(){
+		cb($("select", this).val(), $("option:selected", this).text());
+		$(this).modal("hide");
+		return false;
+	}).modal();
+	return true;
+}
+
+var timeoutTimer;
+reqlock();
+var lockTimer = setInterval(reqlock, 15000);
+$.idleTimer(4 * 60000);
+
+$(function(){
+	$(document).bind("idle.idleTimer", function(){
+		clearTimeout(timeoutTimer);
+		timeoutTimer = setTimeout(function(){
+			$("#lockexpiring").hide();
+			$("#lockexpire").fadeIn();
+			document.title = "[Lock timeout] " + document.title;
+			clearInterval(lockTimer);
+			$.idleTimer('destroy');
+		}, 60000);
+		$("#lockexpiring").modal();
+	});
+	$(document).bind("active.idleTimer", function(){
+		clearTimeout(timeoutTimer);
+		$("#lockexpiring").modal("hide");
+	});
+	$(window).resize(function(){
+		$("#pagepreview").css("width", $(window).innerWidth() - ($("#sidebar:visible").outerWidth()||0)).css("height", window.innerHeight);
+	}).resize();
+	page.on("beforerender", function(){
+		$("#pagepreview").remove();
+		if(inPopout){
+			var previewWnd = window.open("", "preview", "toolbar=no,menubar=no");
+			page.renderer.setElement(previewWnd.document.documentElement);
+			previewWnd.onunload = function(){
+				inPopout = false;
+				$("#sidebar").css("width", "400px");
+				$("#popout,#pagepreview,#hidesidebar").show();
+				page.renderer.render();
+			};
+		}else{
+			var iframe = $('<iframe id="pagepreview" sandbox="allow-scripts allow-same-origin"></iframe>').css("width", $(window).innerWidth() - $("#sidebar:visible").outerWidth());
+			$("body").prepend(iframe);
+			page.renderer.setElement(iframe.get(0).contentDocument.documentElement);
+		}
+	});
+	page.on("render", function(){
+		$("#pagepreview").css("height", window.innerHeight);
+	});
+	page.on("reset", function(){
+		if(page.has("viewtoken")){
+			$("#viewurlfrm input[type=text]").val("http://" + window.location.hostname + "/p/" + page.get("viewtoken"));
+		}
+		if(page.get("note_modified") != localStorage[page.id+"_noteread"] && page.has("note")){
+			$("#notebtn").addClass("btn-warning");
+		}
+		if(page.has("note_modified")){
+			$("#notebtn").attr("title", "Note (modified "+new Date(parseInt(page.get("note_modified"))).toLocaleString()+")").tooltip({ placement: "bottom" });
+		}
+		page.widgets.on("reset add destroy", function(){
+			$("#widgetlist").empty();
+			page.widgets.each(function(v){
+				var ele = $('<li><span class="ui-icon ui-icon-grip-solid-horizontal grip"></span><a class="cssfix btn" title="CSS Edit"><span class="ui-icon ui-icon-wrench"></span></a><img> <strong></strong> <span class="widgetname"></span></li>');
+				ele.data("id", v.id).data("model", v).addClass("id_"+v.id);
+				var widget = new widgets[v.type](v);
+				$("img", ele).attr("src", widget.icon_small);
+				$("strong", ele).text(widget.name+":");
+				$(".widgetname", ele).text(v.get("name"));
+				$("<small></small>").text("#"+v.get("id")).appendTo(ele);
+				if(widget.disable_config.indexOf("*") != -1){
+					$(".cssfix", ele).remove();
+				}
+				if(widget.render_on_change){
+					v.on("change", function(){
+						page.renderer.render();
+					});
+				}
+				ele.appendTo("#widgetlist");
+				v.on("change:name", function(model, val){
+					$(".widgetname", ele).text(val);
+				});
+			});
+			if(curWidget){
+				$("#widgetlist li.id_"+curWidget.id).addClass("active");
+			}
+			page.renderer.render();
+		}).trigger("reset");
+		page.widgets.on("change destroy add", function(){
+			$("#autosave").html("Unsaved changes!").stop(true).show().css("display", "inline-block").css("opacity", 1);
+			bindExit();
+			save();
+		});
+	});
+	page.on("change:layout reset", function(){
+		curLayout = new layouts[page.get("layout")];
+		curLayout.page = page;
+		$("#layoutname").text(" "+curLayout.name+" ");
+		if(_.isFunction(curLayout.config)){
+			$('<a class="btn btn-small" style="padding: 2px 5px 2px 5px; line-height: auto;" title="Config"><i class="icon-cog"></i> Settings</a>').appendTo("#layoutname");
+		}
+		$("<img>").attr("src", curLayout.icon_small).prependTo("#layoutname");
+		$("#widgetpick .pickitem").remove();
+		var layout = new layouts[page.get("layout")];
+		_.each(widgets, function(v, k){
+			v = new v;
+			if(v.check_depends(page) === false || layout.check_depends(v) === false){
+				return;
+			}
+			var ele = $("<div class='pickitem'><img><div></div></div>").addClass("item_"+k).data("value", k).attr("title", v.description);
+			if(v.featured){
+				ele.addClass("featured")
+			}
+			$("img", ele).attr("src", v.icon_large);
+			$("div", ele).text(v.name);
+			ele.appendTo("#widgetpick");
+		});
+		page.renderer.render();
+	});
+	page.on("change:name change:stage reset", function(){
+		$("#pagename").text(page.get("name")+" ");
+		$("<span class='label'>").text(page.stage()).appendTo("#pagename");
+	});
+	page.project.pages.on("reset", function(){
+		$("#selectpage select,#pagelist").empty();
+		page.project.pages.each(function(v){
+			$("<option>").attr("value", v.id).text(v.get("name")).appendTo("#selectpage select");
+			var line = $("<li><a></a></li>").appendTo("#pagelist");
+			line.find("a").attr("href", "/page/"+v.id).text(v.get("name")).data("id", v.id);
+			if(v.id == page.id){
+				line.addClass("active");
+			}
+		});
+	});
+	function bindExit(){
+		window.onbeforeunload = function(e){
+			var s = "You have unsaved changes.\n\nIf you close this page, the unsaved changes will be lost.";
+			e.returnValue = s;
+			page.save();
+			return s;
+		}
+	}
+	var stopAutoSync = false;
+	page.on("sync", function(){
+		$("#autosave").html("Saved").stop(true).show().fadeOut(2000);
+		window.onbeforeunload = window.onunload;
+		stopAutoSync = true;
+	});
+	page.on("change", function(){
+		if(stopAutoSync){
+			stopAutoSync = false;
+			return;
+		}
+		$("#autosave").html("Unsaved changes!").stop(true).show().css("display", "inline-block").css("opacity", 1);
+		bindExit();
+		save();
+	});
+
+	$("#addwidget").click(function(){
+		$("#newwidget").modal();
+		$("#widgetpick div:first").click();
+		$("#newwidget input:first").get(0).focus();
+	});
+	$("#delwidget").click(function(){
+		if(!curWidget){
+			alert("No widget is selected");
+			return false;
+		}
+		if(confirm("Delete "+curWidget.name.toLowerCase()+" widget \""+curWidget.get("name")+"\"?")){
+			page.widgets.remove(curWidget).trigger("destroy");
+			curWidget.trigger("destroy");
+		}else{
+			return;
+		}
+		widgetConfig.undelegateEvents();
+		$("#widgetconfig,#widgetname").empty();
+	});
+	$("#findwidget").click(function(){
+		$(this).addClass("active");
+		var out = page.renderer.findWidget(function(e){
+			$("#findwidget").removeClass("active");
+			var id = $(e).attr("id");
+			var target = $("#widgetlist li.id_" + id).click();
+			// does not work
+			/*if(target){
+				$("#widgetlist").animate({ scrollTop: target.position().top }, 250);
+			}*/
+		});
+		if(out){
+			$(this).addClass("active");
+		}else{
+			$(this).removeClass("active");
+		}
+	});
+	$("#hidesidebar").click(function(){
+		$("#sidebar").hide();
+		$(window).resize();
+		$("#showsidebar").show();
+		return false;
+	});
+	$("#showsidebar").click(function(){
+		$("#showsidebar").hide();
+		$("#sidebar").show();
+		$(window).resize();
+		return false;
+	});
+	$("#viewurl").click(function(){
+		$("#viewurlfrm").modal();
+		return false;
+	});
+	$("#popout").click(function(){
+		$("#pagepreview,#popout,#hidesidebar").hide();
+		$("#sidebar").css("width", "100%");
+		inPopout = true;
+		page.renderer.render();
+		return false;
+	});
+	$(".imgpick").delegate(".pickitem", "click", function(){
+		$("input", $(this).parents(".imgpick")).val($(this).data("value"));
+		$(".active", $(this).parents(".imgpick")).removeClass("active");
+		$(this).addClass("active");
+	});
+	$("#newwidget").submit(function(){
+		var frm = $(this).serializeJSON();
+		$("input[name=name]", this).val("");
+		var view = widgets[frm.widget];
+		frm.id = "w_"+new Date().getTime().toString(36);
+		view = new view(frm);
+		view.weight = ((($("#widgetlist li").index($("#widgetlist .active")))*100)||1E10) + 1;
+		page.widgets.add(view);
+		$(this).modal("hide");
+		return false;
+	});
+	$("#viewurlfrm input[type=button]").click(function(){
+		page.set("viewtoken", (Math.random()).toString(36).replace(/^0./,"").substr(0,8));
+		page.save();
+		$("#viewurlfrm input[type=text]").val("http://" + window.location.hostname + "/p/" + page.get("viewtoken"));
+	});
+	$("#widgetlist").delegate("li", "click", function(){
+		if(widgetConfig){
+			var out = widgetConfig.unload();
+			if(out === false){
+				return false;
+			}
+		}
+
+		$("#widgetlist .active").removeClass("active");
+		$(this).addClass("active");
+		curWidget = page.widgets.get($(this).data("id"));
+		$("#widgetname").text(curWidget.get("name")+" ");
+		$("<small>").text("#"+curWidget.get("id")).appendTo("#widgetname");
+		//$("<img>").attr("src", curWidget.icon_large).appendTo("#widgetname");
+		widgetConfig = new curWidget.config({
+			model: curWidget,
+			el: $("#widgetconfig")
+		});
+		widgetConfig.render();
+	});
+	$("#widgetlist").delegate(".cssfix", "click", function(){
+		if(widgetConfig){
+			var out = widgetConfig.unload();
+			if(out === false){
+				return false;
+			}
+		}
+
+		$("#widgetlist .active").removeClass("active");
+		$(this).parents("li").addClass("active");
+		curWidget = page.widgets.get($(this).parents("li").data("id"));
+		$("#widgetname").text(curWidget.get("name")+" ");
+		$("<small>").text("#"+curWidget.get("id")).appendTo("#widgetname");
+		widgetConfig = new CSSConfigView({
+			model: curWidget,
+			el: $("#widgetconfig")
+		});
+		widgetConfig.render();
+		return false;
+	});
+	$("#layoutname").delegate(".btn", "click", function(){
+		if(widgetConfig){
+			var out = widgetConfig.unload();
+			if(out === false){
+				return false;
+			}
+		}
+
+		$("#widgetlist .active").removeClass("active");
+		curWidget = null;
+		$("#widgetname").text("Layout configuration");
+		widgetConfig = new curLayout.config({
+			model: curLayout,
+			el: $("#widgetconfig")
+		});
+		widgetConfig.render();
+		return false;
+	});
+	$("#pagesetup").submit(function(){
+		page.set("name", $("#pagesetup input[name=name]").val());
+		page.set("layout", $("#pagesetup input[name=layout]").val());
+		page.set("stage", parseInt($("#pagesetup select[name=stage]").val()));
+		save();
+		$(this).modal("hide");
+		return false;
+	});
+	$("#pagename,#layoutname").click(function(){
+		$("#pagesetup").modal();
+		$("#layoutpick .item_"+curLayout.type).click();
+		$("#pagesetup input[name=name]").val(page.get("name")).get(0).focus();
+		$("#pagesetup select[name=stage]").val(page.get("stage"));
+		return false;
+	});
+	$("#runushio").click(function(){
+		$("<div>").css({
+			position: "fixed",
+			top: 0,
+			left: 0,
+			width: "100%",
+			height: "100%",
+			background: "rgba(255,255,255,0.95)",
+			zIndex: 100000,
+			textAlign: "center",
+			boxSizing: "border-box",
+			paddingTop: "25%",
+			verticalAlign: "middle",
+			fontSize: 64,
+			fontFamily: "HelveticaNeue-UltraLight, helvetica, sans-serif"
+		}).text("Entering {$strings.vc}...").hide().appendTo("body").fadeIn(1000);
+		window.location = "/page/" +page.id + "/revisions"
+		return false;
+	});
+	$("#ushio_new").click(function(e){
+		page.save();
+		$("#newrev").modal();
+		$("#newrev input").get(0).focus();
+		e.preventDefault();
+	});
+	$("#newrev").submit(function(){
+		// Rerender
+		page.renderer.render({ revision: true });
+		$("input", this).attr("disabled", true);
+		setTimeout(_.bind(function(){
+			$("input", this).attr("disabled", false);
+			var out = $(this).serializeJSON();
+			$("input", this).attr("disabled", true);
+			out.html = page.renderer.el.outerHTML;
+			
+			$.post("/page/"+page.id+"/@save", out, function(){
+				$("#newrev input").attr("disabled", false);
+				$("#newrev [type=text]").val("");
+				page.renderer.render();
+				$("#newrev").modal("hide");
+			});
+		}, this), 250);
+		return false;
+	});
+	$("#widgetconfig").delegate(".pickbtn", "click", function(){
+		pick_file(_.bind(function(f){
+			$("input", $(this).parent()).val(f);
+		}, this));
+	});
+	$("#widgetconfig").delegate(".pickpagebtn", "click", function(){
+		pick_page(_.bind(function(f){
+			$("input", $(this).parent()).val(f+".html");
+		}, this));
+	});
+	$("#notebtn").click(function(){
+		$("#notefrm").modal();
+		$("#notefrm textarea").val(page.get("note") || "");
+		$(this).removeClass("btn-warning");
+		localStorage[page.id+"_noteread"] = page.get("note_modified");
+		return false;
+	});
+	$("#notefrm").submit(function(){
+		page.set("note", $("textarea", this).val());
+		page.set("note_modified", (new Date().getTime()).toString()); //cast to string to prevent overflow issue
+		localStorage[page.id+"_noteread"] = page.get("note_modified");
+		save();
+		$("#notefrm").modal("hide");
+		return false;
+	});
+	$("body").delegate("[data-help]", "click", function(){
+		$("#helpscreen").modal().data("help", $(this).data("help"));
+		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $(this).data("help") + ".html");
+		return false;
+	});
+	$("#helplang").delegate("button", "click", function(e){
+		localStorage.helpLang = helpLang = $(this).data("lang");
+		$("#helpscreen .modal-body").text("Loading...").load("/help/" + helpLang + "/" + $("#helpscreen").data("help") + ".html");
+		e.preventDefault();
+	});
+
+	$("#widgetlist").sortable({
+		containment: "parent",
+		handle: ".grip",
+		update: function(e, ui){
+			$("#widgetlist li").each(function(k,v){
+				var widget = page.widgets.get($(v).data("id"));
+				widget.weight = k * 100;
+			});
+			page.widgets.sort();
+			page.widgets.trigger("change");
+			page.renderer.render();
+		}
+	}).disableSelection();
+	$("#wl_resize").resizable({
+		handles: "s",
+	});
+	$("#pagelist").delegate("li a", "click", function(){
+		$("#pagelist").parent().removeClass("open");
+		$.getJSON(this.href+"/@lock", _.bind(function(x){
+			$("#pagelist").prev().removeClass("disabled");
+			if(x){
+				$("#lockwarn").modal();
+				var d = new Date(x.time.sec*1000);
+				var targetPage = page.project.pages.get($(this).data("id"));
+				if(targetPage.has("viewtoken")){
+					$("#readonlybtn").show().attr("href", "/p/" + targetPage.get("viewtoken"));
+				}else{
+					$("#readonlybtn").hide();
+				}
+				$("#lockuser").text(x.user);
+				$("#locktime").text(d.toLocaleDateString()+" "+d.toLocaleTimeString());
+				$("#lockwarn a.btn-primary").attr("href", this.href);
+			}else{
+				window.location = this.href;
+			}
+		}, this));
+		return false;
+	});
+	$("#lockwarn .btn-danger").click(function(){
+		$("#lockwarn").modal("hide");
+		return false;
+	});
+
+	// Botan
+	var qsBuilt = false;
+	$(window).keydown(function(e){
+		if(e.keyCode == 69 && (e.metaKey || e.ctrlKey)){
+			$("#quicksilver").modal(qsBuilt ? "toggle" : undefined);
+			$("#qs").autocomplete("close");
+			setTimeout(function(){
+				$("#qs").get(0).focus();
+			}, 500);
+			qsBuilt = true;
+		}
+	});
+	$("#qs").autocomplete({
+		minLength: 0,
+		delay: 0,
+		source: function(request, response){
+			var termlist = request.term.split(" ");
+			var term = termlist.pop();
+			term = term.replace(/^[0-9]+\*/, "");
+			var termind = termlist.length;
+			var source = _.map(_.keys(widgets), function(v){
+				var chkdep = new widgets[v];
+				if(_.isFunction(chkdep.check_depends)){
+					if(!chkdep.check_depends(page)){
+						return;
+					}
+				}
+				if(_.isFunction(curLayout.check_depends)){
+					if(!curLayout.check_depends(chkdep)){
+						return;
+					}
+				}
+				return { "text": widgets[v].prototype.name, "label": v }
+			});
+			source = _.filter(source, function(x){ return !!x; });
+			if(termind == 0){
+				source.push({ "text": "Open widget (command)", "label": "open" });
+			}
+			if(termlist[0] == "open"){
+				if(termind == 1){
+					var widgetList = _.unique(page.widgets.pluck("type"));
+					source = _.map(widgetList, function(v){
+						return { "text": widgets[v].prototype.name, "label": v };
+					});
+					source = _.unique(source);
+				}else if(termind == 2){
+					var widgetList = page.widgets.toJSON();
+					widgetList = _.filter(widgetList, function(v){
+						return v.type === termlist[1];
+					});
+					source = _.map(widgetList, function(v,k){
+						return { "text": "#"+v.id, "label": k.toString() };
+					});
+				}else if(termind > 2){
+					source = {};
+				}
+			}
+			
+			response(_.filter(source, function(i){
+				return i.label.indexOf(term) === 0;
+			}));
+		},
+		focus: function() {
+			return false;
+		},
+		select: function(event, ui){
+			var terms = this.value.split(" ");
+			var lt = terms.pop();
+			try{
+				var mod = lt.match(/^([0-9]+)\*/)[1];
+			}catch(e){ var mod = null; }
+			terms.push((mod ? mod+"*" : "") + ui.item.value);
+			terms.push("");
+			this.value = terms.join(" ");
+			return false;
+		}
+	}).data("autocomplete")._renderItem = function(ul, item){
+		return $("<li></li>")
+			.data("item.autocomplete", item)
+			.append( "<a><strong>" + item.text + "</strong> <span style='color:#aaa'>" + item.label + "</span></a>" )
+			.appendTo(ul);
+	};
+	var hideQs = function(){
+		$("#quicksilver").modal("hide");
+		$("#qs").val("").autocomplete("close");
+	}
+	$("#quicksilver").submit(function(){
+		var stanza = $.trim($("#qs").val()).split(" ");
+		if(stanza[0] == "open"){
+			var widgetList = page.widgets.toJSON();
+			widgetList = _.filter(widgetList, function(v){
+				return v.type === stanza[1];
+			});
+			var item = widgetList[parseInt(stanza[2]) || 0];
+			if(item){
+				$(".id_" + item.id).click();
+				hideQs();
+			}
+		}else{
+			// First pass: validation
+			// If one of these widget does not exists, reject the stanza
+			var validation = _.filter(stanza, function(v){
+				v = v.replace(/^[0-9]+\*/, "");
+				if(!widgets[v]){
+					return true;
+				}
+				var chkdep = new widgets[v];
+				if(_.isFunction(chkdep.check_depends)){
+					if(!chkdep.check_depends(page)){
+						return true;
+					}
+				}
+				if(_.isFunction(curLayout.check_depends)){
+					if(!curLayout.check_depends(chkdep)){
+						return true;
+					}
+				}
+				return false;
+			});
+			// Reject the stanza
+			if(validation.length > 0){
+				return false;
+			}
+			var ind = 0;
+			var idInc = 0;
+			_.each(stanza, function(v){
+				var repeat = v.match(/^([0-9]+)\*/);
+				if(repeat){
+					repeat = parseInt(repeat[1]);
+				}else{
+					repeat = 1;
+				}
+				v = v.replace(/^[0-9]+\*/, "");
+				var cnt = 0;
+				while(cnt<repeat){
+					var view = widgets[v];
+					var data = { "name": new Date().getTime().toString(36) + idInc.toString(36) };
+					data.id = "w_"+data.name;
+					view = new view(data);
+					view.weight = ((($("#widgetlist li").index($("#widgetlist .active")))*100)||1E10) + 1 + ind;
+					page.widgets.add(view, { silent: true });
+					ind++;
+					cnt++;
+					idInc++;
+				}
+			});
+			page.widgets.trigger("add");
+			hideQs();
+		}
+		return false;
+	});
+
+	_.each(layouts, function(v, k){
+		v = new v;
+		var ele = $("<div class='pickitem'><img><div></div></div>").addClass("item_"+k).data("value", k).attr("title", v.description);
+		$("img", ele).attr("src", v.icon_large);
+		$("div", ele).text(v.name);
+		ele.appendTo("#layoutpick");
+	});
+	page.trigger("reset");
+	page.project.pages.fetch();
+	$("#widgetpick .pickitem,#layoutpick .pickitem").tooltip();
+	$(".toolbar a[title],.toolbar button[title],#showsidebar").tooltip({ placement: "bottom" });
+	$("#helplang [data-lang="+helpLang+"]").addClass("active");
+});
+</script>
+{/block}

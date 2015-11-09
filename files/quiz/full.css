@@ -1,0 +1,36 @@
+.widget_quiz.q_full h1, .widget_quiz.q_full h2{
+	font-family: "Sarabun", sans-serif;
+	letter-spacing: 0px;
+	margin: 0;
+}
+.widget_quiz.q_full h1{
+	font-size: 32pt;
+	font-weight: bold;
+}
+.widget_quiz.q_full h2{
+	font-size: 20pt;
+	font-weight: normal;
+}
+.widget_quiz.q_full .q_item{
+	border: black solid 1px;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+.widget_quiz.q_full ul{
+	list-style: none;
+	padding: 0;
+}
+.widget_quiz.q_full .q_ans a{
+	display: block;
+	background: cornflowerblue;
+	color: white;
+	text-align: center;
+	padding: 20px;
+}
+.widget_quiz.q_full .q_ans a:hover{
+	background: #aaccff;
+	color: black;
+}
+.widget_quiz.q_full .q_prev, .widget_quiz.q_full .q_next{
+	display: none;
+}
