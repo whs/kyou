@@ -7,3 +7,4 @@ output/tmp/*
 engine/config.php
 node_modules
 compiled
+npm-debug.log
