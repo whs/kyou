@@ -10,9 +10,9 @@ project Kyou's development is sponsored by NECTEC under National Software Compet
 
 *(I haven't install this in a while, so this is not tested. Also may not work with recent version of softwares?)*
 
-1. `npm install -g gulp`
+1. `npm install -g grunt-cli`
 2. `npm install .`
-3. `gulp` to generate `compiled` folders
+3. `grunt` to generate `compiled` folders
 4. Copy engine/config.def.php to engine/config.php and fill in values
 5. bookfiles and output directory must be writable by the web server
 

@@ -21,8 +21,17 @@ class SmartyTemplateEngine extends SmartyBC {
     function __construct($caching=true) {
         parent::__construct();
         $this->template_dir = RESOURCES_DIR . '/templates/';
-        $this->compile_dir = RESOURCES_DIR . '/compiled/';
-        $this->cache_dir = RESOURCES_DIR . '/cached/';
+        if(defined('SMARTY_COMPILE_DIR')){
+            $this->compile_dir = SMARTY_COMPILE_DIR;
+        }else{
+            $this->compile_dir = RESOURCES_DIR . '/compiled/';
+        }
+
+        if(defined('SMARTY_CACHE_DIR')){
+            $this->cache_dir = SMARTY_CACHE_DIR;
+        }else{
+            $this->cache_dir = RESOURCES_DIR . '/cached/';
+        }
         $this->caching = $caching;
     }
     
