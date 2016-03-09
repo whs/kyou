@@ -171,15 +171,8 @@ class UI extends Base{
 			$disk += $proj['disk'];
 		}
 
-		if($disk > $quota['storage'] && $quota['storage'] != -1){
-			$mountRO = true;
-		}
-		// for project shared with @all
-		if(!in_array($this->user['_id'], $project['user'])){
-			$mountRO = true;
-		}
 		require_once 'elfinder/kyou_connector.class.php';
-		$elfinder = $this->load_fs_driver($project, $mountRO);
+		$elfinder = $this->load_fs_driver($project, false);
 		$connector = new KyouelConnector($elfinder);
 		$connector->run();
 		if(in_array($_REQUEST['cmd'], explode(' ', 'mkfile duplicate paste upload put archive extract resize rm'))){

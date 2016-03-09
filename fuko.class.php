@@ -28,11 +28,6 @@ class Fuko extends UI{
 	}
 	public function fuko_config(){
 		$project = $this->loader->project_by_id();
-		// for project shared with @all
-		if(!in_array($this->user['_id'], $project['user'])){
-			print "Unable to export: user is not a project member";
-			die();
-		}
 		if($_POST['act'] == "ticket"){
 			// Easy ID!
 			$id = (string) new MongoId();

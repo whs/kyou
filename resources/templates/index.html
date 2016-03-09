@@ -150,16 +150,7 @@ header small{
 {/block}
 {block body}
 <div id="container">
-<header>
-	<a href="/auth" id="user">{$user._id|escape} <small>(click to logout)</small></a>
-	<div id="appname">{$strings.app}</div>
-</header>
-<div id="projectpane">
-	<ul class="nav nav-list" id="project">
-	</ul>
-</div>
 <div id="rightpane">
-<p><button class="btn" id="projset"><i class="icon-wrench"></i> Project settings</button> <span id="share"><strong>Sharing:</strong> <span id="share-status"></span></span></p>
 <ul id="pagelist">
 </ul>
 <div id="apps">
@@ -266,7 +257,6 @@ header small{
 	</div>
 </form>
 <script>
-var projects = new ProjectList;
 var curProj;
 function xhr_error(xhr){
 	try{
@@ -292,13 +282,9 @@ function load_project(){
 		curProj.off("reset add destroy");
 	}
 	$("#rightpane").show();
-	curProj = projects.get(localStorage.project);
+	curProj = new Project({{json_encode($projects[0])}});
 	curProj.fetch({
 		success: function(){
-			$("#sharing_pagelimit").text(curProj.limits.page == -1 ? "Unlimited" : curProj.limits.page);
-			$("#sharing_collablimit").text(curProj.limits.collab == -1 ? "Unlimited" : curProj.limits.collab);
-			$("#sharing_storagelimit").text(curProj.limits.storage == -1 ? "Unlimited" : curProj.limits.storage/1024 + "MB");
-
 			var owner = curProj.get("user")[0];
 			$("#projowner").val(owner);
 			if(owner == username){
@@ -419,78 +405,6 @@ function load_project(){
 	curProj.pages.fetch();
 }
 $(function(){
-	$("#rightpane").hide();
-	projects.on("reset add destroy change", function(){
-		$("#project").empty();
-		$('<li class="nav-header">Projects</li>').appendTo("#project");
-		var projectCnt=0;
-		var sharedUsed=0;
-		this.each(function(v){
-			var el = $("<li><a></a></li>").data("id", v.id).attr("id", "proj-"+v.id).find("a").text(v.get("name")).attr("href", "/project/"+v.id).parent().appendTo("#project");
-			$("<div class='progress progress-success'><div class='bar'></div></div>").prependTo(el.find("a")).find(".bar").css("width", v.get("progress") + "%");
-			if(v.get("user")[0] == window.username){
-				projectCnt++;
-			}else if(v.get("user").indexOf(window.username) !== -1){
-				if(sharedUsed>0){
-					if(sharedUsed == 1){
-						projectCnt++;
-					}
-					projectCnt++;
-					sharedUsed++;
-				}else{
-					sharedUsed++;
-				}
-			}
-		});
-		$('<li class="divider"></li>').appendTo("#project");
-		if(user_limits.project == -1 || projectCnt < user_limits.project){
-			$('<li><a href="@new"><i class="icon-plus-sign"></i> Create project</a></li>').appendTo("#project");
-		}else{
-			$('<li>Project limit exceeded.</li>').appendTo("#project");
-		}
-		$('<li><strong>Available:</strong> '+(user_limits.project==-1?'Unlimited':user_limits.project)+'<br><strong>Used:</strong> '+projects.length+'</li>').appendTo("#project");
-		$('<li><strong>Disk:</strong> '+format_disk_quota({$disk})+' / '+(user_limits.storage==-1?'Unlimited':format_disk_quota(user_limits.storage))+'</li>').appendTo("#project");
-		$('<li><a href="/_payments/sso" target="_blank"><i class="icon-shopping-cart"></i> Upgrade</a></li>').appendTo("#project");		
-		if(localStorage.project){
-			$("#proj-"+localStorage.project).addClass("active");
-			$("#rightpane").show();
-		}
-	});
-	$("#project").on("click", "a[href^=\\/project\\/]", function(){
-		$("#loading").fadeIn(250);
-		$("#project li.active").removeClass("active");
-		localStorage.project = $(this).parent().addClass("active").data("id");
-		load_project();
-		return false;
-	});
-	$("#project").on("click", "a[href=\\@new]", function(){
-		$("#newproj").modal();
-		$("#newproj input[name=pname]").get(0).focus();
-		return false;
-	});
-	$("#newproj").submit(function(){
-		projects.create({
-			name: $("input[name=pname]", this).val(),
-			stage: 0
-		}, {
-			wait: true,
-			success: function(obj, xhr){
-				localStorage.project = obj.id;
-				$("#project li.active").removeClass("active");
-				$("#proj-"+localStorage.project).addClass("active");
-				load_project();
-				$("#newproj").modal("hide");
-				$("#newproj input[name=pname]").val("").attr("disabled", false);
-			},
-			error: function(obj, xhr){
-				xhr_error(xhr);
-				$("#newproj").modal("hide");
-				$("#newproj input[name=pname]").val("").attr("disabled", false);
-			}
-		});
-		$("input[name=pname]", this).attr("disabled", true);
-		return false;
-	});
 	$("#projset").click(function(){
 		$("#sharing").modal();
 		return false;
@@ -607,10 +521,7 @@ $(function(){
 	});
 	window.username = {{$user._id|json_encode}};
 	window.user_limits = {{$user.limits|json_encode}};
-	projects.reset({$projects|json_encode});
-	if(localStorage.project){
-		load_project();
-	}
+	load_project();
 });
 </script>
 {/block}

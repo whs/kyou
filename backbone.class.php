@@ -11,13 +11,26 @@ class Loader extends Base{
 		$out = $this->DB->projects->find(array(
 			"user" => array('$in' => array($this->user['_id'], '@all'))
 		));
-		$out->sort(array("stage" => 0));
-		// get project progresses as requested by @ncpeak
-		$out = iterator_to_array($out, false);
-		foreach($out as &$item){
-			$item['progress'] = $this->project_progress($item);
+
+		if($out->count() == 0){
+			$this->create_sandstorm_project();
 		}
+		$out = $this->DB->projects->find(array(
+			"user" => array('$in' => array($this->user['_id'], '@all'))
+		));
+
 		return $this->output($out);
+	}
+
+	function create_sandstorm_project(){
+		$this->DB->projects->insert(array(
+			'name' => 'Sandstorm project',
+			'stage' => 0,
+			'progress' => 0,
+			'user' => array('@all')
+		));
+		// create bookfiles
+		$this->load_fs_driver($data);
 	}
 
 	public function project_by_id(){
@@ -275,82 +288,19 @@ class Loader extends Base{
 
 class Saver extends Loader{
 	public function projects(){
-		// check limit!
-		if($this->user['limits']['project'] != -1){
-			$used = $this->DB->projects->find(array('user' => (string) $this->user['_id']))->count();
-			if($used >= $this->user['limits']['project']){
-				$this->rate_limit($used, $this->user['limits']['project']);
-			}
-		}
-		$data = $this->get_data();
-		$data['user'] = array((string) $this->user['_id']);
-		$this->DB->projects->insert($data);
-		$data['progress'] = 0; // Used in UI
-		// create bookfiles
-		$this->load_fs_driver($data);
-		if($_GET['return']){
-			header("Location: ".$_GET['return']);
-		}else{
-			return $this->output($data);
-		}
+		header("HTTP/1.0 403 Forbidden");
+		return;
 	}
 
 	public function project_by_id(){
-		$data = $this->get_data();
-		unset($data['id']);
-		// Get old project
-		$proj = $this->DB->projects->findOne(array(
-			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
-		));
-		if(!$proj){
-			$this->fatal_error("No project");
-		}
-		$data['user'] = array_merge(array($proj['user'][0]), $data['user'], array($this->user['_id']));
-		$data['user'] = array_values(array_unique($data['user']));
-		$data['size'] = $proj['size']; // don't trust the client on this one
-		$plan = $this->get_project_limit($proj);
-		// find new collaborator
-		$newCollab = array_diff($data['user'], $proj['user']);
-		foreach($newCollab as $n){
-			$u = $this->DB->users->findOne(array('_id' => $n));
-			if(!$u){ // user not found. bye!
-				$data['user'] = array_diff($data['user'], array($n));
-				continue;
-			}
-			$uplan = $u['plan'] ? $u['plan'] : 'free';
-			if($uplan == 'free'){
-				// get list of shared projects
-				$user_proj = $this->DB->projects->find(array('user' => $u['_id']));
-				$free_cnt = 0;
-				foreach($user_proj as $item){
-					$pplan = $this->get_project_limit($item);
-					if($pplan['plan'] == 'free'){
-						$free_cnt += 1;
-					}
-				}
-				if($free_cnt >= 2){
-					// can't receive more share!
-					$data['user'] = array_diff($data['user'], array($n));
-					header('X-Share-Validation-Fail-'.$n.': Owned '.$free_cnt.' free projects');
-				}
-			}
-		}
-		if($plan['collab'] != -1){
-			$data['user'] = array_slice($data['user'], 0, $plan['collab']);
-		}
-		$this->DB->projects->update(array(
-			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
-		), $data); // Yes, don't use $set
-		return parent::project_by_id();
+		header("HTTP/1.0 403 Forbidden");
+		return;
 	}
 
 	public function pages(){
 		$data = $this->get_data();
 		$project = $this->DB->projects->findOne(array(
 			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
 		), array("_id", "user"));
 		if(!$project){
 			$this->fatal_error("Project not found");
@@ -370,7 +320,6 @@ class Saver extends Loader{
 	public function page_by_id(){
 		$project = $this->DB->projects->findOne(array(
 			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
 		), array("_id"));
 		if(!$project){
 			$this->fatal_error("Project not found");
@@ -388,7 +337,6 @@ class Saver extends Loader{
 	public function iimg_by_id(){
 		$project = $this->DB->projects->findOne(array(
 			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
 		), array("_id"));
 		if(!$project){
 			$this->fatal_error("Project not found");
@@ -406,7 +354,6 @@ class Saver extends Loader{
 	public function ryou_by_id(){
 		$project = $this->DB->projects->findOne(array(
 			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
 		), array("_id"));
 		if(!$project){
 			$this->fatal_error("Project not found");
@@ -424,7 +371,6 @@ class Saver extends Loader{
 	public function ryou(){
 		$project = $this->DB->projects->findOne(array(
 			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
 		), array("_id"));
 		if(!$project){
 			$this->fatal_error("Project not found");
@@ -453,40 +399,13 @@ class Deleter extends Base{
 	}
 
 	public function project_by_id(){
-		$project = $this->DB->projects->findOne(array(
-			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
-		), array("_id", "user"));
-		if(!$project){
-			$this->fatal_error("Project not found");
-		}
-		if($project['user'][0] != $this->user['_id']){
-			// Remove the user from project
-			$this->DB->projects->update(array(
-				'_id' => new MongoId($this->phraw->request['pid'])
-			), array(
-				'$pull' => array(
-					'user' => $this->user['_id']
-				)
-			));
-			return;
-		}
-		$this->DB->projects->remove(array(
-			"_id" => $project['_id']
-		));
-		$this->DB->pages->remove(array(
-			"project" => $project['_id']
-		));
-		$this->DB->revisions->remove(array(
-			"project" => $project['_id']
-		));
-		$this->delTree('bookfiles/'.(string) $project['_id']);
+		header("HTTP/1.0 403 Forbidden");
+		return;
 	}
 
 	public function page_by_id(){
 		$project = $this->DB->projects->findOne(array(
 			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
 		), array("_id"));
 		if(!$project){
 			$this->fatal_error("Project not found");
@@ -500,7 +419,6 @@ class Deleter extends Base{
 	public function iimg_by_id(){
 		$project = $this->DB->projects->findOne(array(
 			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
 		), array("_id"));
 		if(!$project){
 			$this->fatal_error("Project not found");
@@ -515,7 +433,6 @@ class Deleter extends Base{
 		// Check ACL
 		$project = $this->DB->projects->findOne(array(
 			"_id" => new MongoId($this->phraw->request['pid']),
-			"user" => $this->user['_id']
 		));
 		if(!$project){
 			$this->fatal_error("Project not found");

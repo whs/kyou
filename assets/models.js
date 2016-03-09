@@ -174,13 +174,13 @@ var Page = Backbone.Model.extend({
 
 			// Sometimes the layout put some image in. This should fix the link.
 			if((!opt || !opt.dist) && window["page"]){
-				$("<base>").attr("href", window.location.protocol + "//" + window.location.hostname + "/bookfiles/" + page.project.id + "/").appendTo(this.el);
+				$("<base>").attr("href", window.location.protocol + "//" + window.location.host + "/bookfiles/" + page.project.id + "/").appendTo(this.el);
 			}
 
 			layoutRenderer.render(opt);
 
 			if((!opt || !opt.dist) && window["page"]){
-				$("<base>").attr("href", window.location.protocol + "//" + window.location.hostname + "/bookfiles/" + page.project.id + "/").appendTo(this.$("head"));
+				$("<base>").attr("href", window.location.protocol + "//" + window.location.host + "/bookfiles/" + page.project.id + "/").appendTo(this.$("head"));
 			}
 
 			var target = this.$(".widgetsInject").get(0);

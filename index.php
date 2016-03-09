@@ -10,7 +10,6 @@ if(is_readable("nonfree/strings.php")){
 $SMARTY->assign("strings", $strings);
 
 ob_start();
-
 $router = new URLRouter(array(
 	""											=> array("ui.class.php", array("UI", "index")),
 	"page\/(?P<page>[a-f0-9]+)"					=> array("ui.class.php", array("UI", "page")),
@@ -76,6 +75,5 @@ try{
 	header("HTTP/1.0 500 Internal Server Error");
 	header("Content-Type: text/plain");
 	print "Internal server error";
-	//print_r($e);
 	die();
 }

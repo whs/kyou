@@ -254,6 +254,8 @@ var page = new Page({$page|json_encode});
 var curWidget, widgetConfig, curLayout, inPopout=false, helpLang=localStorage.helpLang || "en";
 var ASTimer;
 
+window.parent.postMessage({ 'setPath': location.pathname + location.hash }, '*');
+
 function save(){
 	clearTimeout(ASTimer);
 	ASTimer = setTimeout(function(){

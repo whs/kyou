@@ -29,22 +29,11 @@ class Base{
 		if($this->user){
 			throw new RuntimeException("Use reload_user instead!");
 		}
-		if(!$_COOKIE['id']){
-			return false;
-		}
-		if(!$_COOKIE['secure']){
-			setcookie("id", "", 1, "/");
-			return false;
-		}
-		// check the cookie integrity
-		if($_COOKIE['secure'] != hash_hmac("sha256", $_COOKIE['id'], SITE_KEY)){
-			setcookie("id", "", 1, "/");
-			setcookie("secure", "", 1, "/");
-			return false;
-		}
-		$this->user = array("_id" => $_COOKIE['id']);
-		$this->smarty->assign("user", $this->user);
 		$this->reload_user();
+
+		try{
+			$this->DB->users->insert($this->user);
+		}catch(MongoException $e){}
 	}
 	public function set_user($uid){
 		setcookie("id", $uid, time()+60*60*24*30, "/");
@@ -56,12 +45,8 @@ class Base{
 	 */
 	public function reload_user(){
 		global $current_user;
-		$this->user = $this->DB->users->findOne(array("_id" => $this->user['_id']));
-
-		if(!$this->user['plan']){
-			$this->user['plan'] = 'free';
-		}
-		$this->user['limits'] = $this->limits_for_plan($this->user['plan']);
+		$this->user = array("_id" => urldecode($_SERVER['HTTP_X_SANDSTORM_USERNAME']));
+		$this->user['limits'] = $this->limits_for_plan('sunburn');
 
 		$current_user = $this->user;
 
@@ -80,13 +65,14 @@ class Base{
 		}
 	}
 	public function limits_for_plan($plan='free'){
-		include 'planfile.php';
-		if(empty($plan)){
-			$plan = 'free';
-		}
-		$out = $plans[$plan];
-		$out['plan'] = $plan;
-		return $out;
+		return array(
+			'project' => -1,
+			'page' => -1,
+			'storage' => -1,
+			'collab' => -1,
+			'plan' => $plan,
+			'weight' => 999,
+		);
 	}
 	/**
 	 * Make an HTTP request
@@ -146,11 +132,11 @@ class Base{
 		}
 		$pid = isset($project['id']) ? $project['id'] : (string) $project['_id'];
 		if($STORAGE['driver'] == "LocalFileSystem"){
-			@mkdir('bookfiles/'.$pid.'/');
+			@mkdir(BOOKFILES.$pid.'/');
 		}
 		$limits = $this->get_project_limit($project);
 		$storageConfig = array_merge($STORAGE, array(
-			'path' => 'bookfiles/'.$pid.'/',
+			'path' => BOOKFILES.$pid.'/',
 			'URL' => '/bookfiles/'.$pid.'/',
 			'alias' => $project['name'],
 			/*'defaults' => array(
