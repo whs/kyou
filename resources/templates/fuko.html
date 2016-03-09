@@ -203,12 +203,14 @@ h2{
 	<div id="renderdone">
 		<h2>Done!</h2>
 		<p>You're finished!</p>
-		<p><a href="#" class="btn btn-large btn-primary" id="dllink" style="display: block">Download</a></p>
+		<p class="fmt-zip"><a href="#" class="btn btn-large btn-primary" id="viewlink" style="display: block" target="_blank">View online</a></p>
+		<p><a href="#" class="btn btn btn-primary" id="dllink" style="display: block">Download</a></p>
 		<h4>What's next?</h4>
 		<ul class="fmtdep fmt-zip">
-			<li>Unzip this file and upload to your website. Share the link with the world!</li>
+			<li>Share the view online link. Everyone can access the link without logging in to Sandstorm.</li>
 			<li>Upload this ZIP to the <a href="https://chrome.google.com/webstore/developer/dashboard" target="_blank">Chrome Web Store</a></li>
 			<li>Upload this ZIP to <a href="https://build.phonegap.com/apps" target="_blank">PhoneGap:Build</a> service. (Note that ZIP file larger than 10MB is not allowed)</li>
+			<li>Setup <code>CNAME</code> of your domain to <strong id="sandstorm_domain"></strong> and add a <code>TXT</code> record with contents of <code id="sandstorm_code"></code></li>
 		</ul>
 		<ul class="fmtdep fmt-hpub">
 			<li>Unzip the ZIP as <a href="http://bakerframework.com/">Baker framework</a>'s book directory to build iOS application.</li>
@@ -346,6 +348,9 @@ function render(ind){
 									alert(d['error']);
 								}
 								$("#dllink").attr("href", "/"+d.output);
+								$("#viewlink").attr("href", d.id[2]);
+								$("#sandstorm_domain").text(d.id[1]);
+								$("#sandstorm_code").text(d.id[0]);
 								$("#rendering,#box h2:first").hide();
 								$("#renderdone").show();
 								Piecon.reset();

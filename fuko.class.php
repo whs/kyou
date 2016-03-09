@@ -127,10 +127,15 @@ class Fuko extends UI{
 			}
 			$output = $project['id']."_".uniqid().".zip";
 			$this->zip(OUTPUT."tmp/".$_POST['ticket']."/", OUTPUT.$output, $dirname);
-			$this->rrmdir(OUTPUT."tmp/".$_POST['ticket']."/");
+			
+			$this->rrmdir("/var/www");
+			rename(OUTPUT."tmp/".$_POST['ticket']."/", "/var/www/");
+			$publicId = `/opt/app/sandstorm-integration/bin/getPublicId {$_SERVER['HTTP_X_SANDSTORM_SESSION_ID']}`;
+
 			header("Content-Type: application/json");
 			print json_encode(array(
-				"output" => 'output/' . $output
+				"output" => 'output/' . $output,
+				"id" => explode("\n", $publicId)
 			));
 			die();
 		}
