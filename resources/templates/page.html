@@ -255,6 +255,7 @@ var curWidget, widgetConfig, curLayout, inPopout=false, helpLang=localStorage.he
 var ASTimer;
 
 window.parent.postMessage({ 'setPath': location.pathname + location.hash }, '*');
+window.parent.postMessage({ 'setTitle': document.title }, '*');
 
 function save(){
 	clearTimeout(ASTimer);
@@ -305,6 +306,7 @@ $(function(){
 			$("#lockexpiring").hide();
 			$("#lockexpire").fadeIn();
 			document.title = "[Lock timeout] " + document.title;
+			window.parent.postMessage({ 'setTitle': document.title }, '*');
 			clearInterval(lockTimer);
 			$.idleTimer('destroy');
 		}, 60000);

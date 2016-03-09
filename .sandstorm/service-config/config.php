@@ -29,6 +29,7 @@ $PAY_SSO = array(
 );
 
 define('BOOKFILES', '/var/kyou/public/bookfiles/');
+define('OUTPUT', '/var/kyou/public/output/');
 
 /**
  * File storage settings

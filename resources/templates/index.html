@@ -257,6 +257,8 @@ header small{
 	</div>
 </form>
 <script>
+window.parent.postMessage({ 'setPath': location.pathname + location.hash }, '*');
+
 var curProj;
 function xhr_error(xhr){
 	try{
@@ -332,6 +334,7 @@ function load_project(){
 		}
 	});
 	document.title = curProj.get("name") + " | {$strings.app}";
+	window.parent.postMessage({ 'setTitle': document.title }, '*');
 
 	$("a[data-link]").attr("href", function(){
 		return $(this).data("link").replace("%s", curProj.id);

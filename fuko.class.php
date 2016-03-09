@@ -31,16 +31,16 @@ class Fuko extends UI{
 		if($_POST['act'] == "ticket"){
 			// Easy ID!
 			$id = (string) new MongoId();
-			mkdir("output/tmp/".$id);
+			mkdir(OUTPUT."tmp/".$id);
 			header("Content-Type: application/json");
 			print json_encode(array(
 				"id" => $id
 			));
 			flush();
-			$this->copy_resources($project, "output/tmp/".$id);
+			$this->copy_resources($project, OUTPUT."tmp/".$id);
 			die();
 		}else if($_GET['act'] == "save" && preg_match('~^[0-9a-f]+$~', $_GET['ticket']) && !strstr($_GET['file'], "/")){
-			file_put_contents("output/tmp/".$_GET['ticket']."/".$_GET['file'].".html", file_get_contents("php://input"));
+			file_put_contents(OUTPUT."tmp/".$_GET['ticket']."/".$_GET['file'].".html", file_get_contents("php://input"));
 			die();
 		}else if($_POST['act'] == "resfile" && preg_match('~^[0-9a-f]+$~', $_POST['ticket'])){
 			$whitelist = array("assets", "files");
@@ -57,11 +57,11 @@ class Fuko extends UI{
 					header("X-Unsafe-File: ".$item);
 					continue;
 				}
-				@mkdir("output/tmp/".$_POST['ticket']."/".dirname($item), 0777, true);
+				@mkdir(OUTPUT."tmp/".$_POST['ticket']."/".dirname($item), 0777, true);
 				if(is_readable("compiled/".$item)){
 					$itemp = realpath("compiled/".$item);
 				}
-				copy($itemp, "output/tmp/".$_POST['ticket']."/".$item);
+				copy($itemp, OUTPUT."tmp/".$_POST['ticket']."/".$item);
 			}
 			if(is_array($_POST['resources'])){
 				foreach($_POST['resources'] as $item){
@@ -78,14 +78,14 @@ class Fuko extends UI{
 						continue;
 					}
 					if(is_dir($itemp)){
-						@mkdir("output/tmp/".$_POST['ticket']."/".$item, 0777, true);
-						$this->recurse_copy($item, "output/tmp/".$_POST['ticket']."/".$item);
+						@mkdir(OUTPUT."tmp/".$_POST['ticket']."/".$item, 0777, true);
+						$this->recurse_copy($item, OUTPUT."tmp/".$_POST['ticket']."/".$item);
 					}else{
-						@mkdir("output/tmp/".$_POST['ticket']."/".dirname($item), 0777, true);
+						@mkdir(OUTPUT."tmp/".$_POST['ticket']."/".dirname($item), 0777, true);
 						if(is_readable("compiled/".$item)){
 							$itemp = realpath("compiled/".$item);
 						}
-						copy($itemp, "output/tmp/".$_POST['ticket']."/".$item);
+						copy($itemp, OUTPUT."tmp/".$_POST['ticket']."/".$item);
 					}
 				}
 			}
@@ -95,12 +95,12 @@ class Fuko extends UI{
 			if($_POST['output'] == "zip"){
 				$pages = $this->loader->pages();
 				// Write Chrome JSON
-				file_put_contents("output/tmp/".$_POST['ticket']."/manifest.json", $this->get_chrome_json($project, $pages));
+				file_put_contents(OUTPUT."tmp/".$_POST['ticket']."/manifest.json", $this->get_chrome_json($project, $pages));
 				// PhoneGap Build XML
-				file_put_contents("output/tmp/".$_POST['ticket']."/config.xml", $this->get_phonegap_xml($project));
+				file_put_contents(OUTPUT."tmp/".$_POST['ticket']."/config.xml", $this->get_phonegap_xml($project));
 				// Copy icon
-				if(!is_file("output/tmp/".$_POST['ticket']."/icon.png")){
-					copy("output/tmp/".$_POST['ticket']."/".$project['icon128'], "output/tmp/".$_POST['ticket']."/icon.png");
+				if(!is_file(OUTPUT."tmp/".$_POST['ticket']."/icon.png")){
+					copy(OUTPUT."tmp/".$_POST['ticket']."/".$project['icon128'], OUTPUT."tmp/".$_POST['ticket']."/icon.png");
 				}
 				// Copy navigator
 				if($_POST['incnav'] === "true"){
@@ -108,29 +108,29 @@ class Fuko extends UI{
 					if(is_readable("compiled/".$navPath)){
 						$navPath = "compiled/".$navPath;
 					}
-					copy($navPath, "output/tmp/".$_POST['ticket']."/nav.css");
-					file_put_contents("output/tmp/".$_POST['ticket']."/nav.js", $this->gen_navigator($project));
+					copy($navPath, OUTPUT."tmp/".$_POST['ticket']."/nav.css");
+					file_put_contents(OUTPUT."tmp/".$_POST['ticket']."/nav.js", $this->gen_navigator($project));
 				}
 			}else if($_POST['output'] == "hpub"){
 				$dirname = "book";
 				$pages = $this->loader->pages();
-				file_put_contents("output/tmp/".$_POST['ticket']."/book.json", $this->get_hpub_json($project, $pages));
+				file_put_contents(OUTPUT."tmp/".$_POST['ticket']."/book.json", $this->get_hpub_json($project, $pages));
 			}else{
 				$this->fatal_error("Invalid output format");
 			}
 			// Zip
-			$oldfiles = glob("output/".$project['id']."*.zip");
+			$oldfiles = glob(OUTPUT.$project['id']."*.zip");
 			if(count($oldfiles) > 0){
 				foreach($oldfiles as $file){
 					@unlink($file);
 				}
 			}
-			$output = "output/".$project['id']."_".uniqid().".zip";
-			$this->zip("output/tmp/".$_POST['ticket']."/", $output, $dirname);
-			$this->rrmdir("output/tmp/".$_POST['ticket']."/");
+			$output = $project['id']."_".uniqid().".zip";
+			$this->zip(OUTPUT."tmp/".$_POST['ticket']."/", OUTPUT.$output, $dirname);
+			$this->rrmdir(OUTPUT."tmp/".$_POST['ticket']."/");
 			header("Content-Type: application/json");
 			print json_encode(array(
-				"output" => $output
+				"output" => 'output/' . $output
 			));
 			die();
 		}

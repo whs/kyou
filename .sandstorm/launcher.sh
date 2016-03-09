@@ -13,6 +13,7 @@ rm -rf /var/run
 mkdir -p /var/run
 
 mkdir -p /var/kyou/public/bookfiles/thumbnails/
+mkdir -p /var/kyou/public/output/tmp/
 mkdir -p /tmp/kyou/{template_{cached,compiled},}
 
 if [ -f /var/lib/mongodb/mongod.lock ]; then
