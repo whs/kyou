@@ -6,15 +6,28 @@
 
 project Kyou's development is sponsored by NECTEC under National Software Competition 2013 program. NECTEC does not offer support for this application.
 
-## Installation
+## Sandstorm
 
-*(I haven't install this in a while, so this is not tested. Also may not work with recent version of softwares?)*
+Kyou now supports [sandstorm.io](https://sandstorm.io)!
+
+Download the [spk](https://github.com/whs/kyou/releases/download/sandstorm/kyou.spk) and upload it to your Sandstorm installation.
+
+Difference between locally hosted and Sandstorm version:
+
+- Authentication, access control and sharing system are replaced by Sandstorm's
+  - Note that unauthenticated user is still mapped to Kyou's user. As Kyou have no role-based access control everyone (authenticated or not) who have access to the grain will have full control of the project.
+- The limit system is configured to have no limits. Some limit checking code have been removed.
+- Publishing a standard Chrome ZIP will also make site available via Sandstorm's [web publishing](https://docs.sandstorm.io/en/latest/developing/web-publishing/) system.
+- Per Sandstorm's model, only one project is supported in one grain.
+
+## Installation
 
 1. `npm install -g grunt-cli`
 2. `npm install .`
 3. `grunt` to generate `compiled` folders
 4. Copy engine/config.def.php to engine/config.php and fill in values
-5. bookfiles and output directory must be writable by the web server
+5. bookfiles and output directories must be writable by the web server
+6. Edit planfile.php to configure limit. The "free" plan is hardcoded to be the default
 
 ## What's excluded
 
